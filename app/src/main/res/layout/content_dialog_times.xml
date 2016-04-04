@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:background="#FFF">
+
+
+
+        <TextView
+            android:id="@+id/title_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="#000"
+            android:text="Titulo"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/content_text_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_dialog"
+            android:layout_centerHorizontal="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:textColor="#000"
+            android:text="Conteudo do dialog"
+            android:gravity="center"/>
+
+        <RelativeLayout
+            android:id="@+id/btn_ok_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/content_text_dialog"
+            android:layout_marginTop="40dp"
+            android:background="?attr/colorPrimary"
+            android:alpha="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="?attr/colorButtonNormal"
+                android:textStyle="bold"
+                android:text="Ok"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+

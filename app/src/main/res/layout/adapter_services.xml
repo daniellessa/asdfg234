@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_background"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+
+   <RelativeLayout
+       android:layout_width="match_parent"
+       android:layout_height="80dp"
+       android:layout_margin="5dp"
+       android:background="#FFF">
+
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_toLeftOf="@+id/layout_price">
+
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent">
+
+
+               <TextView
+                   android:id="@+id/title_service"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="20dp"
+                   android:layout_marginLeft="15dp"
+                   android:textSize="16sp"
+                   android:textStyle="bold"
+                   android:text="Nome do Serviço"/>
+
+               <TextView
+                   android:id="@+id/subtitle_service"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_below="@+id/title_service"
+                   android:layout_marginLeft="15dp"
+                   android:layout_marginTop="10dp"
+                   android:textSize="10sp"
+                   android:text="Subtitulo do serviço aqui"/>
+
+
+
+           </RelativeLayout>
+
+
+
+
+       </RelativeLayout>
+
+
+
+       <RelativeLayout
+           android:id="@+id/layout_price"
+           android:layout_width="100dp"
+           android:layout_height="match_parent"
+           android:layout_alignParentRight="true"
+           android:background="?attr/colorPrimary">
+
+           <RelativeLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_centerInParent="true">
+
+               <TextView
+                   android:id="@+id/cifrao"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:textColor="#FFF"
+                   android:textStyle="bold"
+                   android:textSize="16sp"
+                   android:text="R$" />
+
+               <TextView
+                   android:id="@+id/price_service"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_toRightOf="@+id/cifrao"
+                   android:layout_marginLeft="5dp"
+                   android:textColor="#FFF"
+                   android:textStyle="bold"
+                   android:textSize="16sp"
+                   android:text="00,00"/>
+
+           </RelativeLayout>
+
+
+
+
+       </RelativeLayout>
+
+
+   </RelativeLayout>
+
+
+
+
+</RelativeLayout>

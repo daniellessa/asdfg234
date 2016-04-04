@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:background="@drawable/background_dialog">
+
+
+        <RelativeLayout
+            android:id="@+id/layout_type_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="20dp"
+            android:background="@color/colorPrimary">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selecione a origem da imagem "
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/colorTextIcons"
+                android:layout_marginBottom="10dp"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_type_image"
+            android:layout_marginBottom="30dp"
+            android:layout_centerHorizontal="true">
+
+            <ImageView
+                android:id="@+id/image_galery"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_marginRight="40dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/gallery_icon"/>
+
+            <ImageView
+                android:id="@+id/image_take"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_toRightOf="@+id/image_galery"
+                android:layout_centerVertical="true"
+                android:src="@drawable/camera_icon"/>
+
+        </RelativeLayout>
+
+
+
+
+
+    </RelativeLayout>
+

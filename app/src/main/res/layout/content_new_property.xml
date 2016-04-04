@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="br.com.dalecom.agendamobile.ui.NewPropertyActivity"
+    tools:showIn="@layout/activity_new_property">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/layout_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/icon_property"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@android:color/transparent"
+                    android:src="@drawable/property_default"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"/>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/layout_title_property"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/layout_icon">
+
+                <TextView
+                    android:id="@+id/title_property"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:textSize="18sp"
+                    android:text="Cadastrar novo estabelecimento"/>
+
+            </RelativeLayout>
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/layout_input_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_title_property"
+                android:layout_marginTop="20dp">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/text_pin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="40dp"
+                        android:singleLine="true"
+                        android:inputType="number"
+                        android:gravity="center"
+                        android:hint="Digite o PIN aqui" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/layout_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_below="@+id/layout_input_pin"
+                android:layout_centerHorizontal="true"
+                android:visibility="invisible">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_progress"
+                android:layout_centerHorizontal="true">
+
+
+                <Button
+                    android:id="@+id/btn_buscar_property"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:text="Buscar"
+                    android:background="@drawable/background_buttom"
+                    android:textColor="#FFF"
+                    android:onClick="buscarProperty"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout_finalize_or_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_progress"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone">
+
+
+                <Button
+                    android:id="@+id/btn_salvar_property"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:text="Confirmar"
+                    android:background="@drawable/background_buttom"
+                    android:textColor="#FFF"
+                    android:onClick="saveProperty" />
+
+                <Button
+                    android:id="@+id/btn_clear_property"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_below="@+id/btn_salvar_property"
+                    android:text="Não é esse"
+                    android:background="@drawable/background_buttom"
+                    android:textColor="#FFF"
+                    android:onClick="clearProperty"/>
+
+            </RelativeLayout>
+
+
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

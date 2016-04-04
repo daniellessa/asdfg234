@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:background="@drawable/background_dialog">
+
+    <RelativeLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/btn_dismiss"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_clear_black_48dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="40dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary"
+            android:text="Cadastrar novo:"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_options_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:orientation="horizontal"
+        android:layout_marginBottom="30dp">
+
+
+        <RelativeLayout
+            android:id="@+id/layout_user"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_user"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_user_white_48dp"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="@dimen/fab_margin"/>
+
+            <TextView
+                android:id="@+id/text_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fab_user"
+                android:layout_centerHorizontal="true"
+                android:textColor="#000"
+                android:text="Usuário"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_professional"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_toRightOf="@+id/layout_user">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_professional"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_professional_white_48dp"
+                android:layout_margin="@dimen/fab_margin"/>
+
+            <TextView
+                android:id="@+id/text_professional"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fab_professional"
+                android:layout_centerHorizontal="true"
+                android:textColor="#000"
+                android:text="Profissional"/>
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/layout_property"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_toRightOf="@+id/layout_professional">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_property"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/ic_property_white_48dp"/>
+
+            <TextView
+                android:id="@+id/text_property"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fab_property"
+                android:layout_centerHorizontal="true"
+                android:textColor="#000"
+                android:text="Estabelecimento"/>
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    </RelativeLayout>
+
