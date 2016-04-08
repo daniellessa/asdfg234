@@ -11,6 +11,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.List;
 
 import br.com.dalecom.agendamobile.utils.LogUtils;
 
@@ -24,7 +25,7 @@ public class User extends Model implements Serializable {
     public long id;
 
     @Column(name = "IdServer")
-    public long idServer;
+    public int idServer;
 
     @Column(name = "RegistrationId")
     @Expose
@@ -85,6 +86,10 @@ public class User extends Model implements Serializable {
     public User(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public User(String user) {
+        this.name = user;
     }
 
     public static User getUserByServerId(long serverId) {
@@ -176,11 +181,11 @@ public class User extends Model implements Serializable {
         this.id = id;
     }
 
-    public long getIdServer() {
+    public int getIdServer() {
         return idServer;
     }
 
-    public void setIdServer(long idServer) {
+    public void setIdServer(int idServer) {
         this.idServer = idServer;
     }
 
@@ -236,8 +241,5 @@ public class User extends Model implements Serializable {
     public void setProfessional(Professional professional) {
         this.professional = professional;
     }
-
-
-
 
 }

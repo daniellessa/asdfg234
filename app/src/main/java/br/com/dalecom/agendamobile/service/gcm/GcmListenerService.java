@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -49,6 +50,9 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
         builder.setContentTitle(titulo);
         builder.setContentText(descricao);
         builder.setSmallIcon(R.drawable.logo_icalendar_primary);
+
+
+        //builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.logo_icalendar_primary));
 
 
         builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_menu_camera));

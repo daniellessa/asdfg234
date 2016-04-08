@@ -72,7 +72,7 @@ public class TimesAdapter extends RecyclerView.Adapter<TimesAdapter.MyViewHolder
 
         if(mList.get(position).isFree()){
             //holder.userName.setTextColor(Color.parseColor("#009688"));
-            holder.imagePerfil.setImageResource(R.drawable.calendar_plus);
+            holder.imagePerfil.setImageResource(R.drawable.user_default);
         }
         else{
             if(mList.get(position).getUserName() == "11")

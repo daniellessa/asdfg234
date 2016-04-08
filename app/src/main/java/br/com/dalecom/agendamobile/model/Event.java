@@ -16,19 +16,14 @@ import java.util.Date;
 @Table(name = "Event")
 public class Event extends Model {
 
-    public static final String STATUS_AGENDADO = "agendado";
-    public static final String STATUS_ATRASADO = "atrasado";
-    public static final String STATUS_ATENDIDO = "atendido";
-
-
 
     @Column(name = "IdServer")
     protected long idServer;
 
     @Column(name = "Professional")
     @Expose
-    @SerializedName("professional")
-    private User professional;
+    @SerializedName("UserProf")
+    private User userProf;
 
     @Column(name = "User")
     @Expose
@@ -79,12 +74,12 @@ public class Event extends Model {
         this.idServer = (long) idServer;
     }
 
-    public User getProfessional() {
-        return professional;
+    public User getUserProf() {
+        return this.userProf;
     }
 
-    public void setProfessional(User professional) {
-        this.professional = professional;
+    public void setUserProf(User professional) {
+        this.userProf = professional;
     }
 
     public User getUser() {

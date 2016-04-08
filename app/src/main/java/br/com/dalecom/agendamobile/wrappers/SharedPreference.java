@@ -52,7 +52,7 @@ public class SharedPreference {
     public void setCurrentUser(User user) {
         sharedPreferences = mContext.getSharedPreferences(CURRENT_USER_PREF, 0);
         sharedPreferences.edit().putLong(CURRENT_USER_ID, user.getId()).commit();
-        sharedPreferences.edit().putLong(CURRENT_USER_SERVER_ID, user.getIdServer()).commit();
+        sharedPreferences.edit().putInt(CURRENT_USER_SERVER_ID, user.getIdServer()).commit();
         sharedPreferences.edit().putString(CURRENT_USER_EMAIL, user.getEmail()).commit();
         sharedPreferences.edit().putString(CURRENT_USER_BUCKET_PATH, user.getBucketPath()).commit();
         sharedPreferences.edit().putString(CURRENT_USER_PHOTO_PATH, user.getPhotoPath()).commit();
@@ -63,7 +63,7 @@ public class SharedPreference {
         sharedPreferences = mContext.getSharedPreferences(CURRENT_USER_PREF, 0);
         User user = new User();
         user.setId(sharedPreferences.getLong(CURRENT_USER_ID, 0));
-        user.setIdServer(sharedPreferences.getLong(CURRENT_USER_SERVER_ID, 0));
+       // user.setIdServer((int) sharedPreferences.getLong(CURRENT_USER_SERVER_ID, 0));
         user.setName(sharedPreferences.getString(CURRENT_USER_NAME, ""));
         user.setEmail(sharedPreferences.getString(CURRENT_USER_EMAIL, ""));
         user.setBucketPath(sharedPreferences.getString(CURRENT_USER_BUCKET_PATH, ""));

@@ -1,14 +1,16 @@
 package br.com.dalecom.agendamobile.utils;
 
 import android.util.Log;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import br.com.dalecom.agendamobile.model.Professional;
 import br.com.dalecom.agendamobile.model.User;
@@ -28,27 +30,14 @@ public class ProfessionalParser {
 
     public List parseFullProfessionas() {
 
-
-        int backCategory = 0;
         users.clear();
-        //provisorio
-
 
         for (JsonElement jsonElement : jsonArray) {
 
             User user = new User();
             JsonObject data = jsonElement.getAsJsonObject();
 
-            if(data.getAsJsonObject("professions").get("id").getAsInt() != backCategory){
-                int idCategory = data.getAsJsonObject("professions").get("id").getAsInt();
-                String nameCategory = data.getAsJsonObject("professions").get("name").getAsString();
-                createHeader(idCategory,nameCategory);
-                backCategory = (data.getAsJsonObject("professions").get("id").getAsInt());
-            }
 
-
-
-            //mandatories
             try {
                 user.setIdServer(data.getAsJsonObject("users").get("id").getAsInt());
                 user.setEmail(data.getAsJsonObject("users").get("email").getAsString());
@@ -71,27 +60,46 @@ public class ProfessionalParser {
                 professional.setProfessionName(data.getAsJsonObject("professions").get("name").getAsString());
 
                 Calendar startAt = Calendar.getInstance();
-                startAt.setTime(format.parse(data.get("startAt").getAsString()));
+                Date dateStart = format.parse(data.get("startAt").getAsString());
+                startAt.set(Calendar.HOUR_OF_DAY, dateStart.getHours());
+                startAt.set(Calendar.MINUTE, dateStart.getMinutes());
+                startAt.set(Calendar.SECOND, 0);
                 professional.setStartAt(startAt);
 
+
                 Calendar endsAt = Calendar.getInstance();
-                startAt.setTime(format.parse(data.get("endsAt").getAsString()));
+                Date dateEnds = format.parse(data.get("endsAt").getAsString());
+                endsAt.set(Calendar.HOUR_OF_DAY, dateEnds.getHours());
+                endsAt.set(Calendar.MINUTE, dateEnds.getMinutes());
+                endsAt.set(Calendar.SECOND, 0);
                 professional.setEndsAt(endsAt);
 
                 Calendar split = Calendar.getInstance();
-                startAt.setTime(format.parse(data.get("split").getAsString()));
+                Date dateSplit = format.parse(data.get("split").getAsString());
+                split.set(Calendar.HOUR_OF_DAY, dateSplit.getHours());
+                split.set(Calendar.MINUTE, dateSplit.getMinutes());
+                split.set(Calendar.SECOND, 0);
                 professional.setSplit(split);
 
                 Calendar interval = Calendar.getInstance();
-                startAt.setTime(format.parse(data.get("interval").getAsString()));
+                Date dateInterval = format.parse(data.get("interval").getAsString());
+                interval.set(Calendar.HOUR_OF_DAY, dateInterval.getHours());
+                interval.set(Calendar.MINUTE, dateInterval.getMinutes());
+                interval.set(Calendar.SECOND, 0);
                 professional.setInterval(interval);
 
                 Calendar startLunchAt = Calendar.getInstance();
-                startAt.setTime(format.parse(data.get("startLunchAt").getAsString()));
+                Date dateStartLunch = format.parse(data.get("startLunchAt").getAsString());
+                startLunchAt.set(Calendar.HOUR_OF_DAY, dateStartLunch.getHours());
+                startLunchAt.set(Calendar.MINUTE, dateStartLunch.getMinutes());
+                startLunchAt.set(Calendar.SECOND, 0);
                 professional.setStartLaunchAt(startLunchAt);
 
                 Calendar endsLunchAt = Calendar.getInstance();
-                startAt.setTime(format.parse(data.get("endsLunchAt").getAsString()));
+                Date dateEndsLunch = format.parse(data.get("endsLunchAt").getAsString());
+                endsLunchAt.set(Calendar.HOUR_OF_DAY, dateEndsLunch.getHours());
+                endsLunchAt.set(Calendar.MINUTE, dateEndsLunch.getMinutes());
+                endsLunchAt.set(Calendar.SECOND, 0);
                 professional.setEndsLaunchAt(endsLunchAt);
 
                 professional.setWorkSunday(data.get("workSunday").getAsBoolean());
@@ -104,7 +112,6 @@ public class ProfessionalParser {
                 professional.setViewType(1);
                 user.setProfessional(professional);
 
-                Log.d(LogUtils.TAG, "List item: " + user.getName());
                 users.add(user);
 
             }
@@ -121,14 +128,5 @@ public class ProfessionalParser {
         return users;
     }
 
-    private void createHeader(int category, String name){
 
-        User initial = new User();
-        Professional init = new Professional();
-        init.setCategory(category);
-        init.setProfessionName(name);
-        init.setViewType(0);
-        initial.setProfessional(init);
-        users.add(initial);
-    }
 }

@@ -1,5 +1,6 @@
 package br.com.dalecom.agendamobile.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -59,12 +60,18 @@ public class ServicesActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         mList.get(position);
+                        initAgenda();
 
-                        initDialog(startDate,endsDate);
+                        //initDialog(startDate,endsDate);
                     }
                 })
         );
 
+    }
+
+    private void initAgenda(){
+        Intent it = new Intent(ServicesActivity.this, TimesActivity.class);
+        startActivity(it);
     }
 
     private void initDialog(Calendar startDate, Calendar endsDate){

@@ -7,7 +7,8 @@ public class Service {
 
     private int id;
     private String title;
-    private int duration;
+    private int hours;
+    private int minutes;
     private float price;
     private String info;
 
@@ -27,12 +28,20 @@ public class Service {
         this.title = title;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getHours() {
+        return hours;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setHours(int hours) {
+        this.hours = hours;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(int minutes) {
+        this.minutes = minutes;
     }
 
     public float getPrice() {

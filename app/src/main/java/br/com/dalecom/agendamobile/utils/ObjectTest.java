@@ -226,25 +226,25 @@ public class ObjectTest {
 
         Service service = new Service();
         service.setTitle("Corte Masculino");
-        service.setDuration(45);
+        service.setMinutes(45);
         service.setPrice(new Float(25.00));
         list.add(service);
 
         Service service1 = new Service();
         service1.setTitle("Corte Feminino");
-        service1.setDuration(1);
+        service1.setMinutes(1);
         service1.setPrice(new Float(45.50));
         list.add(service1);
 
         Service service2 = new Service();
         service2.setTitle("Progressiva");
-        service2.setDuration(2);
+        service2.setMinutes(2);
         service2.setPrice(new Float(100.00));
         list.add(service2);
 
         Service service3 = new Service();
         service3.setTitle("Calterização");
-        service3.setDuration(50);
+        service3.setMinutes(50);
         service3.setPrice(new Float(60.00));
         list.add(service3);
 

@@ -36,7 +36,11 @@ public interface API {
     @GET("/professionals")
     void getProfessionals(@Query("property_id") int propertyId, Callback<JsonObject> callback);
 
+    @GET("/events")
+    void getEvents(@Query("professionals_id") int professionals_id, @Query("startAt") String startAt, Callback<JsonObject> callback);
 
+    @GET("/professions")
+    void getCategories(Callback<JsonObject> callback);
 
     @POST("/events")
     void postExams(@Body List<Event> events, Callback<JsonObject> callback);

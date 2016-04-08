@@ -29,7 +29,7 @@ public class EventManager {
     Context mContext;
     Event mEvent;
     User currentUser;
-    User currentProfessional;
+    User currentUserProf;
     Calendar dateSelected;
     Service currentService;
     String currentStartAt;
@@ -64,9 +64,9 @@ public class EventManager {
             this.mEvent.setUser(user);
     }
 
-    public void setProfessionalIntoEvent(User professional) {
-        this.mEvent.setProfessional(professional);
-        this.currentProfessional = professional;
+    public void setUserProfIntoEvent(User user) {
+        this.mEvent.setUserProf(user);
+        this.currentUserProf = user;
     }
 
     public void setServiceIntoEvent(Service service) {
@@ -108,7 +108,7 @@ public class EventManager {
         User user = this.mEvent.getUser();
         user.save();
 
-        User professional = this.mEvent.getProfessional();
+        User professional = this.mEvent.getUserProf();
         professional.save();
 
         Service service = this.mEvent.getService();
@@ -118,20 +118,20 @@ public class EventManager {
 //
 
         this.mEvent.setUser(user);
-        this.mEvent.setProfessional(professional);
+        this.mEvent.setUserProf(professional);
         this.mEvent.setService(service);
         this.mEvent.setStartAt(currentStartAt);
         this.mEvent.setEndsAt(currentEndsAt);
-        this.mEvent.setStatus(Event.STATUS_AGENDADO);
+        this.mEvent.setStatus(S.STATUS_PENDING);
         this.mEvent.setFinalized(false);
         this.mEvent.setToken(sharedPreference.getUserToken());
         this.mEvent.save();
 
     }
 
-    public User getProfessional() {
+    public User getUserProf() {
         if ( this.mEvent != null )
-            return this.mEvent.getProfessional();
+            return this.mEvent.getUserProf();
 
         return null;
     }
@@ -145,7 +145,7 @@ public class EventManager {
 
     public void clear(){
         this.mEvent.setUser(null);
-        this.mEvent.setProfessional(null);
+        this.mEvent.setUserProf(null);
         this.mEvent.setService(null);
         this.mEvent.setStartAt(null);
         this.mEvent.setEndsAt(null);

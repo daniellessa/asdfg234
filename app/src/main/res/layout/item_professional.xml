@@ -3,13 +3,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:background="?attr/colorPrimary">
+    android:background="?attr/colorPrimaryDark">
 
         <TextView
-            android:id="@+id/text_header"
+            android:id="@+id/name_professional"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Teste Header"
+            android:text="Name"
             android:textColor="#FFF"
             android:layout_centerInParent="true"/>
 

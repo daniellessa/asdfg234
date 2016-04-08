@@ -96,7 +96,12 @@ public class RestClient {
         api.getProfessionals(propertyId, callback);
     }
 
-    public void getHistoryStatus(ArrayList examIds, Callback callback) {
-        api.getHistoryStatus(examIds, callback);
+    public void getEvents(int userProf_id, String startAt, Callback callback) {
+        api.getEvents(userProf_id, startAt, callback);
     }
+
+    public void getCategories(Callback callback) {
+        api.getCategories(callback);
+    }
+
 }
