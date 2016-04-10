@@ -63,7 +63,7 @@ public class SharedPreference {
         sharedPreferences = mContext.getSharedPreferences(CURRENT_USER_PREF, 0);
         User user = new User();
         user.setId(sharedPreferences.getLong(CURRENT_USER_ID, 0));
-       // user.setIdServer((int) sharedPreferences.getLong(CURRENT_USER_SERVER_ID, 0));
+        user.setIdServer(sharedPreferences.getInt(CURRENT_USER_SERVER_ID, 0));
         user.setName(sharedPreferences.getString(CURRENT_USER_NAME, ""));
         user.setEmail(sharedPreferences.getString(CURRENT_USER_EMAIL, ""));
         user.setBucketPath(sharedPreferences.getString(CURRENT_USER_BUCKET_PATH, ""));

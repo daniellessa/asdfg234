@@ -76,10 +76,6 @@ public class RestClient {
         api.postEvent(event, callback);
     }
 
-    public void postEvents(List<Event> events, Callback callback) {
-        api.postExams(events, callback);
-    }
-
     public void updatePasswordRefresh(String password,Callback callback) {
         api.setPasswordRefreshed(password, callback);
     }
@@ -96,12 +92,16 @@ public class RestClient {
         api.getProfessionals(propertyId, callback);
     }
 
-    public void getEvents(int userProf_id, String startAt, Callback callback) {
-        api.getEvents(userProf_id, startAt, callback);
+    public void getEvents(int userProf_id, String day, Callback callback) {
+        api.getEvents(userProf_id, day, callback);
     }
 
     public void getCategories(Callback callback) {
         api.getCategories(callback);
+    }
+
+    public void getServiceForProfessional(int professionalId, Callback callback) {
+        api.getServicesForProfessional(professionalId, callback);
     }
 
 }

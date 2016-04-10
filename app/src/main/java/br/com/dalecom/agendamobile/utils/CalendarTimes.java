@@ -2,6 +2,7 @@ package br.com.dalecom.agendamobile.utils;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 
@@ -18,6 +19,8 @@ import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
 import br.com.dalecom.agendamobile.model.Event;
+import br.com.dalecom.agendamobile.model.Professional;
+import br.com.dalecom.agendamobile.model.Service;
 import br.com.dalecom.agendamobile.model.Times;
 import br.com.dalecom.agendamobile.model.User;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
@@ -31,9 +34,11 @@ import retrofit.client.Response;
 public class CalendarTimes {
 
     private Calendar startAt, endsAt, split, interval;
-    private User userProf;
+    private Professional userProf;
     private List<Event> mEvents;
+    List<Times> list;
     private Context mContext;
+    private Service service;
 
     @Inject EventManager eventManager;
 
@@ -49,11 +54,12 @@ public class CalendarTimes {
     }
 
     private void populateVariables(){
-        userProf = eventManager.getUserProf();
-        startAt = userProf.getProfessional().getStartAt();
-        endsAt = userProf.getProfessional().getEndsAt();
-        split = userProf.getProfessional().getSplit();
-        interval = userProf.getProfessional().getInterval();
+        userProf = eventManager.getCurrentProfessional();
+        startAt = userProf.getStartAt();
+        endsAt = userProf.getEndsAt();
+        split = userProf.getSplit();
+        interval = userProf.getInterval();
+        service = eventManager.getCurrentService();
 
     }
 
@@ -61,35 +67,68 @@ public class CalendarTimes {
     public List<Times> construct(){
 
 
-        List<Times> list = new ArrayList<>();
+        list = new ArrayList<>();
         list.clear();
-        int count = 0;
+        Calendar auxStart = copyDate(startAt);
+        Calendar auxEnd = copyDate(startAt);
+        Calendar auxTarget = copyDate(startAt);
+        auxTarget.add(Calendar.HOUR_OF_DAY, split.get(Calendar.HOUR_OF_DAY));
+        auxTarget.add(Calendar.MINUTE, split.get(Calendar.MINUTE));
+        int next = 1;
+
 
         while (startAt.before(endsAt)){
 
+            boolean find = false;
 
-            count++;
-            for (int i=0; i < mEvents.size(); i++){
+            for (Event event: mEvents){
 
-                Date eventStart = DateHelper.convertStringSqlInDate(mEvents.get(i).getStartAt());
-                if(startAt.get(Calendar.HOUR_OF_DAY) == eventStart.getHours() && startAt.get(Calendar.MINUTE) == eventStart.getMinutes()){
+                Date eventStart = DateHelper.convertStringSqlInDate(event.getStartAt());
 
-                    list.add(populateTime(startAt, mEvents.get(i).getEndsAt(), mEvents.get(i).getUser().getName()));
-                    Date end = DateHelper.convertStringSqlInDate(mEvents.get(i).getEndsAt());
+                Log.d(LogUtils.TAG, "Hour: "+ DateHelper.hourToString(startAt) +" / " + DateHelper.hourToString(eventStart));
+
+                if(DateHelper.hourToString(startAt).equals(DateHelper.hourToString(eventStart))){
+
+                    Log.d(LogUtils.TAG, "Finded");
+                    list.add(populateTime(startAt, event.getEndsAt(), event.getUser().getName()));
+                    Date end = DateHelper.convertStringSqlInDate(event.getEndsAt());
                     startAt.add(Calendar.HOUR_OF_DAY,end.getHours() - eventStart.getHours());
-                    startAt.add(Calendar.MINUTE,(end.getMinutes() - eventStart.getMinutes()) + interval.get(Calendar.MINUTE));
-                }else{
+                    startAt.add(Calendar.MINUTE, (end.getMinutes() - eventStart.getMinutes()) + interval.get(Calendar.MINUTE));
 
-                    list.add(createFreeTime(startAt));
-                    startAt.add(Calendar.HOUR_OF_DAY, split.get(Calendar.HOUR));
-                    startAt.add(Calendar.MINUTE, split.get(Calendar.MINUTE));
+                    Log.d(LogUtils.TAG, "Free find");
+                    auxStart = copyDate(startAt);
+                    auxEnd = copyDate(startAt);
+                    auxTarget = copyDate(startAt);
+                    auxTarget.add(Calendar.HOUR_OF_DAY, split.get(Calendar.HOUR_OF_DAY));
+                    auxTarget.add(Calendar.MINUTE, split.get(Calendar.MINUTE));
+                    auxEnd.add(Calendar.MINUTE, next);
+                    find = true;
+                    break;
                 }
             }
 
+            if(!find){
+
+                if(DateHelper.hourToString(auxEnd).equals(DateHelper.hourToString(auxTarget))){
+                    Log.d(LogUtils.TAG, "Free not find");
+                    //auxStart.add(Calendar.MINUTE, next);
+                    //auxEnd.add(Calendar.MINUTE, next);
+                    list.add(createFreeTime(auxStart, auxEnd));
+
+                    auxStart = copyDate(startAt);
+                    auxEnd = copyDate(startAt);
+                    auxTarget = copyDate(startAt);
+                    auxTarget.add(Calendar.HOUR_OF_DAY, split.get(Calendar.HOUR_OF_DAY));
+                    auxTarget.add(Calendar.MINUTE, split.get(Calendar.MINUTE));
+                }
+                auxEnd.add(Calendar.MINUTE, next);
+            }
+
+            startAt.add(Calendar.MINUTE, next);
+
         }
 
-        Log.d(LogUtils.TAG,"Count: "+ count);
-      return list;
+        return list;
     }
 
     private Times populateTime(Calendar startAt, String ends, String name){
@@ -103,21 +142,53 @@ public class CalendarTimes {
         return time;
     }
 
-    private Times createFreeTime(Calendar startAt){
-
-        Calendar end = Calendar.getInstance();
-        end.set(Calendar.HOUR_OF_DAY, startAt.get(Calendar.HOUR_OF_DAY) + split.get(Calendar.HOUR));
-        end.set(Calendar.MINUTE, startAt.get(Calendar.MINUTE) + split.get(Calendar.MINUTE));
+    private Times createFreeTime(Calendar startAt, Calendar endsAt){
 
         Times time = new Times();
         time.setViewType(0);
         time.setStartAt(DateHelper.calendarToDate(startAt));
-        time.setEndsAt(DateHelper.calendarToDate(end));
+        time.setEndsAt(DateHelper.calendarToDate(endsAt));
         time.setUserName(mContext.getResources().getString(R.string.available));
         time.setFree(true);
 
 
         return time;
+    }
+
+    public boolean checkDisponible(Context context, Times selectedTime){
+
+        if(selectedTime.isFree()){
+            for (int i=0; i < list.size(); i++){
+                if(list.get(i).getStartAt() == selectedTime.getStartAt()){
+                    int duration = (service.getHours()*60) + service.getMinutes();
+                    int splitMinutes = (split.get(Calendar.HOUR_OF_DAY)*60) + split.get(Calendar.MINUTE);
+                    int checkNextIndex = (int) Math.round(((double)duration / splitMinutes)+0.5d);//duration/splitMinutes;
+
+                    Log.d(LogUtils.TAG,"duracao: "+duration+" minutos");
+                    Log.d(LogUtils.TAG, "Varrer os próximos: " + checkNextIndex + " times");
+
+                    for (int x=0; x < checkNextIndex; x++){
+
+                        if(!list.get(i+x).isFree()){
+                            Toast.makeText(context,"Tempo insuficente para este serviço",Toast.LENGTH_LONG).show();
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }else{
+            Toast.makeText(context,"Este horário não está disponível",Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+    }
+
+    private Calendar copyDate(Calendar date){
+        Calendar newDate = Calendar.getInstance();
+        newDate.set(date.get(Calendar.YEAR),date.get(Calendar.MONTH),date.get(Calendar.DAY_OF_MONTH),date.get(Calendar.HOUR_OF_DAY),date.get(Calendar.MINUTE),0);
+        return newDate;
     }
 
 

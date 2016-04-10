@@ -53,7 +53,7 @@ public class EventParser {
 
                 Service service = new Service();
 
-                service.setId(data.getAsJsonObject("services").get("id").getAsInt());
+                service.setIdServer(data.getAsJsonObject("services").get("id").getAsInt());
                 service.setTitle(data.getAsJsonObject("services").get("name").getAsString());
                 service.setHours(data.getAsJsonObject("services").get("hours").getAsInt());
                 service.setMinutes(data.getAsJsonObject("services").get("minutes").getAsInt());

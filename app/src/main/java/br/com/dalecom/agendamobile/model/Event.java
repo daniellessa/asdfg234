@@ -6,6 +6,7 @@ import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,26 +15,40 @@ import java.util.Date;
  */
 
 @Table(name = "Event")
-public class Event extends Model {
+public class Event extends Model implements Serializable {
 
 
     @Column(name = "IdServer")
     protected long idServer;
 
-    @Column(name = "Professional")
-    @Expose
-    @SerializedName("UserProf")
+    @Column(name = "UserProf")
     private User userProf;
 
-    @Column(name = "User")
+    @Column(name = "Professional")
     @Expose
-    @SerializedName("user")
+    @SerializedName("professionals_id")
+    protected int professionalsId;
+
+    private Professional professinal;
+
+    @Column(name = "User_id")
+    @Expose
+    @SerializedName("users_id")
+    protected int userId;
+
     private User user;
 
     @Column(name = "Service")
     @Expose
-    @SerializedName("service")
+    @SerializedName("services_id")
+    protected int servicesId;
+
     private Service service;
+
+    @Column(name = "Day")
+    @Expose
+    @SerializedName("day")
+    protected String day;
 
     @Column(name = "StartAt")
     @Expose
@@ -52,18 +67,12 @@ public class Event extends Model {
 
     @Column(name = "Finalized")
     @Expose
-    @SerializedName("finalazed")
+    @SerializedName("finalized")
     private boolean finalized;
 
     @Column(name = "FinalizedAt")
-    @Expose
-    @SerializedName("finalizedAt")
     private String finalizedAt;
 
-    @Column(name="Token")
-    @Expose
-    @SerializedName("token")
-    protected String token;
 
 
     public int getIdServer() {
@@ -138,11 +147,44 @@ public class Event extends Model {
         this.finalizedAt = finalizedAt;
     }
 
-    public String getToken() {
-        return token;
+
+    public Professional getProfessinal() {
+        return professinal;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setProfessinal(Professional professinal) {
+        this.professinal = professinal;
+    }
+
+    public int getProfessionalsId() {
+        return professionalsId;
+    }
+
+    public void setProfessionalsId(int professionalsId) {
+        this.professionalsId = professionalsId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getServicesId() {
+        return servicesId;
+    }
+
+    public void setServicesId(int servicesId) {
+        this.servicesId = servicesId;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
     }
 }

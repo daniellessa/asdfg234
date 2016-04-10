@@ -5,6 +5,9 @@ import android.location.Location;
 import android.media.Image;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,13 +30,15 @@ import br.com.dalecom.agendamobile.wrappers.SharedPreference;
 @Singleton
 public class EventManager {
     Context mContext;
-    Event mEvent;
-    User currentUser;
-    User currentUserProf;
-    Calendar dateSelected;
-    Service currentService;
-    String currentStartAt;
-    String currentEndsAt;
+    private Event mEvent;
+    private User currentUser;
+    private User currentUserProf;
+    private Professional currentProfessional;
+    private Calendar dateSelected;
+    private Service currentService;
+    private String currentDay;
+    private String currentStartAt;
+    private String currentEndsAt;
 
     @Inject public static SharedPreference sharedPreference;
 
@@ -47,16 +52,11 @@ public class EventManager {
     public void startNewEvent(Calendar date) {
         this.mEvent = new Event();
         this.dateSelected = date;
+        this.currentDay = DateHelper.toStringSql(date);
         String dateSql = DateHelper.convertDateToStringSql(date);
-        Log.d(LogUtils.TAG, "StartNewEvent: "+ dateSql);
         this.mEvent.setStartAt(dateSql);
         setEventCurrentUser();
     }
-
-    public void setUserIntoEvent(User user) {
-        this.mEvent.setUser(user);
-    }
-
 
     public void setEventCurrentUser() {
             User user = sharedPreference.getCurrentUser();
@@ -65,21 +65,32 @@ public class EventManager {
     }
 
     public void setUserProfIntoEvent(User user) {
-        this.mEvent.setUserProf(user);
         this.currentUserProf = user;
+        this.currentProfessional = user.getProfessional();
+    }
+
+    public User getCurrentUserProfessional(){
+        return currentUserProf;
+    }
+
+    public Professional getCurrentProfessional() {
+        return currentProfessional;
+    }
+
+    public void setCurrentProfessional(Professional currentProfessional) {
+        this.currentProfessional = currentProfessional;
     }
 
     public void setServiceIntoEvent(Service service) {
-        this.mEvent.setService(service);
         this.currentService = service;
+    }
+
+    public Service getCurrentService(){
+        return this.currentService;
     }
 
     public Calendar getDateSelected() {
         return dateSelected;
-    }
-
-    public void setDateSelected(Calendar dateSelected) {
-        this.dateSelected = dateSelected;
     }
 
     public String getCurrentStartAt() {
@@ -102,30 +113,19 @@ public class EventManager {
         return mEvent;
     }
 
-    public void saveEvent() {
+    public void finalizeEvent() {
 
-
-        User user = this.mEvent.getUser();
-        user.save();
-
-        User professional = this.mEvent.getUserProf();
-        professional.save();
-
-        Service service = this.mEvent.getService();
-
-
-//      User user = User.getUserByServerId(this.currentUser.getIdServer());
 //
-
-        this.mEvent.setUser(user);
-        this.mEvent.setUserProf(professional);
-        this.mEvent.setService(service);
+        this.mEvent.setUserId(currentUser.getIdServer());
+        this.mEvent.setProfessionalsId(currentUserProf.getIdServer());
+        this.mEvent.setServicesId(currentService.getIdServer());
+        this.mEvent.setDay(currentDay);
         this.mEvent.setStartAt(currentStartAt);
         this.mEvent.setEndsAt(currentEndsAt);
         this.mEvent.setStatus(S.STATUS_PENDING);
         this.mEvent.setFinalized(false);
-        this.mEvent.setToken(sharedPreference.getUserToken());
-        this.mEvent.save();
+
+        //this.mEvent.save();
 
     }
 
@@ -146,12 +146,12 @@ public class EventManager {
     public void clear(){
         this.mEvent.setUser(null);
         this.mEvent.setUserProf(null);
+        this.mEvent.setProfessinal(null);
         this.mEvent.setService(null);
         this.mEvent.setStartAt(null);
         this.mEvent.setEndsAt(null);
         this.mEvent.setStatus(null);
         this.mEvent.setFinalized(false);
-        this.mEvent.setToken(null);
     }
 
 }

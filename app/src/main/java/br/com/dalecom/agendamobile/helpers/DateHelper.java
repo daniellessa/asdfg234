@@ -13,11 +13,55 @@ public class DateHelper {
     private final static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static String convertDateToStringSql(Calendar date){
-        return date.get(Calendar.YEAR)+"-"+(date.get(Calendar.MONTH)+1)+"-"+date.get(Calendar.DAY_OF_MONTH)+" "+date.get(Calendar.HOUR_OF_DAY)+":"+date.get(Calendar.MINUTE)+":"+date.get(Calendar.SECOND);
+        String year = String.valueOf(date.get(Calendar.YEAR));
+        String month = String.valueOf(date.get(Calendar.MONTH)+1);
+        String day = String.valueOf(date.get(Calendar.DAY_OF_MONTH));
+        String hour = String.valueOf(date.get(Calendar.HOUR_OF_DAY));
+        String minute = String.valueOf(date.get(Calendar.MINUTE));
+        String seconds = "00";
+
+        if(year.length() == 1){
+            year= "0"+year;
+        }
+        if(month.length() == 1){
+            month= "0"+month;
+        }
+        if(day.length() == 1){
+            day= "0"+day;
+        }
+        if(hour.length() == 1){
+            hour= "0"+hour;
+        }
+        if(minute.length() == 1){
+            minute= "0"+minute;
+        }
+        return year+"-"+month+"-"+day+" "+hour+":"+minute+":"+seconds;
     }
 
     public static String convertDateToStringSql(Date date){
-        return date.getYear()+"-"+(date.getMonth()+1)+"-"+date.getDay()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+        String year = String.valueOf(date.getYear());
+        String month = String.valueOf(date.getMonth()+1);
+        String day = String.valueOf(date.getDay());
+        String hour = String.valueOf(date.getHours());
+        String minute = String.valueOf(date.getMinutes());
+        String seconds = "00";
+
+        if(year.length() == 1){
+            year= "0"+year;
+        }
+        if(month.length() == 1){
+            month= "0"+month;
+        }
+        if(day.length() == 1){
+            day= "0"+day;
+        }
+        if(hour.length() == 1){
+            hour= "0"+hour;
+        }
+        if(minute.length() == 1){
+            minute= "0"+minute;
+        }
+        return year+"-"+month+"-"+day+" "+hour+":"+minute+":"+seconds;
     }
 
     public static Date convertStringSqlInDate(String dateSql){
@@ -44,6 +88,23 @@ public class DateHelper {
             month = "0"+month;
         }
         result = day+"/"+month+"/"+year;
+
+        return result;
+    }
+
+    public static String toStringSql(Calendar date){
+        String result = null;
+        String day = String.valueOf(date.get(Calendar.DAY_OF_MONTH));
+        String month = String.valueOf(date.get(Calendar.MONTH)+1);
+        String year = String.valueOf(date.get(Calendar.YEAR));
+
+        if(day.length() == 1){
+            day = "0"+day;
+        }
+        if(month.length() == 1){
+            month = "0"+month;
+        }
+        result = year+"-"+month+"-"+day;
 
         return result;
     }

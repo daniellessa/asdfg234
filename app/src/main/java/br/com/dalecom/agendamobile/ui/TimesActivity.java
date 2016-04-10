@@ -3,6 +3,7 @@ package br.com.dalecom.agendamobile.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,9 +28,11 @@ import javax.inject.Inject;
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.TimesAdapter;
+import br.com.dalecom.agendamobile.fragments.CustomDialogFragment;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Professional;
+import br.com.dalecom.agendamobile.model.Service;
 import br.com.dalecom.agendamobile.model.Times;
 import br.com.dalecom.agendamobile.model.User;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
@@ -53,9 +57,11 @@ public class TimesActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private List<Times> mList;
     private int id;
+    private  CalendarTimes calendarTimes;
     private TextView week_day, dateView;
     private ImageView previousDay, nextDay;
     private List<Event> mEvents = new ArrayList<>();
+    private Calendar startAt, endstAt;
 
     @Inject
     public EventManager eventManager;
@@ -73,8 +79,15 @@ public class TimesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Service serv = eventManager.getCurrentService();
+
+        if(serv.getHours() > 0)
+            toolbar.setSubtitle(serv.getTitle() + " - " + serv.getHours() + ":" +serv.getMinutes());
+        else
+            toolbar.setSubtitle(serv.getTitle()+" - "+serv.getMinutes()+" Min");
+
         dateSelected = eventManager.getDateSelected();
-        userSelected = eventManager.getUserProf();
+        userSelected = eventManager.getCurrentUserProfessional();
         populateEventsList();
         setFindsByIds();
 
@@ -105,7 +118,7 @@ public class TimesActivity extends AppCompatActivity {
     }
 
     private void populateEventsList(){
-        restClient.getEvents(userSelected.getIdServer(), DateHelper.convertDateToStringSql(userSelected.getProfessional().getStartAt()), callbackEvents);
+        restClient.getEvents(userSelected.getIdServer(), DateHelper.toStringSql(eventManager.getDateSelected()), callbackEvents);
         dialog = ProgressDialog.show(TimesActivity.this,"Aguarde","Carregando agenda...",false,true);
     }
 
@@ -130,7 +143,7 @@ public class TimesActivity extends AppCompatActivity {
 
     private void setRecyclerView(){
 
-        CalendarTimes calendarTimes = new CalendarTimes(this, mEvents);
+        calendarTimes = new CalendarTimes(this, mEvents);
         mList = calendarTimes.construct();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_times);
@@ -142,29 +155,55 @@ public class TimesActivity extends AppCompatActivity {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        mList.get(position);
 
-                        Calendar startDate = Calendar.getInstance();
-                        startDate.setTime(mList.get(position).getStartAt());
+                        Times time = mList.get(position);
+                        if (calendarTimes.checkDisponible(TimesActivity.this, time)) {
 
-                        Calendar endsDate = Calendar.getInstance();
-                        endsDate.setTime(mList.get(position).getEndsAt());
+                            startAt = Calendar.getInstance();
+                            startAt.setTime(time.getStartAt());
 
-                        Log.d(LogUtils.TAG, "Date: " + DateHelper.toString(startDate));
-                        Log.d(LogUtils.TAG, "StartAt: " + DateHelper.hourToString(startDate));
-                        Log.d(LogUtils.TAG, "EndsAt: " + DateHelper.hourToString(endsDate));
+                            endstAt = Calendar.getInstance();
+                            endstAt.setTime(time.getStartAt());
+                            endstAt.add(Calendar.HOUR_OF_DAY, eventManager.getCurrentService().getHours());
+                            endstAt.add(Calendar.MINUTE, eventManager.getCurrentService().getMinutes());
 
-                        Intent it = new Intent(TimesActivity.this, ServicesActivity.class);
-                        it.putExtra("startDate", startDate);
-                        it.putExtra("endsDate", endsDate);
+                            eventManager.setCurrentStartAt(DateHelper.convertDateToStringSql(startAt));
+                            eventManager.setCurrentEndsAt(DateHelper.convertDateToStringSql(endstAt));
+                            eventManager.finalizeEvent();
 
-                        startActivity(it);
+                            restClient.postEvent(eventManager.getEvent(), callbackPostEvents);
+                        }
+
                     }
                 })
         );
 
 
     }
+
+    private Callback callbackPostEvents = new Callback<JsonObject>(){
+
+        @Override
+        public void success(JsonObject jsonObject, Response response) {
+            Log.d(LogUtils.TAG,"Success postEvent: "+ response.getStatus());
+            initDialog(startAt, endstAt);
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.d(LogUtils.TAG,"Erro postEvent: "+ error);
+        }
+    };
+
+    private void initDialog(Calendar startDate, Calendar endsDate){
+
+        String title = "Parabéns!";
+        String message = "Agendamento realizado com sucesso para o dia " + DateHelper.toString(startDate) + " das " + DateHelper.hourToString(startDate) + " às " + DateHelper.hourToString(endsDate) ;
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        CustomDialogFragment cdf = new CustomDialogFragment(title,message);
+        cdf.show(ft, "dialog");
+    }
+
 
 
     @Override

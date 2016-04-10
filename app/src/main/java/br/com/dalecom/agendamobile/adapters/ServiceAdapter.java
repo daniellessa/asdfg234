@@ -63,7 +63,11 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.MyViewHo
     public void onBindViewHolder(MyViewHolder holder,final int position) {
 
         holder.title.setText(mList.get(position).getTitle());
-        holder.subtitle.setText("Duração média de: " + mList.get(position).getHours() + " Hora(s) e " + mList.get(position).getMinutes() +" minuto(s)");
+        if(mList.get(position).getHours() > 0)
+            holder.subtitle.setText("Duração média de: " + mList.get(position).getHours() + " Hora(s) e " + mList.get(position).getMinutes() +" minuto(s)");
+        else
+            holder.subtitle.setText("Duração média de: " + mList.get(position).getMinutes() +" minuto(s)");
+
         holder.price.setText(FloatHelper.formatarFloat(mList.get(position).getPrice()));
 
     }

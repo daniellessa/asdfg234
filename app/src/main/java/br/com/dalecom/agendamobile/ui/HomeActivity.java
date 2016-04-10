@@ -186,25 +186,32 @@ public class HomeActivity extends AppCompatActivity
 
         Intent it;
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        switch (id){
+            case R.id.account:
 
-        } else if (id == R.id.nav_slideshow) {
+                break;
+            case R.id.mycalendar:
 
-        } else if (id == R.id.nav_manage) {
+                break;
+            case R.id.nav_slideshow:
 
-        } else if (id == R.id.nav_share) {
+                break;
+            case R.id.settings:
 
-        } else if (id == R.id.nav_send) {
+                break;
+            case R.id.history:
 
-            listarProperties();
-
-        } else if(id == R.id.logout) {
-            sharedPreference.clearUserToken();
-            it = new Intent(this, LoginActivity.class);
-            startActivity(it);
+                break;
+            case R.id.properties:
+                listarProperties();
+                break;
+            case R.id.logout:
+                sharedPreference.clearUserToken();
+                it = new Intent(this, LoginActivity.class);
+                startActivity(it);
+                break;
         }
+        
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

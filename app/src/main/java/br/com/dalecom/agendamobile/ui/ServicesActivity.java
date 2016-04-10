@@ -1,5 +1,6 @@
 package br.com.dalecom.agendamobile.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -11,16 +12,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.gson.JsonArray;
+
 import java.util.Calendar;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.ServiceAdapter;
 import br.com.dalecom.agendamobile.fragments.CustomDialogFragment;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
 import br.com.dalecom.agendamobile.model.Service;
+import br.com.dalecom.agendamobile.service.rest.RestClient;
+import br.com.dalecom.agendamobile.utils.EventManager;
 import br.com.dalecom.agendamobile.utils.ObjectTest;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
+import br.com.dalecom.agendamobile.utils.ServicesParser;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class ServicesActivity extends AppCompatActivity {
 
@@ -30,25 +42,49 @@ public class ServicesActivity extends AppCompatActivity {
     private ServiceAdapter adapter;
     private Toolbar toolbar;
     private List<Service> mList;
+    private ProgressDialog dialog;
+
+    @Inject
+    EventManager eventManager;
+
+    @Inject
+    RestClient restClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((AgendaMobileApplication) getApplication()).getAppComponent().inject(this);
         setContentView(R.layout.activity_services);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setSubtitle("realizados por este profissional");
 
-        startDate = (Calendar) getIntent().getSerializableExtra("startDate");
-        endsDate = (Calendar) getIntent().getSerializableExtra("endsDate");
-        setRecyclerView();
+        restClient.getServiceForProfessional(eventManager.getCurrentUserProfessional().getIdServer(), callbackServices);
+        dialog = ProgressDialog.show(ServicesActivity.this, "Aguarde", "Carregando Serviços...", false, true);
 
 
     }
 
-    private void setRecyclerView(){
+    private Callback callbackServices = new Callback<JsonArray>(){
 
-        mList = new ObjectTest().populateService();
+        @Override
+        public void success(JsonArray jsonArray, Response response) {
+
+            ServicesParser servicesParser = new ServicesParser(jsonArray);
+            mList = servicesParser.parseFullServices();
+            setRecyclerView();
+            dialog.dismiss();
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            //configurar view para list vazia
+            dialog.dismiss();
+        }
+    };
+
+    private void setRecyclerView(){
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_services);
         layoutManager = new LinearLayoutManager(this);
@@ -59,10 +95,8 @@ public class ServicesActivity extends AppCompatActivity {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        mList.get(position);
+                        eventManager.setServiceIntoEvent(mList.get(position));
                         initAgenda();
-
-                        //initDialog(startDate,endsDate);
                     }
                 })
         );
@@ -74,14 +108,7 @@ public class ServicesActivity extends AppCompatActivity {
         startActivity(it);
     }
 
-    private void initDialog(Calendar startDate, Calendar endsDate){
 
-        String title = "Parabéns!";
-        String message = "Agendamento realizado com sucesso para o dia " + DateHelper.toString(startDate) + " das " + DateHelper.hourToString(startDate) + " às " + DateHelper.hourToString(endsDate) ;
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        CustomDialogFragment cdf = new CustomDialogFragment(title,message);
-        cdf.show(ft, "dialog");
-    }
 
 
     @Override

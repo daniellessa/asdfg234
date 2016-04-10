@@ -6,6 +6,8 @@ import android.util.Log;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.io.Serializable;
@@ -19,55 +21,86 @@ import br.com.dalecom.agendamobile.utils.LogUtils;
 @Table(name="Professional")
 public class Professional extends Model{
 
-    @Column(name = "Property")
-    private int properties;
 
-    @Column(name = "Category")
-    private int category;
+
+    @Column(name = "Properties")
+    @Expose
+    @SerializedName("properties")
+    protected int properties;
+
+    @Column(name = "Professions")
+    @Expose
+    @SerializedName("professions")
+    protected int category;
 
     @Column(name = "startAt")
-    private Calendar startAt;
+    @Expose
+    @SerializedName("startAt")
+    protected Calendar startAt;
 
     @Column(name = "endsAt")
-    private Calendar endsAt;
+    @Expose
+    @SerializedName("endsAt")
+    protected Calendar endsAt;
 
     @Column(name = "startLaunchAt")
-    private Calendar startLunchAt;
+    @Expose
+    @SerializedName("startLaunchAt")
+    protected Calendar startLunchAt;
 
     @Column(name = "endsLaunchAt")
-    private Calendar endsLunchAt;
+    @Expose
+    @SerializedName("endsLaunchAt")
+    protected Calendar endsLunchAt;
 
     @Column(name = "split")
-    private Calendar split;
+    @Expose
+    @SerializedName("split")
+    protected Calendar split;
 
     @Column(name = "interval")
-    private Calendar interval;
+    @Expose
+    @SerializedName("interval")
+    protected Calendar interval;
 
     @Column(name = "workSunday")
-    private boolean workSunday;
+    @Expose
+    @SerializedName("workSunday")
+    protected boolean workSunday;
 
     @Column(name = "workMonday")
-    private boolean workMonday;
+    @Expose
+    @SerializedName("workMonday")
+    protected boolean workMonday;
 
     @Column(name = "workTuesday")
-    private boolean workTuesday;
+    @Expose
+    @SerializedName("workTuesday")
+    protected boolean workTuesday;
 
     @Column(name = "workWednesday")
-    private boolean workWednesday;
+    @Expose
+    @SerializedName("")
+    protected boolean workWednesday;
 
     @Column(name = "workThursday")
-    private boolean workThursday;
+    @Expose
+    @SerializedName("workThursday")
+    protected boolean workThursday;
 
     @Column(name = "workFriday")
-    private boolean workFriday;
+    @Expose
+    @SerializedName("workFriday")
+    protected boolean workFriday;
 
     @Column(name = "workSaturday")
-    private boolean workSaturday;
+    @Expose
+    @SerializedName("workSaturday")
+    protected boolean workSaturday;
 
     protected int viewType;
 
     protected String professionName;
-
 
 
 

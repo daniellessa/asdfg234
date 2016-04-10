@@ -83,9 +83,6 @@ public class ProfessionalsActivity extends AppCompatActivity {
         restClient.getProfessionals(currentProperty.getIdServer(), callbackProfessionals);
         dialog = ProgressDialog.show(ProfessionalsActivity.this,"Aguarde","Procurando profissionais...",false,true);
 
-        eventManager.startNewEvent(dateSelected);
-
-
     }
 
     private void setRecyclerView(){
@@ -206,6 +203,10 @@ public class ProfessionalsActivity extends AppCompatActivity {
 //        return parentListItems;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
