@@ -119,7 +119,7 @@ public class ProfessionalsActivity extends AppCompatActivity {
                 layoutNull.setVisibility(View.VISIBLE);
             }
 
-            ProfessionalParser professionalParser = new ProfessionalParser(jsonArray);
+            ProfessionalParser professionalParser = new ProfessionalParser(ProfessionalsActivity.this, jsonArray);
             mList = professionalParser.parseFullProfessionas();
             setRecyclerView();
             dialog.dismiss();

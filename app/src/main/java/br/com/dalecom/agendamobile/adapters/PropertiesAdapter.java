@@ -1,6 +1,7 @@
 package br.com.dalecom.agendamobile.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,9 +56,13 @@ public class PropertiesAdapter extends RecyclerView.Adapter<PropertiesAdapter.VH
     public void onBindViewHolder(VHItem holder, int position) {
 
         if(holder instanceof VHItem){
-            //((VHItem) holder).imageView.setImageResource();
             holder.textViewName.setText(mList.get(position).getName());
             holder.textViewInfo.setText(mList.get(position).getInfo());
+
+            if(mList.get(position).getLocalImageLocation() != null){
+                holder.imageView.setImageURI(Uri.parse(mList.get(position).getLocalImageLocation()));
+            }
+
         }
 
 

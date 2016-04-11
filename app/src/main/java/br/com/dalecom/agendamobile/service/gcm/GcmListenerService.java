@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -49,13 +50,9 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
         builder.setTicker(ticker);
         builder.setContentTitle(titulo);
         builder.setContentText(descricao);
-        builder.setSmallIcon(R.drawable.logo_icalendar_primary);
-
-
-        //builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.logo_icalendar_primary));
-
-
-        builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_menu_camera));
+        builder.setColor(Color.parseColor("#9C27B0"));
+        builder.setSmallIcon(R.drawable.ic_icalendar_transparent);
+        builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_icalendar_transparent));
 
 
         //builder.setContentIntent(p);
@@ -64,7 +61,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
         n.vibrate = new long[]{150,300,150,600};
         n.flags = Notification.FLAG_AUTO_CANCEL;
 
-        nm.notify(R.drawable.ic_add_black_48dp,n);
+        nm.notify(R.drawable.ic_icalendar_transparent,n);
 
 
         try{

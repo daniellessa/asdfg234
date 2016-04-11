@@ -114,18 +114,23 @@ public class HomeActivity extends AppCompatActivity
 
         userName.setText(currentUser.getName());
         userEmail.setText(currentUser.getEmail());
-//        User userTemp = currentUser.getUserByServerId(currentUser.getIdServer());
-//         if(userTemp.getLocalImageLocation() != null) {
-//             imageView.setImageURI(Uri.parse(userTemp.getLocalImageLocation()));
-//         }
+
+        if(currentUser.getLocalImageLocation().length() > 0){
+            imageView.setImageURI(Uri.parse(currentUser.getLocalImageLocation()));
+            Log.d(LogUtils.TAG, "Path image CurrentUser: " + currentUser.getLocalImageLocation());
+        }
     }
 
     private void setCurrentProperty(){
         currentProperty = sharedPreference.getCurrentProperty();
 
         if(currentProperty.getName().length() > 0){
-            //imagePropertyView.setImageURI();
+
             propertyName.setText(currentProperty.getName());
+
+            if(currentProperty.getLocalImageLocation().length() > 0){
+               imagePropertyView.setImageURI(Uri.parse(currentProperty.getLocalImageLocation()));
+            }
         }
     }
 

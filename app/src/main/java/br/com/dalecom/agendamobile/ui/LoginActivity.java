@@ -3,6 +3,7 @@ package br.com.dalecom.agendamobile.ui;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
@@ -19,11 +20,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.util.Calendar;
 
 import javax.inject.Inject;
@@ -35,8 +39,10 @@ import br.com.dalecom.agendamobile.helpers.DateHelper;
 import br.com.dalecom.agendamobile.model.User;
 import br.com.dalecom.agendamobile.service.gcm.RegistrationIntentService;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
+import br.com.dalecom.agendamobile.utils.FileUtils;
 import br.com.dalecom.agendamobile.utils.LogUtils;
 import br.com.dalecom.agendamobile.utils.S;
+import br.com.dalecom.agendamobile.wrappers.S3;
 import br.com.dalecom.agendamobile.wrappers.SharedPreference;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -59,6 +65,12 @@ public class LoginActivity extends AppCompatActivity {
     @Inject
     public RestClient restClient;
 
+    @Inject
+    public S3 s3;
+
+    @Inject
+    public FileUtils fileUtils;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-        if ( sharedPreference.hasUserToken()) {
+        if (sharedPreference.hasUserToken()) {
             startHomeActivity();
             finish();
         }
@@ -151,8 +163,8 @@ public class LoginActivity extends AppCompatActivity {
         public void success(JsonObject o, Response response) {
             dialog.dismiss();
 
-            User userFromServer = userMarshalling(o.getAsJsonObject("user"));
-            User userFromDb = User.getUserByServerId(userFromServer.getIdServer());
+            final User userFromServer = userMarshalling(o.getAsJsonObject("user"));
+            final User userFromDb = User.getUserByServerId(userFromServer.getIdServer());
 
 
             if ( o.get(S.KEY_TOKEN) == null || o.get(S.KEY_TOKEN).getAsString().equals("") )
@@ -163,31 +175,72 @@ public class LoginActivity extends AppCompatActivity {
 
             sharedPreference.setUserToken(o.get(S.KEY_TOKEN).getAsString());
 
-            if ( userFromDb == null )
-            {
-                Log.d(LogUtils.TAG, "CREATING USER");
-                userFromServer.save();
-                Log.d(LogUtils.TAG, "CREATING USER ID => " + userFromServer.getId());
-                Log.d(LogUtils.TAG, "CREATING USER ID_SERVER => " + userFromServer.getIdServer());
-                sharedPreference.setCurrentUser(userFromServer);
+            if(userFromServer.getBucketPath() != null && userFromServer.getPhotoPath() != null){
 
-            }
-            else
-            {
-                Log.d(LogUtils.TAG,"USER EXISTS HERE ID => " + userFromDb.getId());
-                Log.d(LogUtils.TAG, "CREATING USER ID => " + userFromDb.getId());
-                Log.d(LogUtils.TAG, "CREATING USER ID_SERVER => " + userFromDb.getIdServer());
+                String namePath = fileUtils.getUniqueName();
+                final File pictureFile = fileUtils.getOutputMediaFile(FileUtils.MEDIA_TYPE_IMAGE, namePath);
 
-                if ( !userFromServer.getName().equals( userFromDb.getName() ) )
+                s3.downloadProfileFile(pictureFile, userFromServer.getBucketPath()+userFromServer.getPhotoPath()).setTransferListener(new TransferListener() {
+                    @Override
+                    public void onStateChanged(int id, TransferState state) {
+
+                        if (state == TransferState.COMPLETED) {
+                            userFromDb.setLocalImageLocationAndDeletePreviousIfExist(Uri.fromFile(pictureFile).toString());
+                            userFromServer.setLocalImageLocationAndDeletePreviousIfExist(Uri.fromFile(pictureFile).toString());
+
+                            if ( userFromDb == null )
+                            {
+                                Log.d(LogUtils.TAG, "CREATING USER");
+                                userFromServer.save();
+                                sharedPreference.setCurrentUser(userFromServer);
+
+                            }
+                            else
+                            {
+                                userFromDb.setName(userFromServer.getName());
+                                userFromDb.setBucketPath(userFromServer.getBucketPath());
+                                userFromDb.setPhotoPath(userFromServer.getPhotoPath());
+
+                                userFromDb.save();
+                                sharedPreference.setCurrentUser(userFromDb);
+                            }
+
+                            startHomeActivity();
+                        }
+                    }
+
+                    @Override
+                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                        Log.d(LogUtils.TAG, "Progress: "+ (int) (bytesCurrent * 100 / bytesTotal) + "%");
+                    }
+
+                    @Override
+                    public void onError(int id, Exception ex) {
+                        Log.d(LogUtils.TAG, "Erro s3 Login: "+ ex);
+                    }
+                });
+            }else{
+
+                if ( userFromDb == null )
+                {
+                    Log.d(LogUtils.TAG, "CREATING USER");
+                    userFromServer.save();
+                    sharedPreference.setCurrentUser(userFromServer);
+
+                }
+                else
                 {
                     userFromDb.setName(userFromServer.getName());
+                    userFromDb.setBucketPath(userFromServer.getBucketPath());
+                    userFromDb.setPhotoPath(userFromServer.getPhotoPath());
+
                     userFromDb.save();
+                    sharedPreference.setCurrentUser(userFromDb);
                 }
 
-                sharedPreference.setCurrentUser(userFromDb);
-            }
 
-            startHomeActivity();
+                startHomeActivity();
+            }
 
 
         }
@@ -246,11 +299,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private User userMarshalling(JsonObject user) {
-        User userObj = new User();
-        //userObj.setBucketPath(user.get("hospital").getAsJsonObject().get("bucket_path").getAsString());
+        final User userObj = new User();
+
+        if(!user.get("bucket_name").isJsonNull())
+            userObj.setBucketPath(user.get("bucket_name").getAsString());
+
+        if(!user.get("photo_path").isJsonNull())
+            userObj.setPhotoPath(user.get("photo_path").getAsString());
+
         userObj.setEmail(user.get("email").getAsString());
         userObj.setName(user.get("name").getAsString());
         userObj.setIdServer(user.get("id").getAsInt());
+
 
         return userObj;
     }

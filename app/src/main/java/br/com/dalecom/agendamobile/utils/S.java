@@ -11,7 +11,7 @@ public class S {
 
 
     public static final String AuthGoogle =  "661341416508-jmqeigejivot5erf7vhhukbofbphvsi0.apps.googleusercontent.com";
-    public  static final String END_POINT_URL = "http://192.168.1.104.xip.io:1337";
+    public  static final String END_POINT_URL = "http://192.168.1.107.xip.io:1337";
     public  static final String FILE_PREFIX = "image_";
     public static final String JPG_EXT = ".jpg";
     public static final String BUCKET_PREFIX = "agendamobile";

@@ -78,8 +78,9 @@ public class S3 {
     }
 
     public TransferObserver downloadProfileFile(File file, String nameWithPath) {
+        Log.d(LogUtils.TAG,"Path Bucket: "+nameWithPath);
         TransferUtility transferUtility = this.getS3TransferUtility();
-        String currentBucketName = fileUtils.getCurrentProfileBucketName();
+        String currentBucketName = S.BUCKET_PREFIX;
 
         return transferUtility.download(
                 currentBucketName,     /* The bucket to download from */

@@ -1,10 +1,16 @@
 package br.com.dalecom.agendamobile.utils;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
+
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,18 +18,30 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.model.Professional;
 import br.com.dalecom.agendamobile.model.User;
-
+import br.com.dalecom.agendamobile.wrappers.S3;
 
 
 public class ProfessionalParser {
 
     List<User> users;
     private JsonArray jsonArray;
+    private Context mContext;
+    private User user;
     SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 
-    public ProfessionalParser(JsonArray jsonArray) {
+    @Inject public FileUtils fileUtils;
+
+    @Inject public S3 s3;
+
+    public ProfessionalParser(Context context, JsonArray jsonArray) {
+        mContext = context;
+        ((AgendaMobileApplication) mContext.getApplicationContext()).getAppComponent().inject(this);
         users = new ArrayList<>();
         this.jsonArray = jsonArray;
     }
@@ -34,7 +52,7 @@ public class ProfessionalParser {
 
         for (JsonElement jsonElement : jsonArray) {
 
-            User user = new User();
+            user = new User();
             JsonObject data = jsonElement.getAsJsonObject();
 
 
@@ -48,7 +66,7 @@ public class ProfessionalParser {
                     user.setRegistrationId(data.getAsJsonObject("users").get("registration_id").getAsString());
 
                 if ( !data.getAsJsonObject("users").get("bucket_name").isJsonNull() )
-                    user.setBucketPath(data.getAsJsonObject("users").get("photo_path").getAsString());
+                    user.setBucketPath(data.getAsJsonObject("users").get("bucket_name").getAsString());
 
                 if ( !data.getAsJsonObject("users").get("photo_path").isJsonNull() )
                     user.setPhotoPath(data.getAsJsonObject("users").get("photo_path").getAsString());
@@ -112,7 +130,10 @@ public class ProfessionalParser {
                 professional.setViewType(1);
                 user.setProfessional(professional);
 
+
                 users.add(user);
+
+
 
             }
             catch (UnsupportedOperationException e)
@@ -127,6 +148,7 @@ public class ProfessionalParser {
 
         return users;
     }
+
 
 
 }

@@ -25,6 +25,7 @@ public class SharedPreference {
     private final String CURRENT_USER_BUCKET_PATH = "BucketPath";
     private final String CURRENT_USER_PHOTO_PATH = "PhotoPath";
     private final String CURRENT_USER_NAME = "Name";
+    private final String CURRENT_USER_LOCAL_IMAGE = "image";
 
     private final String CURRENT_USER_REGISTRATION_ID = "Token";
     private final String CURRENT_USER_TOKEN = "Token";
@@ -39,6 +40,7 @@ public class SharedPreference {
     private final String CURRENT_PROPERTY_BUCKET_PATH = "bucketPath";
     private final String CURRENT_PROPERTY_PHOTO_PATH = "PhotoPath";
     private final String CURRENT_PROPERTY_INFO = "info";
+    private final String CURRENT_PROPERTY_LOCAL_IMAGE = "image";
 
 
     private SharedPreferences sharedPreferences = null;
@@ -57,6 +59,7 @@ public class SharedPreference {
         sharedPreferences.edit().putString(CURRENT_USER_BUCKET_PATH, user.getBucketPath()).commit();
         sharedPreferences.edit().putString(CURRENT_USER_PHOTO_PATH, user.getPhotoPath()).commit();
         sharedPreferences.edit().putString(CURRENT_USER_NAME, user.getName()).commit();
+        sharedPreferences.edit().putString(CURRENT_USER_LOCAL_IMAGE, user.getLocalImageLocation()).commit();
     }
 
     public User getCurrentUser() {
@@ -68,6 +71,7 @@ public class SharedPreference {
         user.setEmail(sharedPreferences.getString(CURRENT_USER_EMAIL, ""));
         user.setBucketPath(sharedPreferences.getString(CURRENT_USER_BUCKET_PATH, ""));
         user.setPhotoPath(sharedPreferences.getString(CURRENT_USER_PHOTO_PATH, ""));
+        user.setLocalImageLocation(sharedPreferences.getString(CURRENT_USER_LOCAL_IMAGE, ""));
         return user;
     }
 
@@ -145,6 +149,7 @@ public class SharedPreference {
         sharedPreferences.edit().putString(CURRENT_PROPERTY_PHOTO_PATH, property.getPhoto_path()).commit();
         sharedPreferences.edit().putString(CURRENT_PROPERTY_BUCKET_PATH, property.getBucketPath()).commit();
         sharedPreferences.edit().putString(CURRENT_PROPERTY_INFO, property.getInfo()).commit();
+        sharedPreferences.edit().putString(CURRENT_PROPERTY_LOCAL_IMAGE, property.getLocalImageLocation()).commit();
     }
 
     public Property getCurrentProperty() {
@@ -156,6 +161,7 @@ public class SharedPreference {
         property.setPhoto_path(sharedPreferences.getString(CURRENT_PROPERTY_PHOTO_PATH, ""));
         property.setBucketPath(sharedPreferences.getString(CURRENT_PROPERTY_BUCKET_PATH, ""));
         property.setInfo(sharedPreferences.getString(CURRENT_PROPERTY_INFO, ""));
+        property.setLocalImageLocation(sharedPreferences.getString(CURRENT_PROPERTY_LOCAL_IMAGE, ""));
         return property;
     }
 }

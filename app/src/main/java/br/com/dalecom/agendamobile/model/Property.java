@@ -118,6 +118,13 @@ public class Property extends Model{
                 .execute();
     }
 
+    public static Property findOne(int idServer){
+        return new Select()
+                .from(Property.class)
+                .where("IdServer = ?", idServer)
+                .executeSingle();
+    }
+
     public String getLocalImageLocation() {
         return localImageLocation;
     }

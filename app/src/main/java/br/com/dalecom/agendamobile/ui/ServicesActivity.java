@@ -36,7 +36,6 @@ import retrofit.client.Response;
 
 public class ServicesActivity extends AppCompatActivity {
 
-    private Calendar dateSelected, startDate, endsDate ;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ServiceAdapter adapter;
@@ -58,7 +57,7 @@ public class ServicesActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setSubtitle("realizados por este profissional");
+        toolbar.setSubtitle("realizados pelo profissional");
 
         restClient.getServiceForProfessional(eventManager.getCurrentUserProfessional().getIdServer(), callbackServices);
         dialog = ProgressDialog.show(ServicesActivity.this, "Aguarde", "Carregando Serviços...", false, true);

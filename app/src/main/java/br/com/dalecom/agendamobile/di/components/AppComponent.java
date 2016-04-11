@@ -5,6 +5,9 @@ import android.content.Context;
 import javax.inject.Singleton;
 
 
+import br.com.dalecom.agendamobile.adapters.ProfessionalsAdapter;
+import br.com.dalecom.agendamobile.adapters.TimesAdapter;
+import br.com.dalecom.agendamobile.fragments.DialogFragmentConfirmEvent;
 import br.com.dalecom.agendamobile.fragments.DialogFragmentCreateUser;
 import br.com.dalecom.agendamobile.service.gcm.RegistrationIntentService;
 import br.com.dalecom.agendamobile.ui.CreateUserActivity;
@@ -25,6 +28,7 @@ import br.com.dalecom.agendamobile.service.sync.SyncAdapter;
 import br.com.dalecom.agendamobile.utils.CalendarTimes;
 import br.com.dalecom.agendamobile.utils.EventManager;
 import br.com.dalecom.agendamobile.utils.FileUtils;
+import br.com.dalecom.agendamobile.utils.ProfessionalParser;
 import br.com.dalecom.agendamobile.wrappers.MixPanel;
 import br.com.dalecom.agendamobile.wrappers.S3;
 import dagger.Component;
@@ -51,5 +55,9 @@ public interface AppComponent {
     void inject(DialogFragmentCreateUser dialogFragmentCreateUser);
     void inject(RegistrationIntentService registrationIntentService);
     void inject(CalendarTimes calendarTimes);
+    void inject(DialogFragmentConfirmEvent dialogFragmentConfirmEvent);
+    void inject(TimesAdapter timesAdapter);
+    void inject(ProfessionalsAdapter professionalsAdapter);
+    void inject(ProfessionalParser professionalParser);
 
 }

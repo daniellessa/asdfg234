@@ -44,32 +44,24 @@
             android:text="Profissão"
             android:textSize="12sp"/>
 
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/layout_calendar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="20dp"
-        android:layout_alignParentRight="true">
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/professional_type"
+            style="?android:attr/ratingBarStyleSmall"
+            android:numStars="5"
+            android:stepSize="5"
             android:src="@drawable/ic_perm_contact_calendar_black_48dp"/>
 
-
     </RelativeLayout>
-
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/icon_perfil"
-        android:background="#CBCBCB"/>
+        android:background="@color/colorDivider"/>
 
 
 

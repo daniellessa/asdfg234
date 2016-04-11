@@ -55,9 +55,9 @@ public class CalendarTimes {
 
     private void populateVariables(){
         userProf = eventManager.getCurrentProfessional();
-        startAt = userProf.getStartAt();
-        endsAt = userProf.getEndsAt();
-        split = userProf.getSplit();
+        startAt = copyDate(userProf.getStartAt());
+        endsAt = copyDate(userProf.getEndsAt());
+        split = copyDate(userProf.getSplit());
         interval = userProf.getInterval();
         service = eventManager.getCurrentService();
 
@@ -85,17 +85,17 @@ public class CalendarTimes {
 
                 Date eventStart = DateHelper.convertStringSqlInDate(event.getStartAt());
 
-                Log.d(LogUtils.TAG, "Hour: "+ DateHelper.hourToString(startAt) +" / " + DateHelper.hourToString(eventStart));
-
                 if(DateHelper.hourToString(startAt).equals(DateHelper.hourToString(eventStart))){
 
-                    Log.d(LogUtils.TAG, "Finded");
+                    if(DateHelper.hourToString(auxEnd).equals(DateHelper.hourToString(auxTarget))){
+                        list.add(createFreeTime(auxStart, auxEnd));
+                    }
+
                     list.add(populateTime(startAt, event.getEndsAt(), event.getUser().getName()));
                     Date end = DateHelper.convertStringSqlInDate(event.getEndsAt());
                     startAt.add(Calendar.HOUR_OF_DAY,end.getHours() - eventStart.getHours());
                     startAt.add(Calendar.MINUTE, (end.getMinutes() - eventStart.getMinutes()) + interval.get(Calendar.MINUTE));
 
-                    Log.d(LogUtils.TAG, "Free find");
                     auxStart = copyDate(startAt);
                     auxEnd = copyDate(startAt);
                     auxTarget = copyDate(startAt);
@@ -110,9 +110,6 @@ public class CalendarTimes {
             if(!find){
 
                 if(DateHelper.hourToString(auxEnd).equals(DateHelper.hourToString(auxTarget))){
-                    Log.d(LogUtils.TAG, "Free not find");
-                    //auxStart.add(Calendar.MINUTE, next);
-                    //auxEnd.add(Calendar.MINUTE, next);
                     list.add(createFreeTime(auxStart, auxEnd));
 
                     auxStart = copyDate(startAt);
@@ -164,13 +161,14 @@ public class CalendarTimes {
                     int splitMinutes = (split.get(Calendar.HOUR_OF_DAY)*60) + split.get(Calendar.MINUTE);
                     int checkNextIndex = (int) Math.round(((double)duration / splitMinutes)+0.5d);//duration/splitMinutes;
 
-                    Log.d(LogUtils.TAG,"duracao: "+duration+" minutos");
-                    Log.d(LogUtils.TAG, "Varrer os próximos: " + checkNextIndex + " times");
-
                     for (int x=0; x < checkNextIndex; x++){
-
-                        if(!list.get(i+x).isFree()){
-                            Toast.makeText(context,"Tempo insuficente para este serviço",Toast.LENGTH_LONG).show();
+                        try {
+                            if(!list.get(i+x).isFree()){
+                                Toast.makeText(context,"Tempo insuficente para este serviço",Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
+                        }catch (IndexOutOfBoundsException e){
+                            Toast.makeText(context,"Tempo insuficente para este serviço",Toast.LENGTH_SHORT).show();
                             return false;
                         }
                     }
@@ -179,7 +177,7 @@ public class CalendarTimes {
             }
             return false;
         }else{
-            Toast.makeText(context,"Este horário não está disponível",Toast.LENGTH_LONG).show();
+            Toast.makeText(context,"Este horário não está disponível",Toast.LENGTH_SHORT).show();
             return false;
         }
 

@@ -113,6 +113,10 @@ public class EventManager {
         return mEvent;
     }
 
+    public void setDateSelected(Calendar dateSelected) {
+        this.dateSelected = dateSelected;
+    }
+
     public void finalizeEvent() {
 
 //

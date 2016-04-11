@@ -2,8 +2,11 @@ package br.com.dalecom.agendamobile.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +32,7 @@ import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.TimesAdapter;
 import br.com.dalecom.agendamobile.fragments.CustomDialogFragment;
+import br.com.dalecom.agendamobile.fragments.DialogFragmentConfirmEvent;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Professional;
@@ -42,24 +46,27 @@ import br.com.dalecom.agendamobile.utils.EventParser;
 import br.com.dalecom.agendamobile.utils.LogUtils;
 import br.com.dalecom.agendamobile.utils.ObjectTest;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class TimesActivity extends AppCompatActivity {
 
+
+    private TextView week_day, dateView;
+    private ImageView previousDay, nextDay;
+    private CircleImageView imageProfessional;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private Calendar dateSelected;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private TimesAdapter adapter;
     private User userSelected;
     public ProgressDialog dialog;
-    private Toolbar toolbar;
     private List<Times> mList;
     private int id;
     private  CalendarTimes calendarTimes;
-    private TextView week_day, dateView;
-    private ImageView previousDay, nextDay;
     private List<Event> mEvents = new ArrayList<>();
     private Calendar startAt, endstAt;
 
@@ -90,6 +97,8 @@ public class TimesActivity extends AppCompatActivity {
         userSelected = eventManager.getCurrentUserProfessional();
         populateEventsList();
         setFindsByIds();
+        setImageProfessional();
+        setSwipeRefreshLayout();
 
     }
 
@@ -98,26 +107,45 @@ public class TimesActivity extends AppCompatActivity {
         dateView = (TextView) findViewById(R.id.date);
         previousDay = (ImageView) findViewById(R.id.button_back_day);
         nextDay = (ImageView) findViewById(R.id.button_next_day);
+        imageProfessional = (CircleImageView) findViewById(R.id.icon_perfil_professional);
 
-        week_day.setText(DateHelper.getWeekDay(dateSelected));
-        dateView.setText(DateHelper.toString(dateSelected));
+        setDateHeader();
+
 
         previousDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //--Day
+                dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+                eventManager.setDateSelected(dateSelected);
+                updateRecyclerView(dateSelected);
+                setDateHeader();
             }
         });
 
         nextDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //++day
+                dateSelected.add(Calendar.DAY_OF_MONTH, 1);
+                eventManager.setDateSelected(dateSelected);
+                updateRecyclerView(dateSelected);
+                setDateHeader();
             }
         });
     }
 
+    private void setImageProfessional(){
+        User userProf = eventManager.getCurrentUserProfessional();
+        if(userProf.getLocalImageLocation() != null)
+            imageProfessional.setImageURI(Uri.parse(userProf.getLocalImageLocation()));
+    }
+
+    private void setDateHeader(){
+        week_day.setText(DateHelper.getWeekDay(dateSelected));
+        dateView.setText(DateHelper.toString(dateSelected));
+    }
+
     private void populateEventsList(){
+        mEvents.clear();
         restClient.getEvents(userSelected.getIdServer(), DateHelper.toStringSql(eventManager.getDateSelected()), callbackEvents);
         dialog = ProgressDialog.show(TimesActivity.this,"Aguarde","Carregando agenda...",false,true);
     }
@@ -143,6 +171,7 @@ public class TimesActivity extends AppCompatActivity {
 
     private void setRecyclerView(){
 
+
         calendarTimes = new CalendarTimes(this, mEvents);
         mList = calendarTimes.construct();
 
@@ -150,6 +179,8 @@ public class TimesActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         adapter = new TimesAdapter(this,mList,dateSelected);
+        mRecyclerView.invalidate();
+        adapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(adapter);
 
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
@@ -171,12 +202,13 @@ public class TimesActivity extends AppCompatActivity {
                             eventManager.setCurrentEndsAt(DateHelper.convertDateToStringSql(endstAt));
                             eventManager.finalizeEvent();
 
-                            restClient.postEvent(eventManager.getEvent(), callbackPostEvents);
+                            initConfirmDialog(startAt, endstAt);
                         }
-
                     }
                 })
         );
+
+
 
 
     }
@@ -186,6 +218,7 @@ public class TimesActivity extends AppCompatActivity {
         @Override
         public void success(JsonObject jsonObject, Response response) {
             Log.d(LogUtils.TAG,"Success postEvent: "+ response.getStatus());
+            updateRecyclerView(dateSelected);
             initDialog(startAt, endstAt);
         }
 
@@ -194,6 +227,16 @@ public class TimesActivity extends AppCompatActivity {
             Log.d(LogUtils.TAG,"Erro postEvent: "+ error);
         }
     };
+
+
+    private void initConfirmDialog(Calendar startDate, Calendar endsDate){
+
+        String message = "Você confirma o agendamento deste serviço para o dia " + DateHelper.toString(startDate) + " das " + DateHelper.hourToString(startDate) + " às " + DateHelper.hourToString(endsDate) + "?" ;
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        DialogFragmentConfirmEvent cdf = new DialogFragmentConfirmEvent(this,message,callbackPostEvents);
+        cdf.show(ft, "dialog");
+    }
+
 
     private void initDialog(Calendar startDate, Calendar endsDate){
 
@@ -204,12 +247,65 @@ public class TimesActivity extends AppCompatActivity {
         cdf.show(ft, "dialog");
     }
 
+    private void updateRecyclerView(final Calendar dateSelected){
+
+        dialog = ProgressDialog.show(TimesActivity.this,"Aguarde","Carregando agenda...",false,true);
+        restClient.getEvents(userSelected.getIdServer(), DateHelper.toStringSql(dateSelected), new Callback<JsonArray>() {
+
+
+            @Override
+            public void success(JsonArray jsonArray, Response response) {
+
+                EventParser eventParser = new EventParser(jsonArray);
+                List<Event> mEvents = eventParser.parseFullEvents();
+                CalendarTimes calendarTimes = new CalendarTimes(TimesActivity.this, mEvents);
+                List<Times> times = calendarTimes.construct();
+                adapter.swap(times);
+
+                if(mSwipeRefreshLayout.isRefreshing()){
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+                dialog.dismiss();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void setSwipeRefreshLayout(){
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+            @Override
+            public void onRefresh() {
+                refreshItems();
+            }
+
+            void refreshItems() {
+                updateRecyclerView(dateSelected);
+            }
+
+        });
+
+
+    }
+
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        //populateEventsList();
+        //updateRecyclerView(dateSelected);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override

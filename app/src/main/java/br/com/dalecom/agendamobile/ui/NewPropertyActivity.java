@@ -1,5 +1,6 @@
 package br.com.dalecom.agendamobile.ui;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,13 +15,20 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+
 import br.com.dalecom.agendamobile.model.Property;
+import br.com.dalecom.agendamobile.utils.FileUtils;
 import br.com.dalecom.agendamobile.utils.LogUtils;
+import br.com.dalecom.agendamobile.utils.S;
+import br.com.dalecom.agendamobile.wrappers.S3;
 import retrofit.Callback;
 import javax.inject.Inject;
 
@@ -43,6 +51,11 @@ public class NewPropertyActivity extends AppCompatActivity {
 
     @Inject
     public RestClient restClient;
+
+    @Inject
+    S3 s3;
+
+    @Inject FileUtils fileUtils;
 
 
     @Override
@@ -72,34 +85,86 @@ public class NewPropertyActivity extends AppCompatActivity {
 
         @Override
         public void success(JsonObject o, Response response) {
-            property = new Property();
-            property.setIdServer(o.getAsJsonObject("property").get("id").getAsInt());
-            property.setPin(o.getAsJsonObject("property").get("pin").getAsString());
-            property.setName(o.getAsJsonObject("property").get("name").getAsString());
-            property.setPhoto_path(o.getAsJsonObject("property").get("photo_path").getAsString());
-            property.setBucketPath(o.getAsJsonObject("property").get("bucket_name").getAsString());
-            property.setInfo(o.getAsJsonObject("property").get("info").getAsString());
 
-            nameProperty.setText(property.getName());
-            btnBuscar.setVisibility(View.GONE);
-            layoutFinalize.setVisibility(View.VISIBLE);
-            layoutProgress.setVisibility(View.INVISIBLE);
+            if(!o.isJsonNull()) {
+                property = new Property();
+                property.setIdServer(o.get("id").getAsInt());
+                property.setPin(o.get("pin").getAsString());
+                property.setName(o.get("name").getAsString());
+                property.setPhoto_path(o.get("photo_path").getAsString());
+                property.setBucketPath(o.get("bucket_name").getAsString());
+                property.setInfo(o.get("info").getAsString());
+
+            }else{
+                layoutProgress.setVisibility(View.INVISIBLE);
+                nameProperty.setText("Ops! Nenhum estabelecimento encontrado.");
+            }
+
+            if(property.getPhoto_path() != null && property.getBucketPath() != null){
+
+                final String pictureName = fileUtils.getUniqueName();
+                final File pictureFile = fileUtils.getOutputMediaFile(fileUtils.MEDIA_TYPE_IMAGE, pictureName);
+
+                s3.downloadProfileFile(pictureFile,property.getBucketPath()+"/"+property.getPhoto_path()).setTransferListener(new TransferListener() {
+                    @Override
+                    public void onStateChanged(int id, TransferState state) {
+                        if(state == TransferState.COMPLETED) {
+                            nameProperty.setText(property.getName());
+                            property.setLocalImageLocationAndDeletePreviousIfExist(Uri.fromFile(pictureFile).toString());
+                            circleImageView.setImageURI(Uri.fromFile(pictureFile));
+                            btnBuscar.setVisibility(View.GONE);
+                            layoutFinalize.setVisibility(View.VISIBLE);
+                            layoutProgress.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                        Log.d(LogUtils.TAG, "Progress: "+ (int) (bytesCurrent * 100 / bytesTotal) + "%");
+                    }
+
+                    @Override
+                    public void onError(int id, Exception ex) {
+                        Log.d(LogUtils.TAG, "Erro: "+ ex);
+                        layoutProgress.setVisibility(View.INVISIBLE);
+                        nameProperty.setText("Algo de errado aconteceu, tente novamente por favor");
+                    }
+                });
+
+
+            }else{
+                nameProperty.setText(property.getName());
+                btnBuscar.setVisibility(View.GONE);
+                layoutFinalize.setVisibility(View.VISIBLE);
+                layoutProgress.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override
         public void failure(RetrofitError error) {
             Log.d(LogUtils.TAG, "FAILURE");
             layoutProgress.setVisibility(View.INVISIBLE);
-            nameProperty.setText("Ops! Nenhum estabelecimento encontrado.");
+            nameProperty.setText("Ops! Nenhum estabelecimento encontrado. Verifique sua conexão com a internet");
         }
 
     };
 
     public void saveProperty(View view){
         if(property != null){
-            property.save();
-            notificationAdminProperty();
-            finish();
+
+            Property oldProperty = Property.findOne(property.getIdServer());
+
+            if(oldProperty == null){
+                property.save();
+                notificationAdminProperty();
+                finish();
+            }else{
+                oldProperty.delete();
+                property.save();
+                notificationAdminProperty();
+                finish();
+            }
+
         }else{
             messageSnackbar("Nenhum estabelecimento selecionado", view);
         }
