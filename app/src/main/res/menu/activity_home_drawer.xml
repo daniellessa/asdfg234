@@ -3,13 +3,9 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/account"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Meus dados" />
-        <item
             android:id="@+id/mycalendar"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Agendamentos" />
+            android:title="Meus Agendamentos" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"

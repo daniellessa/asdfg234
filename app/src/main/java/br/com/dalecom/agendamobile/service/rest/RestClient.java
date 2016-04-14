@@ -76,6 +76,10 @@ public class RestClient {
         api.postEvent(event, callback);
     }
 
+    public void postImage(User user, Callback callback) {
+        api.postImage(user, callback);
+    }
+
     public void updatePasswordRefresh(String password,Callback callback) {
         api.setPasswordRefreshed(password, callback);
     }

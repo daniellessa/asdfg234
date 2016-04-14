@@ -25,6 +25,7 @@ import br.com.dalecom.agendamobile.di.modules.RestClientModule;
 import br.com.dalecom.agendamobile.di.modules.SharedPreferenceModule;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
 import br.com.dalecom.agendamobile.service.sync.SyncAdapter;
+import br.com.dalecom.agendamobile.ui.UpDateImageActivity;
 import br.com.dalecom.agendamobile.utils.CalendarTimes;
 import br.com.dalecom.agendamobile.utils.EventManager;
 import br.com.dalecom.agendamobile.utils.FileUtils;
@@ -59,5 +60,6 @@ public interface AppComponent {
     void inject(TimesAdapter timesAdapter);
     void inject(ProfessionalsAdapter professionalsAdapter);
     void inject(ProfessionalParser professionalParser);
+    void inject(UpDateImageActivity upDateImageActivity);
 
 }

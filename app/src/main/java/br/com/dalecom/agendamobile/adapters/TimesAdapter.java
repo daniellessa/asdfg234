@@ -89,18 +89,19 @@ public class TimesAdapter extends RecyclerView.Adapter<TimesAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(MyViewHolder holder,final int position) {
+
         holder.startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
         holder.endsAt.setText(DateHelper.hourToString(mList.get(position).getEndsAt()));
         holder.userName.setText(mList.get(position).getUserName());
 
-        if(mList.get(position).isFree()){
-            //holder.userName.setTextColor(Color.parseColor("#009688"));
-            holder.imagePerfil.setImageResource(R.drawable.user_default);
+        if(!mList.get(position).isFree()){
+            holder.userName.setText("Indisponível");
         }
         else{
-            if(mList.get(position).getUserName() == "11")
-                holder.userName.setText("Scarlett Johanson");
-                holder.imagePerfil.setImageResource(R.drawable.scarlett);
+//            holder.userName.setTextColor(Color.parseColor("#009688"));
+//            holder.startAt.setTextColor(Color.parseColor("#009688"));
+//            holder.endsAt.setTextColor(Color.parseColor("#009688"));
+            //holder.imagePerfil.setImageResource(R.drawable.scarlett);
         }
 
     }

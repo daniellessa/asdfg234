@@ -16,8 +16,9 @@
 
         <ImageView
             android:id="@+id/icon_clock"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
             android:src="@drawable/ic_alarm_black_48dp"/>
 
         <TextView
@@ -25,7 +26,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/icon_clock"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
             android:textStyle="bold"
             android:text="08:00 hs"
@@ -60,7 +60,7 @@
             android:layout_height="60dp"
             app:civ_border_width="2dp"
             app:civ_border_color="@android:color/transparent"
-            android:src="@drawable/scarlett"
+            android:src="@drawable/user_default"
             android:layout_centerVertical="true"/>
 
 
@@ -77,7 +77,7 @@
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fernanda"/>
+            android:text="Status"/>
 
     </RelativeLayout>
 

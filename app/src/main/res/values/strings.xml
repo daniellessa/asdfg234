@@ -12,6 +12,8 @@
     <string name="title_activity_new_property">NewPropertyActivity</string>
     <string name="title_activity_cadastro">CadastroActivity</string>
     <string name="title_activity_create_user">Novo Usuário</string>
+    <string name="title_activity_update_image">Editar imagem</string>
+    <string name="title_activity_professional_list">ProfessionalListActivity</string>
     <string name="available">Disponível</string>
     <string name="authority">br.com.dalecom.agendamobile</string>
     <string name="wait">Aguarde...</string>
@@ -21,6 +23,7 @@
     <string name="search_hint">Pesquisar</string>
     <string name="myProperties">Meus estabelecimentos</string>
     <string name="professionalActivity">Profissionais</string>
+    <string name="subtitle_update_image">toque na imagem para editar</string>
 
 
     <array name="weeks_array">
@@ -53,7 +56,9 @@
         <item>Feminino</item>
         <item>Masculino</item>
     </array>
-    <string name="title_activity_professional_list">ProfessionalListActivity</string>
+
+
+
 
 
 </resources>

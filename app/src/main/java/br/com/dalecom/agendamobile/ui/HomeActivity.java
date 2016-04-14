@@ -90,13 +90,16 @@ public class HomeActivity extends AppCompatActivity
         calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                date.copyTo(dateSelected);
+                if(currentProperty != null){
+                    date.copyTo(dateSelected);
+                    eventManager.startNewEvent(dateSelected);
+                    Intent it = new Intent(HomeActivity.this, ProfessionalsActivity.class);
+                    it.putExtra("dateSelected", dateSelected);
+                    startActivity(it);
+                }else{
+                    Toast.makeText(HomeActivity.this,"Nenhum estabelecimento selecionado",Toast.LENGTH_SHORT).show();
+                }
 
-                eventManager.startNewEvent(dateSelected);
-
-                Intent it = new Intent(HomeActivity.this, ProfessionalsActivity.class);
-                it.putExtra("dateSelected", dateSelected);
-                startActivity(it);
             }
         });
     }
@@ -107,6 +110,15 @@ public class HomeActivity extends AppCompatActivity
         userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_user);
         propertyName = (TextView) findViewById(R.id.name_property_home);
         imagePropertyView = (CircleImageView) findViewById(R.id.icon_property);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(HomeActivity.this, UpDateImageActivity.class);
+                startActivity(it);
+            }
+        });
+
     }
 
     private void setUserOnNavigation(){
@@ -192,9 +204,6 @@ public class HomeActivity extends AppCompatActivity
         Intent it;
 
         switch (id){
-            case R.id.account:
-
-                break;
             case R.id.mycalendar:
 
                 break;

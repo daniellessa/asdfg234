@@ -156,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
     private void startHomeActivity() {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private Callback loginCallback = new Callback<JsonObject>() {
@@ -185,12 +186,13 @@ public class LoginActivity extends AppCompatActivity {
                     public void onStateChanged(int id, TransferState state) {
 
                         if (state == TransferState.COMPLETED) {
-                            userFromDb.setLocalImageLocationAndDeletePreviousIfExist(Uri.fromFile(pictureFile).toString());
+
                             userFromServer.setLocalImageLocationAndDeletePreviousIfExist(Uri.fromFile(pictureFile).toString());
 
                             if ( userFromDb == null )
                             {
                                 Log.d(LogUtils.TAG, "CREATING USER");
+
                                 userFromServer.save();
                                 sharedPreference.setCurrentUser(userFromServer);
 
@@ -200,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
                                 userFromDb.setName(userFromServer.getName());
                                 userFromDb.setBucketPath(userFromServer.getBucketPath());
                                 userFromDb.setPhotoPath(userFromServer.getPhotoPath());
-
+                                userFromDb.setLocalImageLocationAndDeletePreviousIfExist(Uri.fromFile(pictureFile).toString());
                                 userFromDb.save();
                                 sharedPreference.setCurrentUser(userFromDb);
                             }

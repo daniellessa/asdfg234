@@ -10,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -29,6 +30,7 @@ import br.com.dalecom.agendamobile.utils.FileUtils;
 public class DialogFragmentCreateUser extends DialogFragment {
 
     private ImageView gallery, pickImage;
+    private ImageView btnDismiss;
     private final int CAMERA_ACTIVITY = 4563;
     private final int GALLERY_CODE = 3523;
     private File file;
@@ -55,7 +57,7 @@ public class DialogFragmentCreateUser extends DialogFragment {
 
         gallery = (ImageView) view.findViewById(R.id.image_galery);
         pickImage = (ImageView) view.findViewById(R.id.image_take);
-
+        btnDismiss = (ImageView) view.findViewById(R.id.btn_dismiss);
 
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +83,19 @@ public class DialogFragmentCreateUser extends DialogFragment {
             }
         });
 
+
+        btnDismiss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+
         return view;
+    }
+
+    public void dismissFragment(View view){
+        dismiss();
     }
 
     public File getCreatedFile(){

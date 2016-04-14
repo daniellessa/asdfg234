@@ -48,6 +48,9 @@ public interface API {
     @POST("/events")
     void postExams(@Body List<Event> events, Callback<JsonObject> callback);
 
+    @POST("/update-image")
+    void postImage(@Body User user, Callback<JsonObject> callback);
+
     @FormUrlEncoded
     @POST("/exams/status")
     void getHistoryStatus(@Field("exams") ArrayList examIds, Callback<JsonArray> callback);

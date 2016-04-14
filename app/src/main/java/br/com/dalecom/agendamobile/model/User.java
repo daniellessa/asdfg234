@@ -25,6 +25,8 @@ public class User extends Model implements Serializable {
     public long id;
 
     @Column(name = "IdServer")
+    @Expose
+    @SerializedName("id")
     public int idServer;
 
     @Column(name = "RegistrationId")
