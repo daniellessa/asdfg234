@@ -64,6 +64,7 @@
             android:authorities="br.com.dalecom.agendamobile"
             android:exported="false"
             android:syncable="true" />
+
         <activity
             android:name=".ui.HomeActivity"
             android:label="@string/title_activity_home"
@@ -71,7 +72,7 @@
         <activity
             android:name=".ui.UpDateImageActivity"
             android:label="@string/title_activity_update_image"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.ProfessionalsActivity"
             android:label="@string/professionalActivity"
@@ -145,6 +146,10 @@
 
         <!-- [Google gms services ends] -->
 
+        <activity
+            android:name=".ui.CalendarProfessionalActivity"
+            android:label="@string/title_activity_calendar_professional"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

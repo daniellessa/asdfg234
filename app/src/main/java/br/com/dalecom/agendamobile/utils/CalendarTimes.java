@@ -130,7 +130,7 @@ public class CalendarTimes {
 
     private Times populateTime(Calendar startAt, String ends, String name){
         Times time = new Times();
-        time.setViewType(1);
+        time.setViewType(S.TYPE_HEADER);
         time.setStartAt(DateHelper.calendarToDate(startAt));
         time.setEndsAt(DateHelper.convertStringSqlInDate(ends));
         time.setUserName(name);
@@ -142,7 +142,7 @@ public class CalendarTimes {
     private Times createFreeTime(Calendar startAt, Calendar endsAt){
 
         Times time = new Times();
-        time.setViewType(0);
+        time.setViewType(S.TYPE_ITEM);
         time.setStartAt(DateHelper.calendarToDate(startAt));
         time.setEndsAt(DateHelper.calendarToDate(endsAt));
         time.setUserName(mContext.getResources().getString(R.string.available));

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,10 +33,12 @@ import javax.inject.Inject;
 
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
+import br.com.dalecom.agendamobile.adapters.CalendarHorizontalAdapter;
 import br.com.dalecom.agendamobile.adapters.TimesAdapter;
 import br.com.dalecom.agendamobile.fragments.CustomDialogFragment;
 import br.com.dalecom.agendamobile.fragments.DialogFragmentConfirmEvent;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
+import br.com.dalecom.agendamobile.model.Day;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Professional;
 import br.com.dalecom.agendamobile.model.Service;
@@ -46,6 +51,7 @@ import br.com.dalecom.agendamobile.utils.EventParser;
 import br.com.dalecom.agendamobile.utils.LogUtils;
 import br.com.dalecom.agendamobile.utils.ObjectTest;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
+import br.com.dalecom.agendamobile.utils.S;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -54,18 +60,21 @@ import retrofit.client.Response;
 public class TimesActivity extends AppCompatActivity {
 
 
-    private TextView week_day, dateView;
-    private ImageView previousDay, nextDay;
-    private CircleImageView imageProfessional;
+    private TextView viewMonth, viewYear;
+    private ImageView imageProfessional, selectedHorizDay, nextMonth, previusMonth;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private Calendar dateSelected;
     private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager layoutManagerCalendarHoriz;
+    private RecyclerView mRecyclerViewCalendarHoriz;
     private RecyclerView.LayoutManager layoutManager;
+    private CalendarHorizontalAdapter adapterCalendarHoriz;
     private TimesAdapter adapter;
     private User userSelected;
     public ProgressDialog dialog;
     private List<Times> mList;
-    private int id;
+    private List<Day> mListCalendarHoriz;
     private  CalendarTimes calendarTimes;
     private List<Event> mEvents = new ArrayList<>();
     private Calendar startAt, endstAt;
@@ -80,69 +89,87 @@ public class TimesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((AgendaMobileApplication) getApplication()).getAppComponent().inject(this);
-
         setContentView(R.layout.activity_times);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Service serv = eventManager.getCurrentService();
-
-        if(serv.getHours() > 0)
-            toolbar.setSubtitle(serv.getTitle() + " - " + serv.getHours() + ":" +serv.getMinutes());
-        else
-            toolbar.setSubtitle(serv.getTitle()+" - "+serv.getMinutes()+" Min");
-
         dateSelected = eventManager.getDateSelected();
         userSelected = eventManager.getCurrentUserProfessional();
         populateEventsList();
-        setFindsByIds();
-        setImageProfessional();
-        setSwipeRefreshLayout();
+        setCollapsingToolBar();
+        populateCalendarHorizontal();
+        setFindByIds();
 
     }
 
-    private void setFindsByIds(){
-        week_day = (TextView) findViewById(R.id.week_day);
-        dateView = (TextView) findViewById(R.id.date);
-        previousDay = (ImageView) findViewById(R.id.button_back_day);
-        nextDay = (ImageView) findViewById(R.id.button_next_day);
-        imageProfessional = (CircleImageView) findViewById(R.id.icon_perfil_professional);
+    private void setCollapsingToolBar(){
 
-        setDateHeader();
-
-
-        previousDay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateSelected.add(Calendar.DAY_OF_MONTH, -1);
-                eventManager.setDateSelected(dateSelected);
-                updateRecyclerView(dateSelected);
-                setDateHeader();
-            }
-        });
-
-        nextDay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateSelected.add(Calendar.DAY_OF_MONTH, 1);
-                eventManager.setDateSelected(dateSelected);
-                updateRecyclerView(dateSelected);
-                setDateHeader();
-            }
-        });
-    }
-
-    private void setImageProfessional(){
         User userProf = eventManager.getCurrentUserProfessional();
+
+        imageProfessional = (ImageView) findViewById(R.id.icon_professional);
+
         if(userProf.getLocalImageLocation() != null)
             imageProfessional.setImageURI(Uri.parse(userProf.getLocalImageLocation()));
+
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.textWhite));
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+        collapsingToolbarLayout.setTitle(userProf.getName());
+        collapsingToolbarLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //listarProperties();
+            }
+        });
+
     }
 
-    private void setDateHeader(){
-        week_day.setText(DateHelper.getWeekDay(dateSelected));
-        dateView.setText(DateHelper.toString(dateSelected));
+    private void setFindByIds(){
+
+        viewMonth = (TextView) findViewById(R.id.calendar_month);
+        viewYear = (TextView) findViewById(R.id.calendar_year);
+
+        viewMonth.setText(DateHelper.getMonth(dateSelected));
+        viewYear.setText(String.valueOf(dateSelected.get(Calendar.YEAR)));
+
+        previusMonth = (ImageView) findViewById(R.id.calendar_previus_month);
+        nextMonth = (ImageView) findViewById(R.id.calendar_next_month);
+
+        previusMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar currentDate = Calendar.getInstance();
+                dateSelected.add(Calendar.MONTH, -1);
+                viewMonth.setText(DateHelper.getMonth(dateSelected));
+                viewYear.setText(String.valueOf(dateSelected.get(Calendar.YEAR)));
+                if(dateSelected.after(currentDate)){
+                    updateCalendarHorizontal(dateSelected);
+                    updateRecyclerView(dateSelected);
+                }
+
+
+            }
+        });
+
+        nextMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar currentDate = Calendar.getInstance();
+                dateSelected.add(Calendar.MONTH, 1);
+                viewMonth.setText(DateHelper.getMonth(dateSelected));
+                viewYear.setText(String.valueOf(dateSelected.get(Calendar.YEAR)));
+                if(dateSelected.after(currentDate)) {
+                    updateCalendarHorizontal(dateSelected);
+                    updateRecyclerView(dateSelected);
+                }
+
+            }
+        });
+
     }
+
 
     private void populateEventsList(){
         mEvents.clear();
@@ -168,6 +195,81 @@ public class TimesActivity extends AppCompatActivity {
         }
     };
 
+    private void populateCalendarHorizontal() {
+
+        mListCalendarHoriz = populateList(dateSelected);
+        //mListCalendarHoriz.get(0).setSelected(true);
+
+        mRecyclerViewCalendarHoriz = (RecyclerView) findViewById(R.id.recyclerView_calendar_horizontal);
+        layoutManagerCalendarHoriz = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerViewCalendarHoriz.setLayoutManager(layoutManagerCalendarHoriz);
+        adapterCalendarHoriz = new CalendarHorizontalAdapter(this,mListCalendarHoriz);
+        adapterCalendarHoriz.notifyDataSetChanged();
+        mRecyclerViewCalendarHoriz.setAdapter(adapterCalendarHoriz);
+
+        mRecyclerViewCalendarHoriz.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+                if(mListCalendarHoriz.get(position).getViewType() == S.TYPE_ITEM) {
+                    if (selectedHorizDay != null)
+                        selectedHorizDay.setBackground(null);
+
+                    selectedHorizDay = (ImageView) view.findViewById(R.id.background_day);
+                    selectedHorizDay.setBackground(getResources().getDrawable(R.drawable.background_item_calendar));
+
+                    dateSelected = DateHelper.copyDate(mListCalendarHoriz.get(position).getDate());
+                    eventManager.setDateSelected(dateSelected);
+                    updateRecyclerView(dateSelected);
+
+                    Toast.makeText(TimesActivity.this, DateHelper.toString(mListCalendarHoriz.get(position).getDate()), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(TimesActivity.this, "Data indisponível", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }));
+
+
+
+    }
+
+    private List<Day> populateList (Calendar date){
+
+        ArrayList<Day> listDay = new ArrayList<>();
+
+        int month = date.get(Calendar.MONTH) + 1;
+        int year = date.get(Calendar.YEAR);
+
+        Calendar startAt = DateHelper.copyDate(date);
+        startAt.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar endsAt = DateHelper.copyDate(startAt);
+
+        if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
+            endsAt.add(Calendar.DAY_OF_MONTH, 31);
+        else if(month == 4 || month == 6 || month == 9 || month == 11)
+            endsAt.add(Calendar.DAY_OF_MONTH, 30);
+        else if(month == 2 && !isBissexto(year))
+            endsAt.add(Calendar.DAY_OF_MONTH, 28);
+        else if(month == 2 && isBissexto(year))
+            endsAt.add(Calendar.DAY_OF_MONTH, 29);
+
+        while (startAt.before(endsAt)){
+            listDay.add(new Day(startAt));
+            startAt.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        return listDay;
+    }
+
+    private boolean isBissexto(int ano){
+        boolean result = false;
+        if( ano % 400 == 0){
+            result = true;
+        }else if(ano%4 == 0 && ano%100!=0)
+            result = true;
+
+        return result;
+    }
 
     private void setRecyclerView(){
 
@@ -188,6 +290,8 @@ public class TimesActivity extends AppCompatActivity {
                     public void onItemClick(View view, int position) {
 
                         Times time = mList.get(position);
+
+                        Log.d(LogUtils.TAG,"Date selected: "+ time.getStartAt() + " " +time.getEndsAt());
                         if (calendarTimes.checkDisponible(TimesActivity.this, time)) {
 
                             startAt = Calendar.getInstance();
@@ -262,9 +366,6 @@ public class TimesActivity extends AppCompatActivity {
                 List<Times> times = calendarTimes.construct();
                 adapter.swap(times);
 
-                if(mSwipeRefreshLayout.isRefreshing()){
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
                 dialog.dismiss();
             }
 
@@ -275,25 +376,10 @@ public class TimesActivity extends AppCompatActivity {
         });
     }
 
-    private void setSwipeRefreshLayout(){
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
-
-            @Override
-            public void onRefresh() {
-                refreshItems();
-            }
-
-            void refreshItems() {
-                updateRecyclerView(dateSelected);
-            }
-
-        });
-
-
+    private void updateCalendarHorizontal(Calendar dateSelected){
+        List<Day> mDays = populateList(dateSelected);
+        adapterCalendarHoriz.swap(mDays);
     }
-
 
 
     @Override
@@ -324,7 +410,7 @@ public class TimesActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         switch (id){
-            case R.id.action_settings:
+            case R.id.change_professional:
 
                 break;
             case android.R.id.home:

@@ -56,9 +56,7 @@
         <item>Feminino</item>
         <item>Masculino</item>
     </array>
-
-
-
+    <string name="title_activity_calendar_professional">CalendarProfessionalActivity</string>
 
 
 </resources>

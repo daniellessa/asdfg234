@@ -8,30 +8,30 @@
 
 
     <RelativeLayout
-        android:id="@+id/profissional_info"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="15dp">
+        android:id="@+id/background_times"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true">
 
-        <ImageView
+        <!--ImageView
             android:id="@+id/icon_clock"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_alarm_black_48dp"/>
+            android:src="@drawable/ic_alarm_black_48dp"
+            android:visibility="gone"/-->
 
         <TextView
             android:id="@+id/time_startAt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/icon_clock"
             android:layout_marginLeft="10dp"
+            android:layout_centerInParent="true"
             android:textStyle="bold"
-            android:text="08:00 hs"
-            android:textSize="12sp"/>
+            android:text="00:00 hs"
+            android:textSize="16sp"/>
 
-        <TextView
+        <!--TextView
             android:id="@+id/time_endsAt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,11 +41,12 @@
             android:layout_marginLeft="10dp"
             android:textStyle="bold"
             android:text="09:00 hs"
-            android:textSize="12sp"/>
+            android:textSize="12sp"
+            android:visibility="gone"/-->
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <!--<RelativeLayout
         android:id="@+id/layout_perfil_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -61,7 +62,8 @@
             app:civ_border_width="2dp"
             app:civ_border_color="@android:color/transparent"
             android:src="@drawable/user_default"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:visibility="gone"/>
 
 
     </RelativeLayout>
@@ -71,7 +73,8 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/layout_perfil_icon"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp">
+        android:layout_marginLeft="10dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/user_name"
@@ -86,7 +89,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/layout_perfil_icon"
-        android:background="#CBCBCB"/>
+        android:background="#CBCBCB"/> -->
 
 
 

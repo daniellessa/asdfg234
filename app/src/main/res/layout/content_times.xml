@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,85 +10,76 @@
     tools:showIn="@layout/activity_times">
 
     <RelativeLayout
-        android:id="@+id/navigation_times"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="?attr/colorPrimary">
-
-
-        <ImageView
-            android:id="@+id/button_back_day"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_keyboard_arrow_left_white_48dp"/>
-
+        android:layout_height="match_parent">
 
         <RelativeLayout
-            android:id="@+id/layout_perfil_icon"
+            android:id="@+id/layout_month_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/button_back_day"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="25dp">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_centerHorizontal="true">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/icon_perfil_professional"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                app:civ_border_width="2dp"
-                app:civ_border_color="@android:color/transparent"
-                android:src="@drawable/user_default"
-                android:layout_centerVertical="true"/>
+            <ImageView
+                android:id="@+id/calendar_previus_month"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/ic_skip_previous_black_24dp"/>
 
+            <TextView
+                android:id="@+id/calendar_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textStyle="bold"
+                android:layout_toRightOf="@+id/calendar_previus_month"
+                android:text="Month"/>
+
+            <TextView
+                android:id="@+id/calendar_of"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/calendar_month"
+                android:layout_marginLeft="5dp"
+                android:textStyle="bold"
+                android:text="de"/>
+
+            <TextView
+                android:id="@+id/calendar_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/calendar_of"
+                android:layout_marginLeft="5dp"
+                android:textStyle="bold"
+                android:text="0000"/>
+
+            <ImageView
+                android:id="@+id/calendar_next_month"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_toRightOf="@+id/calendar_year"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/ic_skip_next_black_24dp" />
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/week_day"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_calendar_horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="Semana"
-            android:textColor="#FFF"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:textSize="25sp"/>
+            android:layout_below="@+id/layout_month_info"
+            android:elevation="5dp"/>
 
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/week_day"
-            android:textColor="#FFF"
-            android:text="00/00/0000"/>
-
-
-        <ImageView
-            android:id="@+id/button_next_day"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_keyboard_arrow_right_white_24dp"/>
-
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_times"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/recyclerView_calendar_horizontal"/>
 
     </RelativeLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/navigation_times">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView_times"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

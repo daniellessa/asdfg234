@@ -34,6 +34,7 @@ import br.com.dalecom.agendamobile.utils.CalendarTimes;
 import br.com.dalecom.agendamobile.utils.EventManager;
 import br.com.dalecom.agendamobile.utils.EventParser;
 import br.com.dalecom.agendamobile.utils.LogUtils;
+import br.com.dalecom.agendamobile.utils.S;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -42,7 +43,7 @@ import retrofit.client.Response;
 /**
  * Created by daniellessa on 24/03/16.
  */
-public class TimesAdapter extends RecyclerView.Adapter<TimesAdapter.MyViewHolder> {
+public class TimesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Times> mList;
     private Context mContext;
@@ -55,21 +56,29 @@ public class TimesAdapter extends RecyclerView.Adapter<TimesAdapter.MyViewHolder
     @Inject
     EventManager eventManager;
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class VHBusy extends RecyclerView.ViewHolder {
 
         protected CircleImageView imagePerfil;
         protected TextView startAt, endsAt, userName;
         protected RelativeLayout background;
 
-        public MyViewHolder(View itemView) {
+        public VHBusy(View itemView) {
             super(itemView);
-
-            imagePerfil = (CircleImageView) itemView.findViewById(R.id.icon_perfil);
             startAt = (TextView) itemView.findViewById(R.id.time_startAt);
-            endsAt = (TextView) itemView.findViewById(R.id.time_endsAt);
-            userName = (TextView) itemView.findViewById(R.id.user_name);
-            background = (RelativeLayout) itemView.findViewById(R.id.layout_background);
+            background = (RelativeLayout) itemView.findViewById(R.id.background_times);
+        }
+    }
 
+    class VHFree extends RecyclerView.ViewHolder {
+
+        protected CircleImageView imagePerfil;
+        protected TextView startAt, endsAt, userName;
+        protected RelativeLayout background;
+
+
+        public VHFree(View itemView) {
+            super(itemView);
+            startAt = (TextView) itemView.findViewById(R.id.time_startAt);
         }
     }
 
@@ -81,27 +90,32 @@ public class TimesAdapter extends RecyclerView.Adapter<TimesAdapter.MyViewHolder
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_times, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        if(viewType == S.TYPE_HEADER){
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_times, parent, false);
+            return new VHBusy(view);
+        }
+        else if(viewType == S.TYPE_ITEM){
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_times, parent, false);
+            return new VHFree(view);
+        }
+
+        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder,final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder,final int position) {
 
-        holder.startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
-        holder.endsAt.setText(DateHelper.hourToString(mList.get(position).getEndsAt()));
-        holder.userName.setText(mList.get(position).getUserName());
-
-        if(!mList.get(position).isFree()){
-            holder.userName.setText("Indisponível");
+        if(holder instanceof VHBusy){
+            ((VHBusy) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
+            ((VHBusy) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.red_time));
+            //((VHBusy) holder).background.setVisibility(View.GONE);
         }
-        else{
-//            holder.userName.setTextColor(Color.parseColor("#009688"));
-//            holder.startAt.setTextColor(Color.parseColor("#009688"));
-//            holder.endsAt.setTextColor(Color.parseColor("#009688"));
-            //holder.imagePerfil.setImageResource(R.drawable.scarlett);
+        else if(holder instanceof VHFree){
+            ((VHFree) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
+            //((VHFree) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.green_time));
+
         }
 
     }
@@ -109,6 +123,14 @@ public class TimesAdapter extends RecyclerView.Adapter<TimesAdapter.MyViewHolder
     @Override
     public int getItemCount() {
         return mList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        if(mList.get(position).getViewType() == S.TYPE_HEADER)
+            return S.TYPE_HEADER;
+        return S.TYPE_ITEM;
     }
 
     private void displayProfilePhotoByUri(String uriString, ImageView imageView) {

@@ -1,90 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v4.widget.NestedScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="agendamobile.dalecom.com.br.agendamobile.activitys.HomeActivity"
-    tools:showIn="@layout/app_bar_home">
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    tools:showIn="@layout/activity_home">
+    
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
             <RelativeLayout
-                android:id="@+id/last_property"
+                android:id="@+id/layout_property_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary">
+                android:background="@drawable/background_info_property">
 
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/property_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:onClick="listarProperties">
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/textSecondary"
+                    android:textStyle="bold"
+                    android:text="Nome da loja"/>
+
+                <TextView
+                    android:id="@+id/text_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/textSecondary"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="10sp"
+                    android:layout_below="@+id/property_name"
+                    android:text="escolha um dia para agendar"/>
+
+            </RelativeLayout>
 
 
-                    <RelativeLayout
-                        android:id="@+id/layout_perfil_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginTop="10dp">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            xmlns:app="http://schemas.android.com/apk/res-auto"
-                            android:id="@+id/icon_property"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            app:civ_border_width="2dp"
-                            app:civ_border_color="@android:color/transparent"
-                            android:src="@drawable/property_default"/>
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/layout_name_property"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:layout_toRightOf="@+id/layout_perfil_icon">
-
-
-                        <TextView
-                            android:id="@+id/name_property_home"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textStyle="bold"
-                            android:text="Escolha um estabeleciamento"
-                            android:textColor="#FFFFFF"/>
-
-
-                    </RelativeLayout>
-
-                </RelativeLayout>
-
-
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_property_name"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                app:mcv_showOtherDates="all"
+                app:mcv_selectionColor="#00F"/>
+            
         </RelativeLayout>
 
-
-        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-            android:id="@+id/calendarView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            app:mcv_showOtherDates="all"
-            app:mcv_selectionColor="#00F"
-            android:layout_below="@+id/last_property"/>
-
-
-        </RelativeLayout>
-    </ScrollView>
-</RelativeLayout>
+</android.support.v4.widget.NestedScrollView>

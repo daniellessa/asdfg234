@@ -2,9 +2,11 @@ package br.com.dalecom.agendamobile.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,8 +45,10 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private MaterialCalendarView calendarView;
-    private CircleImageView imageView, imagePropertyView;
-    private TextView propertyName, userName, userEmail;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private CircleImageView imageView;
+    private ImageView imagePropertyView;
+    private TextView userName, userEmail, propertyName;
     private Calendar dateSelected = Calendar.getInstance();
     private User currentUser;
     private Property currentProperty;
@@ -63,6 +68,18 @@ public class HomeActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorPrimary));
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(android.R.color.transparent));
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+        collapsingToolbarLayout.setTitle("");
+        collapsingToolbarLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listarProperties();
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -90,14 +107,14 @@ public class HomeActivity extends AppCompatActivity
         calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                if(currentProperty != null){
+                if (currentProperty != null) {
                     date.copyTo(dateSelected);
                     eventManager.startNewEvent(dateSelected);
                     Intent it = new Intent(HomeActivity.this, ProfessionalsActivity.class);
                     it.putExtra("dateSelected", dateSelected);
                     startActivity(it);
-                }else{
-                    Toast.makeText(HomeActivity.this,"Nenhum estabelecimento selecionado",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(HomeActivity.this, "Nenhum estabelecimento selecionado", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -108,8 +125,8 @@ public class HomeActivity extends AppCompatActivity
         imageView = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.icon_perfil);
         userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.name_user);
         userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email_user);
-        propertyName = (TextView) findViewById(R.id.name_property_home);
-        imagePropertyView = (CircleImageView) findViewById(R.id.icon_property);
+        propertyName = (TextView) findViewById(R.id.property_name);
+        imagePropertyView = (ImageView) findViewById(R.id.icon_property);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,10 +163,6 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    public void listarProperties (View view){
-        Intent it = new Intent(this, ProperiesActivity.class);
-        startActivity(it);
-    }
     public void listarProperties (){
         Intent it = new Intent(this, ProperiesActivity.class);
         startActivity(it);
@@ -205,7 +218,8 @@ public class HomeActivity extends AppCompatActivity
 
         switch (id){
             case R.id.mycalendar:
-
+                it = new Intent(this,CalendarProfessionalActivity.class);
+                startActivity(it);
                 break;
             case R.id.nav_slideshow:
 

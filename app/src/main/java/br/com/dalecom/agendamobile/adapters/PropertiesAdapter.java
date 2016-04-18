@@ -26,15 +26,14 @@ public class PropertiesAdapter extends RecyclerView.Adapter<PropertiesAdapter.VH
 
     public class VHItem extends RecyclerView.ViewHolder {
 
-        protected CircleImageView imageView;
-        protected TextView textViewName, textViewInfo;
+        protected ImageView imageView;
+        protected TextView textViewName;
 
         public VHItem (View view){
             super(view);
 
-            imageView = (CircleImageView) view.findViewById(R.id.icon_property);
+            imageView = (ImageView) view.findViewById(R.id.icon_property);
             textViewName = (TextView) view.findViewById(R.id.name_professional);
-            textViewInfo  = (TextView) view.findViewById(R.id.professional_type);
 
         }
     }
@@ -57,7 +56,6 @@ public class PropertiesAdapter extends RecyclerView.Adapter<PropertiesAdapter.VH
 
         if(holder instanceof VHItem){
             holder.textViewName.setText(mList.get(position).getName());
-            holder.textViewInfo.setText(mList.get(position).getInfo());
 
             if(mList.get(position).getLocalImageLocation() != null){
                 holder.imageView.setImageURI(Uri.parse(mList.get(position).getLocalImageLocation()));
