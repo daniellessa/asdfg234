@@ -5,14 +5,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_view"
-        android:layout_gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        card_view:cardCornerRadius="2dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -53,42 +45,48 @@
 
             </RelativeLayout>
 
-       <RelativeLayout
-           android:id="@+id/layout_price"
-           android:layout_width="100dp"
-           android:layout_height="60dp"
-           android:layout_alignParentRight="true"
-           android:background="?attr/colorPrimary">
-
            <RelativeLayout
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_centerInParent="true">
+               android:id="@+id/layout_price"
+               android:layout_width="100dp"
+               android:layout_height="60dp"
+               android:layout_alignParentRight="true"
+               android:background="?attr/colorPrimary">
 
-               <TextView
-                   android:id="@+id/cifrao"
+               <RelativeLayout
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:textColor="#FFF"
-                   android:textStyle="bold"
-                   android:textSize="16sp"
-                   android:text="R$" />
+                   android:layout_centerInParent="true">
 
-               <TextView
-                   android:id="@+id/price_service"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_toRightOf="@+id/cifrao"
-                   android:layout_marginLeft="5dp"
-                   android:textColor="#FFF"
-                   android:textStyle="bold"
-                   android:textSize="16sp"
-                   android:text="00,00"/>
+                   <TextView
+                       android:id="@+id/cifrao"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:textColor="#FFF"
+                       android:textStyle="bold"
+                       android:textSize="16sp"
+                       android:text="R$" />
 
+                   <TextView
+                       android:id="@+id/price_service"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_toRightOf="@+id/cifrao"
+                       android:layout_marginLeft="5dp"
+                       android:textColor="#FFF"
+                       android:textStyle="bold"
+                       android:textSize="16sp"
+                       android:text="00,00"/>
+
+               </RelativeLayout>
            </RelativeLayout>
-       </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_below="@+id/layout_price"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/colorDivider"/>
         </RelativeLayout>
 
-</android.support.v7.widget.CardView>
+
 
 </RelativeLayout>

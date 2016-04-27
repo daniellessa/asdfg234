@@ -5,6 +5,7 @@ import android.content.Context;
 import javax.inject.Singleton;
 
 
+import br.com.dalecom.agendamobile.adapters.EventsAdapter;
 import br.com.dalecom.agendamobile.adapters.ProfessionalsAdapter;
 import br.com.dalecom.agendamobile.adapters.TimesAdapter;
 import br.com.dalecom.agendamobile.fragments.DialogFragmentConfirmEvent;
@@ -16,6 +17,7 @@ import br.com.dalecom.agendamobile.ui.LoginActivity;
 import br.com.dalecom.agendamobile.ui.NewPropertyActivity;
 import br.com.dalecom.agendamobile.ui.ProfessionalsActivity;;
 import br.com.dalecom.agendamobile.ui.ProperiesActivity;
+import br.com.dalecom.agendamobile.ui.PropertyActivity;
 import br.com.dalecom.agendamobile.ui.ServicesActivity;
 import br.com.dalecom.agendamobile.ui.TimesActivity;
 import br.com.dalecom.agendamobile.di.modules.AwsModule;
@@ -58,8 +60,11 @@ public interface AppComponent {
     void inject(CalendarTimes calendarTimes);
     void inject(DialogFragmentConfirmEvent dialogFragmentConfirmEvent);
     void inject(TimesAdapter timesAdapter);
+    void inject(EventsAdapter eventsAdapter);
     void inject(ProfessionalsAdapter professionalsAdapter);
     void inject(ProfessionalParser professionalParser);
     void inject(UpDateImageActivity upDateImageActivity);
+    void inject(PropertyActivity propertyActivity);
+    void inject(PropertyActivity.PlaceholderFragment placeholderFragment);
 
 }

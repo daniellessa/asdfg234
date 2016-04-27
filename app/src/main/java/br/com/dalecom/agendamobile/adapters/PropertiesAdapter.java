@@ -3,16 +3,20 @@ package br.com.dalecom.agendamobile.adapters;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.model.Property;
+import br.com.dalecom.agendamobile.model.Times;
+import br.com.dalecom.agendamobile.utils.LogUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -55,7 +59,7 @@ public class PropertiesAdapter extends RecyclerView.Adapter<PropertiesAdapter.VH
     public void onBindViewHolder(VHItem holder, int position) {
 
         if(holder instanceof VHItem){
-            holder.textViewName.setText(mList.get(position).getName());
+            //holder.textViewName.setText(mList.get(position).getName());
 
             if(mList.get(position).getLocalImageLocation() != null){
                 holder.imageView.setImageURI(Uri.parse(mList.get(position).getLocalImageLocation()));
@@ -70,5 +74,11 @@ public class PropertiesAdapter extends RecyclerView.Adapter<PropertiesAdapter.VH
     @Override
     public int getItemCount() {
         return mList.size();
+    }
+
+    public void swap(List<Property> properties){
+        mList.clear();
+        mList.addAll(properties);
+        notifyDataSetChanged();
     }
 }

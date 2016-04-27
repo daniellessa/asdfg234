@@ -144,10 +144,10 @@ public class TimesActivity extends AppCompatActivity {
                 dateSelected.add(Calendar.MONTH, -1);
                 viewMonth.setText(DateHelper.getMonth(dateSelected));
                 viewYear.setText(String.valueOf(dateSelected.get(Calendar.YEAR)));
-                if(dateSelected.after(currentDate)){
+                //if(dateSelected.after(currentDate)){
                     updateCalendarHorizontal(dateSelected);
                     updateRecyclerView(dateSelected);
-                }
+                //}
 
 
             }
@@ -160,10 +160,10 @@ public class TimesActivity extends AppCompatActivity {
                 dateSelected.add(Calendar.MONTH, 1);
                 viewMonth.setText(DateHelper.getMonth(dateSelected));
                 viewYear.setText(String.valueOf(dateSelected.get(Calendar.YEAR)));
-                if(dateSelected.after(currentDate)) {
+                //if(dateSelected.after(currentDate)) {
                     updateCalendarHorizontal(dateSelected);
                     updateRecyclerView(dateSelected);
-                }
+               // }
 
             }
         });
@@ -207,6 +207,12 @@ public class TimesActivity extends AppCompatActivity {
         adapterCalendarHoriz.notifyDataSetChanged();
         mRecyclerViewCalendarHoriz.setAdapter(adapterCalendarHoriz);
 
+
+        Calendar currentDate = Calendar.getInstance();
+        currentDate.add(Calendar.DAY_OF_MONTH, -1);
+        int position = currentDate.get(Calendar.DAY_OF_MONTH);
+        layoutManagerCalendarHoriz.scrollToPosition(position);
+
         mRecyclerViewCalendarHoriz.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -222,7 +228,7 @@ public class TimesActivity extends AppCompatActivity {
                     eventManager.setDateSelected(dateSelected);
                     updateRecyclerView(dateSelected);
 
-                    Toast.makeText(TimesActivity.this, DateHelper.toString(mListCalendarHoriz.get(position).getDate()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TimesActivity.this, DateHelper.toString(eventManager.getDateSelected()), Toast.LENGTH_SHORT).show();
                 }else {
                     Toast.makeText(TimesActivity.this, "Data indisponível", Toast.LENGTH_SHORT).show();
                 }

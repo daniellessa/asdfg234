@@ -100,12 +100,18 @@ public class RestClient {
         api.getEvents(userProf_id, day, callback);
     }
 
+    public void getAppointments(Callback callback) {
+        api.getAppointments(callback);
+    }
+
     public void getCategories(Callback callback) {
         api.getCategories(callback);
     }
 
-    public void getServiceForProfessional(int professionalId, Callback callback) {
-        api.getServicesForProfessional(professionalId, callback);
+    public void getServiceForProperty(int professionalId, Callback callback) {
+        api.getServicesForProperty(professionalId, callback);
     }
+
+
 
 }

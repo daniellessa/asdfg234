@@ -45,7 +45,6 @@ import retrofit.client.Response;
 
 public class ProfessionalsActivity extends AppCompatActivity {
 
-    private Calendar dateSelected;
     private RecyclerView mRecyclerView;
     private RelativeLayout layoutNull;
     private TextView textViewNull;
@@ -76,11 +75,9 @@ public class ProfessionalsActivity extends AppCompatActivity {
         layoutNull = (RelativeLayout) findViewById(R.id.layout_null);
         textViewNull = (TextView) findViewById(R.id.text_null);
 
-
-        dateSelected = (Calendar) getIntent().getSerializableExtra("dateSelected");
         currentProperty = sharedPreference.getCurrentProperty();
 
-        restClient.getProfessionals(currentProperty.getIdServer(), callbackProfessionals);
+        restClient.getProfessionals(eventManager.getCurrentProperty().getIdServer(), callbackProfessionals);
         dialog = ProgressDialog.show(ProfessionalsActivity.this,"Aguarde","Procurando profissionais...",false,true);
 
     }
@@ -103,8 +100,6 @@ public class ProfessionalsActivity extends AppCompatActivity {
                     }
                 })
         );
-
-
 
     }
 

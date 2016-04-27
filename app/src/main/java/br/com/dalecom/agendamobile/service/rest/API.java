@@ -39,11 +39,14 @@ public interface API {
     @GET("/events")
     void getEvents(@Query("professionals_id") int professionals_id, @Query("day") String day, Callback<JsonObject> callback);
 
+    @GET("/events_appointments")
+    void getAppointments( Callback<JsonObject> callback);
+
     @GET("/professions")
     void getCategories(Callback<JsonObject> callback);
 
     @GET("/services")
-    void getServicesForProfessional(@Query("professional_id") int professional_id,Callback<JsonObject> callback);
+    void getServicesForProperty(@Query("property_id") int professional_id,Callback<JsonObject> callback);
 
     @POST("/events")
     void postExams(@Body List<Event> events, Callback<JsonObject> callback);

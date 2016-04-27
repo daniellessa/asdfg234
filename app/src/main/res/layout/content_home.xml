@@ -1,61 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="agendamobile.dalecom.com.br.agendamobile.activitys.HomeActivity"
-    tools:showIn="@layout/activity_home">
-    
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:id="@+id/layout_property_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/background_info_property">
-
-                <TextView
-                    android:id="@+id/property_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:textColor="@color/textSecondary"
-                    android:textStyle="bold"
-                    android:text="Nome da loja"/>
-
-                <TextView
-                    android:id="@+id/text_subtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/textSecondary"
-                    android:layout_marginBottom="10dp"
-                    android:textSize="10sp"
-                    android:layout_below="@+id/property_name"
-                    android:text="escolha um dia para agendar"/>
-
-            </RelativeLayout>
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_properties"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-                android:id="@+id/calendarView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/layout_property_name"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                app:mcv_showOtherDates="all"
-                app:mcv_selectionColor="#00F"/>
-            
-        </RelativeLayout>
 
-</android.support.v4.widget.NestedScrollView>
+</RelativeLayout>

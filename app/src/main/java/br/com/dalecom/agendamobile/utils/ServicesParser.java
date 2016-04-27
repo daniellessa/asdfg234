@@ -36,13 +36,13 @@ public class ServicesParser {
             Service service = new Service();
             JsonObject data = jsonElement.getAsJsonObject();
 
-            service.setIdServer(data.getAsJsonObject("services").get("id").getAsInt());
-            service.setTitle(data.getAsJsonObject("services").get("name").getAsString());
-            service.setHours(data.getAsJsonObject("services").get("hours").getAsInt());
-            service.setMinutes(data.getAsJsonObject("services").get("minutes").getAsInt());
-            service.setPrice(new Float(data.getAsJsonObject("services").get("price").getAsFloat()));
+            service.setIdServer(data.get("id").getAsInt());
+            service.setTitle(data.get("name").getAsString());
+            service.setHours(data.get("hours").getAsInt());
+            service.setMinutes(data.get("minutes").getAsInt());
+            service.setPrice(new Float(data.get("price").getAsFloat()));
 
-            if(!data.getAsJsonObject("services").get("info").isJsonNull())
+            if(!data.get("info").isJsonNull())
             service.setInfo(data.getAsJsonObject("services").get("info").getAsString());
 
             services.add(service);

@@ -1,0 +1,128 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="br.com.dalecom.agendamobile.ui.PropertyActivity$PlaceholderFragment">
+
+    <RelativeLayout
+        android:id="@+id/layout_info_property"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_icon">
+
+        <RelativeLayout
+            android:id="@+id/property_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/property_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome do Estabelecimento"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/text_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/property_name"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:text="Telefone: "/>
+
+            <TextView
+                android:id="@+id/property_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/text_phone"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:text="(11) 4427-8861"/>
+
+            <TextView
+                android:id="@+id/text_street"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/property_phone"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:text="Endereço:"/>
+
+            <TextView
+                android:id="@+id/property_adress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/text_street"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:text="Rua Jaboticabeira da Silva, 54 - Vila Maria - SP"/>
+
+            <TextView
+                android:id="@+id/text_open"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/property_adress"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:text="Funcionamento:"/>
+
+            <TextView
+                android:id="@+id/property_open"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/text_open"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Seg. à Sex. das "/>
+
+            <TextView
+                android:id="@+id/property_das"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/property_open"
+                android:layout_alignBaseline="@+id/property_open"
+                android:layout_marginLeft="5dp"
+                android:text="das"/>
+
+            <TextView
+                android:id="@+id/property_open_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/property_das"
+                android:layout_alignBaseline="@+id/property_das"
+                android:layout_marginLeft="5dp"
+                android:text="09:00 às 20:00"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_property_call"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@android:color/holo_green_light"
+            android:layout_marginTop="20dp"
+            android:layout_above="@+id/property_info"
+            android:layout_alignParentBottom="true">
+
+            <ImageView
+                android:id="@+id/icon_phone"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_phone_white_24dp"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -53,6 +53,46 @@ public class Property extends Model{
     @Column(name = "LocalImageLocation")
     protected String localImageLocation;
 
+    @Column(name = "OpenDay")
+    @Expose
+    @SerializedName("open_day")
+    protected String openDay;
+
+    @Column(name = "OpenHour")
+    @Expose
+    @SerializedName("open_hour")
+    protected String openHour;
+
+    @Column(name = "Phone")
+    @Expose
+    @SerializedName("phone")
+    protected String phone;
+
+    @Column(name = "Street")
+    @Expose
+    @SerializedName("street")
+    protected String street;
+
+    @Column(name = "Number")
+    @Expose
+    @SerializedName("number")
+    protected String number;
+
+    @Column(name = "City")
+    @Expose
+    @SerializedName("city")
+    protected String city;
+
+    @Column(name = "Lat")
+    @Expose
+    @SerializedName("lat")
+    protected float lat;
+
+    @Column(name = "Lng")
+    @Expose
+    @SerializedName("lng")
+    protected float lng;
+
 
 
     public void setId(long id) {
@@ -101,6 +141,70 @@ public class Property extends Model{
 
     public void setBucketPath(String bucketPath) {
         this.bucketPath = bucketPath;
+    }
+
+    public String getOpenDay() {
+        return openDay;
+    }
+
+    public void setOpenDay(String openDay) {
+        this.openDay = openDay;
+    }
+
+    public String getOpenHour() {
+        return openHour;
+    }
+
+    public void setOpenHour(String openHour) {
+        this.openHour = openHour;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public float getLat() {
+        return lat;
+    }
+
+    public void setLat(float lat) {
+        this.lat = lat;
+    }
+
+    public float getLng() {
+        return lng;
+    }
+
+    public void setLng(float lng) {
+        this.lng = lng;
     }
 
     public String getInfo() {

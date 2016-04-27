@@ -59,7 +59,7 @@ public class ServicesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setSubtitle("realizados pelo profissional");
 
-        restClient.getServiceForProfessional(eventManager.getCurrentUserProfessional().getIdServer(), callbackServices);
+        restClient.getServiceForProperty(eventManager.getCurrentProperty().getIdServer(), callbackServices);
         dialog = ProgressDialog.show(ServicesActivity.this, "Aguarde", "Carregando Serviços...", false, true);
 
 

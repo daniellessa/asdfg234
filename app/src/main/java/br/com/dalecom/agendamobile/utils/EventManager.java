@@ -19,6 +19,7 @@ import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Professional;
+import br.com.dalecom.agendamobile.model.Property;
 import br.com.dalecom.agendamobile.model.Service;
 import br.com.dalecom.agendamobile.model.User;
 import br.com.dalecom.agendamobile.wrappers.SharedPreference;
@@ -39,6 +40,7 @@ public class EventManager {
     private String currentDay;
     private String currentStartAt;
     private String currentEndsAt;
+    private Property currentProperty;
 
     @Inject public static SharedPreference sharedPreference;
 
@@ -115,6 +117,14 @@ public class EventManager {
 
     public void setDateSelected(Calendar dateSelected) {
         this.dateSelected = dateSelected;
+    }
+
+    public Property getCurrentProperty() {
+        return currentProperty;
+    }
+
+    public void setCurrentProperty(Property currentProperty) {
+        this.currentProperty = currentProperty;
     }
 
     public void finalizeEvent() {

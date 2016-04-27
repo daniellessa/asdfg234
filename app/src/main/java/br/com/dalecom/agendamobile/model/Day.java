@@ -23,7 +23,7 @@ public class Day {
 
         Calendar currentDate = Calendar.getInstance();
 
-        if(this.date.before(currentDate))
+        if(this.date.before(currentDate) && !DateHelper.toString(date).equals(DateHelper.toString(currentDate)))
             this.viewType = S.TYPE_HEADER;
         else
             this.viewType = S.TYPE_ITEM;

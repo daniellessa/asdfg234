@@ -94,6 +94,20 @@ public class NewPropertyActivity extends AppCompatActivity {
                 property.setPhoto_path(o.get("photo_path").getAsString());
                 property.setBucketPath(o.get("bucket_name").getAsString());
                 property.setInfo(o.get("info").getAsString());
+                property.setOpenDay(o.get("open_day").getAsString());
+                property.setOpenHour(o.get("open_hour").getAsString());
+                property.setPhone(o.get("phone").getAsString());
+                property.setStreet(o.get("street").getAsString());
+                property.setNumber(o.get("number").getAsString());
+                property.setCity(o.get("city").getAsString());
+
+                if(!o.get("lat").isJsonNull()){
+                    property.setLat(o.get("lat").getAsFloat());
+                }
+
+                if(!o.get("lng").isJsonNull()){
+                    property.setLng(o.get("lng").getAsFloat());
+                }
 
             }else{
                 layoutProgress.setVisibility(View.INVISIBLE);
