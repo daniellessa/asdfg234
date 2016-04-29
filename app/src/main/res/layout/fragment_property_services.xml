@@ -4,9 +4,15 @@
     android:layout_height="match_parent"
     tools:context="br.com.dalecom.agendamobile.ui.PropertyActivity$PlaceholderFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView_services"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_services"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </ScrollView>
 
 </android.support.v4.widget.NestedScrollView>

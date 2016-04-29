@@ -27,6 +27,9 @@ public interface API {
     @POST("/users")
     void postUser(@Body User user, Callback<JsonObject> callback);
 
+    @POST("/authGoogleOrFacebook")
+    void loginGoogleOrFacebook(@Body User user, Callback<JsonObject> callback);
+
     @POST("/events")
     void postEvent(@Body Event event, Callback<JsonObject> callback);
 
@@ -34,7 +37,7 @@ public interface API {
     void getProperties(@Query("pin") int pin, Callback<JsonObject> callback);
 
     @GET("/professionals")
-    void getProfessionals(@Query("property_id") int propertyId, Callback<JsonObject> callback);
+    void getProfessionals(@Query("property_id") int propertyId, @Query("service_id") int serviceId, Callback<JsonObject> callback);
 
     @GET("/events")
     void getEvents(@Query("professionals_id") int professionals_id, @Query("day") String day, Callback<JsonObject> callback);

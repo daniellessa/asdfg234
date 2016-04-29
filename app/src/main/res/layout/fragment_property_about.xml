@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     tools:context="br.com.dalecom.agendamobile.ui.PropertyActivity$PlaceholderFragment">
 
+
     <RelativeLayout
         android:id="@+id/layout_info_property"
         android:layout_width="match_parent"
@@ -108,7 +109,7 @@
             android:id="@+id/layout_property_call"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@android:color/holo_green_light"
+            android:background="@android:color/holo_green_dark"
             android:layout_marginTop="20dp"
             android:layout_above="@+id/property_info"
             android:layout_alignParentBottom="true">
@@ -123,6 +124,5 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
 
 </RelativeLayout>

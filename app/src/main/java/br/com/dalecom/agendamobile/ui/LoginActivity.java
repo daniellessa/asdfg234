@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -17,17 +18,30 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.JsonObject;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import javax.inject.Inject;
@@ -48,15 +62,18 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private final int RC_SIGN_IN = 987;
     private GoogleApiClient mGoogleApiClient;
     private EditText editTextLogin;
     private EditText editTextPassword;
     private TextView btnLogin, textProfessional,textUser;
     private ProgressDialog dialog;
-    private FloatingActionButton fab, fab_user, fab_professional;
+    private FloatingActionButton fab;
+    private ImageView loginFacebook, loginGoogle;
+    private CallbackManager callbackManager;
 
 
     @Inject
@@ -96,6 +113,100 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
+        setLoginFacebook();
+        setLoginGoogle();
+
+    }
+
+    private void setLoginFacebook(){
+        Log.d(LogUtils.TAG, "Entrou");
+
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d(LogUtils.TAG, "LoginResult - " + loginResult.getRecentlyGrantedPermissions());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.d(LogUtils.TAG, "onCancel");
+                    }
+
+                    @Override
+                    public void onError(FacebookException error) {
+                        Log.d(LogUtils.TAG, "onError", error);
+                    }
+        });
+
+        loginFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends"));
+            }
+        });
+
+    }
+
+    private void setLoginGoogle(){
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        loginGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
+            }
+        });
+
+    }
+
+    private void signIn() {
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(LogUtils.TAG, "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            User userGoogle = new User();
+            userGoogle.setEmail(acct.getEmail());
+            userGoogle.setName(acct.getDisplayName());
+            userGoogle.setPassword(acct.getId());
+            userGoogle.setPhotoPath(acct.getPhotoUrl().toString());
+            userGoogle.setRegistrationId(sharedPreference.getUserRegistrationId());
+
+            restClient.loginGoogleOrFacebbok(userGoogle,loginCallback);
+
+        } else {
+            // Signed out, show unauthenticated UI.
+//            updateUI(false);
+        }
     }
 
 
@@ -108,6 +219,8 @@ public class LoginActivity extends AppCompatActivity {
         textProfessional = (TextView) findViewById(R.id.text_professional);
         textUser = (TextView) findViewById(R.id.text_user);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        loginFacebook = (ImageView) findViewById(R.id.facebook_login);
+        loginGoogle = (ImageView) findViewById(R.id.google_login);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,15 +339,21 @@ public class LoginActivity extends AppCompatActivity {
                 if ( userFromDb == null )
                 {
                     Log.d(LogUtils.TAG, "CREATING USER");
+
+                    if(userFromServer.getPhotoPath() != null)
+                        userFromServer.setLocalImageLocationAndDeletePreviousIfExist(userFromServer.getPhotoPath());
+
                     userFromServer.save();
                     sharedPreference.setCurrentUser(userFromServer);
 
                 }
-                else
-                {
+                else {
                     userFromDb.setName(userFromServer.getName());
                     userFromDb.setBucketPath(userFromServer.getBucketPath());
                     userFromDb.setPhotoPath(userFromServer.getPhotoPath());
+
+                    if(userFromServer.getPhotoPath() != null)
+                        userFromDb.setLocalImageLocationAndDeletePreviousIfExist(userFromServer.getPhotoPath());
 
                     userFromDb.save();
                     sharedPreference.setCurrentUser(userFromDb);
@@ -309,9 +428,14 @@ public class LoginActivity extends AppCompatActivity {
         if(!user.get("photo_path").isJsonNull())
             userObj.setPhotoPath(user.get("photo_path").getAsString());
 
-        userObj.setEmail(user.get("email").getAsString());
-        userObj.setName(user.get("name").getAsString());
-        userObj.setIdServer(user.get("id").getAsInt());
+        if(!user.get("email").isJsonNull())
+            userObj.setEmail(user.get("email").getAsString());
+
+        if(!user.get("name").isJsonNull())
+            userObj.setName(user.get("name").getAsString());
+
+        if(!user.get("id").isJsonNull())
+            userObj.setIdServer(user.get("id").getAsInt());
 
 
         return userObj;
@@ -340,4 +464,8 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i(LogUtils.TAG, "onConnectionFailed");
+    }
 }

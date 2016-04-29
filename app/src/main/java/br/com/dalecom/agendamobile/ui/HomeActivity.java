@@ -1,6 +1,8 @@
 package br.com.dalecom.agendamobile.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -31,6 +33,10 @@ import com.google.gson.Gson;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.List;
 
@@ -203,6 +209,24 @@ public class HomeActivity extends AppCompatActivity
             imageView.setImageURI(Uri.parse(currentUser.getLocalImageLocation()));
             Log.d(LogUtils.TAG, "Path image CurrentUser: " + currentUser.getLocalImageLocation());
         }
+
+//        if(currentUser.getBucketPath().length() == 0 && currentUser.getPhotoPath().length() > 0){
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        URL newurl = new URL(currentUser.getPhotoPath());
+//                        Bitmap image = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+//                        if(image != null)
+//                            imageView.setImageBitmap(image);
+//
+//                        Log.d(LogUtils.TAG, "Carregou?");
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }).start();
+//        }
     }
 
 

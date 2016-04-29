@@ -30,6 +30,11 @@ public class Service extends Model {
     @SerializedName("minutes")
     protected int minutes;
 
+    @Column(name = "OldPrice")
+    @Expose
+    @SerializedName("old_price")
+    protected float oldPrice;
+
     @Column(name = "Price")
     @Expose
     @SerializedName("price")
@@ -74,6 +79,14 @@ public class Service extends Model {
         this.minutes = minutes;
     }
 
+    public float getOldPrice() {
+        return oldPrice;
+    }
+
+    public void setOldPrice(float oldPrice) {
+        this.oldPrice = oldPrice;
+    }
+
     public float getPrice() {
         return price;
     }
@@ -89,4 +102,5 @@ public class Service extends Model {
     public void setInfo(String info) {
         this.info = info;
     }
+
 }

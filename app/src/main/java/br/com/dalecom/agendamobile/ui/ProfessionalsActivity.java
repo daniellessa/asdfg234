@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
@@ -76,8 +77,7 @@ public class ProfessionalsActivity extends AppCompatActivity {
         textViewNull = (TextView) findViewById(R.id.text_null);
 
         currentProperty = sharedPreference.getCurrentProperty();
-
-        restClient.getProfessionals(eventManager.getCurrentProperty().getIdServer(), callbackProfessionals);
+        restClient.getProfessionals(eventManager.getCurrentProperty().getIdServer(), eventManager.getCurrentService().getIdServer(), callbackProfessionals);
         dialog = ProgressDialog.show(ProfessionalsActivity.this,"Aguarde","Procurando profissionais...",false,true);
 
     }
@@ -95,7 +95,7 @@ public class ProfessionalsActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         eventManager.setUserProfIntoEvent(mList.get(position));
-                        Intent it = new Intent(ProfessionalsActivity.this, ServicesActivity.class);
+                        Intent it = new Intent(ProfessionalsActivity.this, TimesActivity.class);
                         startActivity(it);
                     }
                 })

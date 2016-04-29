@@ -133,7 +133,7 @@ public class EventManager {
         this.mEvent.setUserId(currentUser.getIdServer());
         this.mEvent.setProfessionalsId(currentUserProf.getIdServer());
         this.mEvent.setServicesId(currentService.getIdServer());
-        this.mEvent.setDay(currentDay);
+        this.mEvent.setDay(DateHelper.toStringSql(dateSelected));
         this.mEvent.setStartAt(currentStartAt);
         this.mEvent.setEndsAt(currentEndsAt);
         this.mEvent.setStatus(S.STATUS_PENDING);

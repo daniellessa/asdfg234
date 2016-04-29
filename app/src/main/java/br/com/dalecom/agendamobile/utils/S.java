@@ -11,7 +11,7 @@ public class S {
 
 
 //    public static final String AuthGoogle =  "661341416508-jmqeigejivot5erf7vhhukbofbphvsi0.apps.googleusercontent.com";
-    public  static final String END_POINT_URL = "http://172.22.15.222.xip.io:1337";
+    public  static final String END_POINT_URL = "http://172.22.8.13.xip.io:1337";
 //    public  static final String END_POINT_URL = "http://icalendar-homolog.us-east-1.elasticbeanstalk.com"; //Homolog
     public  static final String FILE_PREFIX = "image_";
     public static final String JPG_EXT = ".jpg";

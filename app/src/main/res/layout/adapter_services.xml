@@ -47,34 +47,93 @@
 
            <RelativeLayout
                android:id="@+id/layout_price"
-               android:layout_width="100dp"
+               android:layout_width="wrap_content"
                android:layout_height="60dp"
-               android:layout_alignParentRight="true"
-               android:background="?attr/colorPrimary">
+               android:layout_alignParentRight="true">
+
+               <RelativeLayout
+                   android:id="@+id/layout_old_price"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_centerVertical="true"
+                   android:visibility="gone">
+
+                   <TextView
+                       android:id="@+id/cifrao_old"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginLeft="10dp"
+                       android:textStyle="bold"
+                       android:textSize="12sp"
+                       android:text="R$" />
+
+                   <TextView
+                       android:id="@+id/old_price_service"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_toRightOf="@+id/cifrao_old"
+                       android:layout_marginLeft="5dp"
+                       android:textStyle="bold"
+                       android:textSize="12sp"
+                       android:text="00,00"/>
+
+               </RelativeLayout>
+
+               <RelativeLayout
+                   android:id="@+id/layout_discount"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_below="@+id/layout_old_price"
+                   android:layout_centerHorizontal="true"
+                   android:layout_marginTop="5dp"
+                   android:visibility="gone">
+
+                   <TextView
+                       android:id="@+id/value_discount"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:textColor="@android:color/holo_green_dark"
+                       android:textStyle="bold"
+                       android:textSize="10sp"
+                       android:text="00" />
+
+                   <TextView
+                       android:id="@+id/percent"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_toRightOf="@+id/value_discount"
+                       android:layout_marginLeft="1dp"
+                       android:textColor="@android:color/holo_green_dark"
+                       android:textStyle="bold"
+                       android:textSize="10sp"
+                       android:text="% de desconto"/>
+
+               </RelativeLayout>
 
                <RelativeLayout
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:layout_centerInParent="true">
+                   android:layout_centerVertical="true"
+                   android:layout_marginLeft="10dp"
+                   android:layout_toRightOf="@+id/layout_old_price">
 
                    <TextView
                        android:id="@+id/cifrao"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:textColor="#FFF"
                        android:textStyle="bold"
-                       android:textSize="16sp"
+                       android:textSize="14sp"
                        android:text="R$" />
 
                    <TextView
                        android:id="@+id/price_service"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
+                       android:layout_marginRight="10dp"
                        android:layout_toRightOf="@+id/cifrao"
                        android:layout_marginLeft="5dp"
-                       android:textColor="#FFF"
                        android:textStyle="bold"
-                       android:textSize="16sp"
+                       android:textSize="14sp"
                        android:text="00,00"/>
 
                </RelativeLayout>

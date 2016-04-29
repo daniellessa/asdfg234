@@ -72,6 +72,10 @@ public class RestClient {
         api.postUser(user, callback);
     }
 
+    public void loginGoogleOrFacebbok(User user, Callback callback) {
+        api.loginGoogleOrFacebook(user, callback);
+    }
+
     public void postEvent(Event event, Callback callback) {
         api.postEvent(event, callback);
     }
@@ -92,8 +96,8 @@ public class RestClient {
         api.getProperties(pin, callback);
     }
 
-    public void getProfessionals(int propertyId, Callback callback) {
-        api.getProfessionals(propertyId, callback);
+    public void getProfessionals(int propertyId, int serviceId, Callback callback) {
+        api.getProfessionals(propertyId, serviceId, callback);
     }
 
     public void getEvents(int userProf_id, String day, Callback callback) {

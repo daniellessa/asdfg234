@@ -56,6 +56,8 @@
         <item>Feminino</item>
         <item>Masculino</item>
     </array>
+
+    <string name="facebook_app_id">475394335994139</string>
     <string name="title_activity_calendar_professional">CalendarProfessionalActivity</string>
     <string name="title_activity_my_appointments">MyAppointmentsActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>

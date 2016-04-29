@@ -83,8 +83,8 @@ public class CalendarHorizontalAdapter extends RecyclerView.Adapter<RecyclerView
             ((VHHeader) holder).weekDay.setText(mList.get(position).getWeekDay());
             ((VHHeader) holder).numberDay.setText(mList.get(position).getDay());
 
-            ((VHHeader) holder).weekDay.setTextColor(mContext.getResources().getColor(R.color.red_time));
-            ((VHHeader) holder).numberDay.setTextColor(mContext.getResources().getColor(R.color.red_time));
+            ((VHHeader) holder).weekDay.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
+            ((VHHeader) holder).numberDay.setTextColor(mContext.getResources().getColor(android.R.color.holo_red_dark));
         }
         else if(holder instanceof VHItem){
             ((VHItem) holder).weekDay.setText(mList.get(position).getWeekDay());

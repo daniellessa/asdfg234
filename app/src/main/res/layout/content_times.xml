@@ -9,14 +9,21 @@
     tools:context="agendamobile.dalecom.com.br.agendamobile.activitys.TimesActivity"
     tools:showIn="@layout/activity_times">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <include
+            android:id="@+id/fragment_days"
+            layout="@layout/fragment_days" />
+
+
+        <!--RelativeLayout
             android:id="@+id/layout_month_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/fragment_days"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true">
@@ -65,20 +72,20 @@
                 android:layout_marginLeft="20dp"
                 android:src="@drawable/buttom_next_right" />
 
-        </RelativeLayout>
+        </RelativeLayout-->
 
-        <android.support.v7.widget.RecyclerView
+        <!--android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView_calendar_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layout_month_info"
-            android:elevation="5dp"/>
+            android:layout_below="@+id/fragment_days"
+            android:elevation="5dp"/-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView_times"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/recyclerView_calendar_horizontal"/>
+            android:layout_below="@+id/fragment_days"/>
 
     </RelativeLayout>
 

@@ -92,6 +92,14 @@ public class DateHelper {
         return result;
     }
 
+    public static String getDay(Calendar date){
+        String day = String.valueOf(date.get(Calendar.DAY_OF_MONTH));
+        if(day.length() == 1){
+            day = "0"+day;
+        }
+        return day;
+    }
+
     public static String toStringSql(Calendar date){
         String result = null;
         String day = String.valueOf(date.get(Calendar.DAY_OF_MONTH));

@@ -26,8 +26,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -98,6 +100,8 @@ public class PropertyActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryLight));
+        tabLayout.setSelectedTabIndicatorHeight(10);
         setFindsByIds();
 
 
@@ -223,6 +227,7 @@ public class PropertyActivity extends AppCompatActivity {
                     TextView propertyOpen = (TextView) view.findViewById(R.id.property_open);
                     TextView propertyOpenHours = (TextView) view.findViewById(R.id.property_open_hour);
                     RelativeLayout propertyCall = (RelativeLayout) view.findViewById(R.id.layout_property_call);
+
 
                     propertyName.setText(eventManager.getCurrentProperty().getName());
                     propertyPhone.setText(eventManager.getCurrentProperty().getPhone());
@@ -353,4 +358,5 @@ public class PropertyActivity extends AppCompatActivity {
             return null;
         }
     }
+
 }
