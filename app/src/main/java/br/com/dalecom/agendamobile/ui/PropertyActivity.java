@@ -3,48 +3,34 @@ package br.com.dalecom.agendamobile.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.JsonArray;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.ServiceAdapter;
@@ -162,6 +148,7 @@ public class PropertyActivity extends AppCompatActivity {
         private ServiceAdapter adapter;
         private List<Service> mList;
         private ProgressDialog dialog;
+        private float lat, lng;
         private static View view;
 
         private SupportMapFragment fragment;
@@ -192,34 +179,44 @@ public class PropertyActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             ((AgendaMobileApplication) getActivity().getApplicationContext()).getAppComponent().inject(this);
 
-
             switch (getArguments().getInt(ARG_SECTION_NUMBER)){
 
                 case 1:
                     view = inflater.inflate(R.layout.fragment_property_services, container, false);
 
-                    dialog = ProgressDialog.show(getActivity(), "Aguarde", "Carregando Serviços...", false, true);
+                    if(mList == null) {
 
-                    restClient.getServiceForProperty(eventManager.getCurrentProperty().getIdServer(), new Callback<JsonArray>() {
-                        @Override
-                        public void success(JsonArray jsonArray, Response response) {
+                        dialog = ProgressDialog.show(getActivity(), "Aguarde", "Carregando Serviços...", false, true);
 
-                            ServicesParser servicesParser = new ServicesParser(jsonArray);
-                            mList = servicesParser.parseFullServices();
-                            setRecyclerView(view);
-                            dialog.dismiss();
-                        }
+                        restClient.getServiceForProperty(eventManager.getCurrentProperty().getIdServer(), new Callback<JsonArray>() {
+                            @Override
+                            public void success(JsonArray jsonArray, Response response) {
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            //configurar view para list vazia
-                            dialog.dismiss();
-                        }
-                    });
+                                ServicesParser servicesParser = new ServicesParser(jsonArray);
+                                mList = servicesParser.parseFullServices();
+                                setRecyclerView(view);
+                                dialog.dismiss();
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                //configurar view para list vazia
+                                dialog.dismiss();
+                            }
+                        });
+                    }else{
+                        setRecyclerView(view);
+                        dialog.dismiss();
+                    }
 
                     break;
 
                 case 2:
+                    view = inflater.inflate(R.layout.fragment_property_map, container, false);
+                    break;
+
+                case 3:
+
                     view = inflater.inflate(R.layout.fragment_property_about, container, false);
                     TextView propertyName = (TextView) view.findViewById(R.id.property_name);
                     TextView propertyPhone = (TextView) view.findViewById(R.id.property_phone);
@@ -248,21 +245,6 @@ public class PropertyActivity extends AppCompatActivity {
                         }
                     });
                     break;
-
-                case 3:
-
-                    if(view != null) {
-                        ViewGroup parent = (ViewGroup) view.getParent();
-                        if (parent != null)
-                            parent.removeView(view);
-                    }
-
-                    try {
-                        view = inflater.inflate(R.layout.fragment_property_map, container, false);
-                    }catch (InflateException ex){}
-
-
-                    break;
             }
 
             return view;
@@ -271,7 +253,7 @@ public class PropertyActivity extends AppCompatActivity {
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
-            if(getArguments().getInt(ARG_SECTION_NUMBER) == 3) {
+            if(getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
                 Log.d(LogUtils.TAG, "onActivityCreated");
                 FragmentManager fm = getChildFragmentManager();
                 fragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
@@ -285,9 +267,9 @@ public class PropertyActivity extends AppCompatActivity {
         @Override
         public void onResume() {
             super.onResume();
-            if (map == null && getArguments().getInt(ARG_SECTION_NUMBER) == 3) {
-                float lat = eventManager.getCurrentProperty().getLat();
-                float lng = eventManager.getCurrentProperty().getLng();
+            if (map == null && getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
+                lat = eventManager.getCurrentProperty().getLat();
+                lng = eventManager.getCurrentProperty().getLng();
                 Log.d(LogUtils.TAG,"LatLng: "+ lat +" - "+ lng);
                 map = fragment.getMap();
                 map.addMarker(new MarkerOptions().position(new LatLng(lat, lng)));
@@ -297,6 +279,7 @@ public class PropertyActivity extends AppCompatActivity {
 
 
         private void setRecyclerView(View view){
+
 
             mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_services);
             layoutManager = new LinearLayoutManager(getContext());
@@ -351,9 +334,9 @@ public class PropertyActivity extends AppCompatActivity {
                 case 0:
                     return "Serviços";
                 case 1:
-                    return "Sobre";
-                case 2:
                     return "Mapa";
+                case 2:
+                    return "Sobre";
             }
             return null;
         }

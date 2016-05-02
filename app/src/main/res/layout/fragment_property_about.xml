@@ -11,107 +11,166 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_icon">
 
-        <RelativeLayout
-            android:id="@+id/property_info"
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view"
+            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp">
+            android:layout_margin="5dp"
+            android:elevation="2dp"
+            card_view:cardCornerRadius="2dp">
 
-            <TextView
-                android:id="@+id/property_name"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/property_info"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nome do Estabelecimento"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_centerHorizontal="true"/>
+                android:layout_margin="15dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp">
 
-            <TextView
-                android:id="@+id/text_phone"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/property_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Nome do Estabelecimento"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"/>
+
+                <TextView
+                    android:id="@+id/text_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/property_name"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:text="Telefone: "/>
+
+                <TextView
+                    android:id="@+id/property_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_phone"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="(11) 4427-8861"/>
+
+                <TextView
+                    android:id="@+id/text_street"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/property_phone"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:text="Endereço:"/>
+
+                <TextView
+                    android:id="@+id/property_adress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_street"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="Rua Jaboticabeira da Silva, 54 - Vila Maria - SP"/>
+
+                <TextView
+                    android:id="@+id/text_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/property_adress"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:text="Funcionamento:"/>
+
+                <TextView
+                    android:id="@+id/property_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_open"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Seg. à Sex. das "/>
+
+                <TextView
+                    android:id="@+id/property_das"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/property_open"
+                    android:layout_alignBaseline="@+id/property_open"
+                    android:layout_marginLeft="5dp"
+                    android:text="das"/>
+
+                <TextView
+                    android:id="@+id/property_open_hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/property_das"
+                    android:layout_alignBaseline="@+id/property_das"
+                    android:layout_marginLeft="5dp"
+                    android:text="09:00 às 20:00"/>
+
+            </RelativeLayout>
+
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view_2"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:elevation="2dp"
+            card_view:cardCornerRadius="2dp"
+            android:layout_below="@+id/card_view">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/property_name"
-                android:layout_marginLeft="10dp"
+                android:layout_below="@+id/property_info"
                 android:layout_marginTop="10dp"
-                android:textStyle="bold"
-                android:text="Telefone: "/>
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="15dp">
 
-            <TextView
-                android:id="@+id/property_phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/text_phone"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:text="(11) 4427-8861"/>
+                <TextView
+                    android:id="@+id/text_promotions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Receber notificação de promoções deste estabelecimento?"/>
 
-            <TextView
-                android:id="@+id/text_street"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/property_phone"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:textStyle="bold"
-                android:text="Endereço:"/>
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:layout_alignParentRight="true"/>
 
-            <TextView
-                android:id="@+id/property_adress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/text_street"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:text="Rua Jaboticabeira da Silva, 54 - Vila Maria - SP"/>
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/text_open"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/property_adress"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:textStyle="bold"
-                android:text="Funcionamento:"/>
+        </android.support.v7.widget.CardView>
 
-            <TextView
-                android:id="@+id/property_open"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/text_open"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:text="Seg. à Sex. das "/>
-
-            <TextView
-                android:id="@+id/property_das"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/property_open"
-                android:layout_alignBaseline="@+id/property_open"
-                android:layout_marginLeft="5dp"
-                android:text="das"/>
-
-            <TextView
-                android:id="@+id/property_open_hour"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/property_das"
-                android:layout_alignBaseline="@+id/property_das"
-                android:layout_marginLeft="5dp"
-                android:text="09:00 às 20:00"/>
-
-        </RelativeLayout>
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view_call"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            card_view:cardCornerRadius="2dp"
+            android:layout_below="@+id/card_view_2">
 
         <RelativeLayout
             android:id="@+id/layout_property_call"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@android:color/holo_green_dark"
-            android:layout_marginTop="20dp"
-            android:layout_above="@+id/property_info"
+            android:layout_above="@+id/card_view"
             android:layout_alignParentBottom="true">
 
             <ImageView
@@ -122,6 +181,8 @@
                 android:src="@drawable/ic_phone_white_24dp"/>
 
         </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
 
     </RelativeLayout>
 

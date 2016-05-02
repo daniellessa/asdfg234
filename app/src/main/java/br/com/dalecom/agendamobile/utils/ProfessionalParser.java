@@ -122,7 +122,7 @@ public class ProfessionalParser {
 
                 professional.setWorkSunday(data.get("workSunday").getAsBoolean());
                 professional.setWorkMonday(data.get("workMonday").getAsBoolean());
-                professional.setWorkTuesday(data.get("workMonday").getAsBoolean());
+                professional.setWorkTuesday(data.get("workTuesday").getAsBoolean());
                 professional.setWorkWednesday(data.get("workWednesday").getAsBoolean());
                 professional.setWorkThursday(data.get("workThursday").getAsBoolean());
                 professional.setWorkFriday(data.get("workFriday").getAsBoolean());

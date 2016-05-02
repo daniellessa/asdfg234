@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -35,6 +36,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
@@ -203,30 +205,23 @@ public class HomeActivity extends AppCompatActivity
     private void setUserOnNavigation(){
         currentUser = sharedPreference.getCurrentUser();
 
-        userName.setText(currentUser.getName());
+        try {
+            userName.setText(currentUser.getName());
 
-        if(currentUser.getLocalImageLocation().length() > 0){
-            imageView.setImageURI(Uri.parse(currentUser.getLocalImageLocation()));
-            Log.d(LogUtils.TAG, "Path image CurrentUser: " + currentUser.getLocalImageLocation());
+            if(currentUser.getLocalImageLocation().length() > 0){
+                imageView.setImageURI(Uri.parse(currentUser.getLocalImageLocation()));
+                Log.d(LogUtils.TAG, "Path image CurrentUser: " + currentUser.getLocalImageLocation());
+            }
+
+            if(currentUser.getBucketPath().length() == 0 && currentUser.getPhotoPath().length() > 0){
+                new DownloadImageGoogle().execute();
+            }
+        }catch (NullPointerException ex){
+            Intent it = new Intent(this,LoginActivity.class);
+            startActivity(it);
         }
 
-//        if(currentUser.getBucketPath().length() == 0 && currentUser.getPhotoPath().length() > 0){
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    try {
-//                        URL newurl = new URL(currentUser.getPhotoPath());
-//                        Bitmap image = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
-//                        if(image != null)
-//                            imageView.setImageBitmap(image);
-//
-//                        Log.d(LogUtils.TAG, "Carregou?");
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }).start();
-//        }
+
     }
 
 
@@ -309,5 +304,28 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private class DownloadImageGoogle extends AsyncTask<Void, Void, Void> {
+
+        private Bitmap image;
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+                InputStream is = new URL(currentUser.getPhotoPath()).openStream();
+                image = BitmapFactory.decodeStream(is);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (image != null)
+                imageView.setImageBitmap(image);
+        }
     }
 }

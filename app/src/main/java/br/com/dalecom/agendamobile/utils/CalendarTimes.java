@@ -87,6 +87,8 @@ public class CalendarTimes {
 
                 if(DateHelper.hourToString(startAt).equals(DateHelper.hourToString(eventStart))){
 
+                    Log.d(LogUtils.TAG, "Time: " + DateHelper.convertDateToStringSql(startAt)+" => "+DateHelper.convertDateToStringSql(auxTarget));
+
                     if(DateHelper.hourToString(auxEnd).equals(DateHelper.hourToString(auxTarget))){
                         list.add(createFreeTime(auxStart, auxEnd));
                     }

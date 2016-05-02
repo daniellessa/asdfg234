@@ -1,70 +1,40 @@
 package br.com.dalecom.agendamobile.ui;
 
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.InflateException;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewFlipper;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
-import br.com.dalecom.agendamobile.adapters.CalendarHorizontalAdapter;
-import br.com.dalecom.agendamobile.adapters.ServiceAdapter;
 import br.com.dalecom.agendamobile.adapters.TimesAdapter;
 import br.com.dalecom.agendamobile.fragments.CustomDialogFragment;
 import br.com.dalecom.agendamobile.fragments.DialogFragmentConfirmEvent;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
-import br.com.dalecom.agendamobile.model.Day;
 import br.com.dalecom.agendamobile.model.Event;
-import br.com.dalecom.agendamobile.model.Professional;
-import br.com.dalecom.agendamobile.model.Service;
 import br.com.dalecom.agendamobile.model.Times;
 import br.com.dalecom.agendamobile.model.User;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
@@ -72,40 +42,28 @@ import br.com.dalecom.agendamobile.utils.CalendarTimes;
 import br.com.dalecom.agendamobile.utils.EventManager;
 import br.com.dalecom.agendamobile.utils.EventParser;
 import br.com.dalecom.agendamobile.utils.LogUtils;
-import br.com.dalecom.agendamobile.utils.ObjectTest;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
-import br.com.dalecom.agendamobile.utils.S;
-import br.com.dalecom.agendamobile.utils.ServicesParser;
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class TimesActivity extends AppCompatActivity {
+public class TimesActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, DialogInterface.OnCancelListener{
 
-
-    private ViewPager mViewPager;
-    private TextView viewMonth, viewYear;
     private TextView dayPrevius, dayCurrent, dayNext, weekDayPrevius, weekDayCurrent, weekDayNext, monthCurrent;
     private RelativeLayout previusLayout, nextLayout, daysLayout;
-    private ImageView imageProfessional, selectedHorizDay, nextMonth, previusMonth;
+    private ImageView imageProfessional;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private Calendar dateSelected;
     private RecyclerView mRecyclerView;
-    //private RecyclerView.LayoutManager layoutManagerCalendarHoriz;
-    //private RecyclerView mRecyclerViewCalendarHoriz;
     private RecyclerView.LayoutManager layoutManager;
-    //private CalendarHorizontalAdapter adapterCalendarHoriz;
     private TimesAdapter adapter;
     private User userSelected;
-    public ProgressDialog dialog;
+    private RelativeLayout layoutProgressBar;
     private List<Times> mList;
-    private List<Day> mListCalendarHoriz;
     private  CalendarTimes calendarTimes;
     private List<Event> mEvents = new ArrayList<>();
     private Calendar startAt, endstAt;
-    private ViewFlipper viewDays;
+    private FloatingActionButton calendarPicker;
 
     @Inject
     public EventManager eventManager;
@@ -123,16 +81,31 @@ public class TimesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
+        setFindByIds();
         dateSelected = eventManager.getDateSelected();
         userSelected = eventManager.getCurrentUserProfessional();
         populateEventsList();
         setCollapsingToolBar();
-        //populateCalendarHorizontal();
-        setFindByIds();
         setFragmentDays();
 
+
     }
+
+    private void setFindByIds(){
+        layoutProgressBar = (RelativeLayout) findViewById(R.id.layout_progress);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_times);
+        calendarPicker = (FloatingActionButton) findViewById(R.id.fab);
+
+        calendarPicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initDatePicker();
+            }
+        });
+
+    }
+
+
 
     private void setCollapsingToolBar(){
 
@@ -156,51 +129,6 @@ public class TimesActivity extends AppCompatActivity {
 
     }
 
-    private void setFindByIds(){
-
-        //viewMonth = (TextView) findViewById(R.id.calendar_month);
-        //viewYear = (TextView) findViewById(R.id.calendar_year);
-
-        //viewMonth.setText(DateHelper.getMonth(dateSelected));
-        //viewYear.setText(String.valueOf(dateSelected.get(Calendar.YEAR)));
-
-        //previusMonth = (ImageView) findViewById(R.id.calendar_previus_month);
-        //nextMonth = (ImageView) findViewById(R.id.calendar_next_month);
-
-
-//
-//        previusMonth.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Calendar currentDate = Calendar.getInstance();
-//                dateSelected.add(Calendar.MONTH, -1);
-//                viewMonth.setText(DateHelper.getMonth(dateSelected));
-//                viewYear.setText(String.valueOf(dateSelected.get(Calendar.YEAR)));
-//                //if(dateSelected.after(currentDate)){
-//                updateCalendarHorizontal(dateSelected);
-//                updateRecyclerView(dateSelected);
-//                //}
-//
-//
-//            }
-//        });
-
-//        nextMonth.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Calendar currentDate = Calendar.getInstance();
-//                dateSelected.add(Calendar.MONTH, 1);
-//                viewMonth.setText(DateHelper.getMonth(dateSelected));
-//                viewYear.setText(String.valueOf(dateSelected.get(Calendar.YEAR)));
-//                //if(dateSelected.after(currentDate)) {
-//                    updateCalendarHorizontal(dateSelected);
-//                    updateRecyclerView(dateSelected);
-//               // }
-//
-//            }
-//        });
-
-    }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void setFragmentDays(){
@@ -220,8 +148,16 @@ public class TimesActivity extends AppCompatActivity {
         previusLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+
+                while (!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
+                    dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+                }
+
                 setCurrentDayFragment();
+
+
             }
         });
 
@@ -229,18 +165,15 @@ public class TimesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dateSelected.add(Calendar.DAY_OF_MONTH, 1);
+
+                while(!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
+                    dateSelected.add(Calendar.DAY_OF_MONTH, 1);
+                }
+
                 setCurrentDayFragment();
+
             }
         });
-
-
-//        daysLayout.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                Log.d(LogUtils.TAG, "OnTouchListener: "+event.getTouchMajor()+" - ");
-//                return false;
-//            }
-//        });
 
     }
 
@@ -271,7 +204,8 @@ public class TimesActivity extends AppCompatActivity {
     private void populateEventsList(){
         mEvents.clear();
         restClient.getEvents(userSelected.getIdServer(), DateHelper.toStringSql(eventManager.getDateSelected()), callbackEvents);
-        dialog = ProgressDialog.show(TimesActivity.this,"Aguarde","Carregando agenda...",false,true);
+        layoutProgressBar.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.GONE);
     }
 
     private Callback callbackEvents = new Callback<JsonArray>(){
@@ -281,98 +215,18 @@ public class TimesActivity extends AppCompatActivity {
             EventParser eventParser = new EventParser(jsonArray);
             mEvents = eventParser.parseFullEvents();
             setRecyclerView();
-            dialog.dismiss();
+            layoutProgressBar.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void failure(RetrofitError error) {
             mEvents = new ArrayList<>();
             setRecyclerView();
-            dialog.dismiss();
+            layoutProgressBar.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
     };
-
-//    private void populateCalendarHorizontal() {
-//
-//        mListCalendarHoriz = populateList(dateSelected);
-//        //mListCalendarHoriz.get(0).setSelected(true);
-//
-//        mRecyclerViewCalendarHoriz = (RecyclerView) findViewById(R.id.recyclerView_calendar_horizontal);
-//        layoutManagerCalendarHoriz = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-//        mRecyclerViewCalendarHoriz.setLayoutManager(layoutManagerCalendarHoriz);
-//        adapterCalendarHoriz = new CalendarHorizontalAdapter(this,mListCalendarHoriz);
-//        adapterCalendarHoriz.notifyDataSetChanged();
-//        mRecyclerViewCalendarHoriz.setAdapter(adapterCalendarHoriz);
-//
-//
-//        Calendar currentDate = Calendar.getInstance();
-//        currentDate.add(Calendar.DAY_OF_MONTH, -1);
-//        int position = currentDate.get(Calendar.DAY_OF_MONTH);
-//        layoutManagerCalendarHoriz.scrollToPosition(position);
-//
-//        mRecyclerViewCalendarHoriz.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//
-//                if(mListCalendarHoriz.get(position).getViewType() == S.TYPE_ITEM) {
-//                    if (selectedHorizDay != null)
-//                        selectedHorizDay.setBackground(null);
-//
-//                    selectedHorizDay = (ImageView) view.findViewById(R.id.background_day);
-//                    selectedHorizDay.setBackground(getResources().getDrawable(R.drawable.background_item_calendar));
-//
-//                    dateSelected = DateHelper.copyDate(mListCalendarHoriz.get(position).getDate());
-//                    eventManager.setDateSelected(dateSelected);
-//                    updateRecyclerView(dateSelected);
-//
-//                    Toast.makeText(TimesActivity.this, DateHelper.toString(eventManager.getDateSelected()), Toast.LENGTH_SHORT).show();
-//                }else {
-//                    Toast.makeText(TimesActivity.this, "Data indisponível", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        }));
-//
-//
-//
-//    }
-
-//    private List<Day> populateList (Calendar date){
-//
-//        ArrayList<Day> listDay = new ArrayList<>();
-//
-//        int month = date.get(Calendar.MONTH) + 1;
-//        int year = date.get(Calendar.YEAR);
-//
-//        Calendar startAt = DateHelper.copyDate(date);
-//        startAt.set(Calendar.DAY_OF_MONTH, 1);
-//        Calendar endsAt = DateHelper.copyDate(startAt);
-//
-//        if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
-//            endsAt.add(Calendar.DAY_OF_MONTH, 31);
-//        else if(month == 4 || month == 6 || month == 9 || month == 11)
-//            endsAt.add(Calendar.DAY_OF_MONTH, 30);
-//        else if(month == 2 && !isBissexto(year))
-//            endsAt.add(Calendar.DAY_OF_MONTH, 28);
-//        else if(month == 2 && isBissexto(year))
-//            endsAt.add(Calendar.DAY_OF_MONTH, 29);
-//
-//        while (startAt.before(endsAt)){
-//            listDay.add(new Day(startAt));
-//            startAt.add(Calendar.DAY_OF_MONTH, 1);
-//        }
-//
-//        return listDay;
-//    }
-//
-//    private boolean isBissexto(int ano){
-//        boolean result = false;
-//        if( ano % 400 == 0){
-//            result = true;
-//        }else if(ano%4 == 0 && ano%100!=0)
-//            result = true;
-//
-//        return result;
-//    }
 
     private void setRecyclerView(){
 
@@ -394,7 +248,7 @@ public class TimesActivity extends AppCompatActivity {
 
                         Times time = mList.get(position);
 
-                        Log.d(LogUtils.TAG,"Date selected: "+ time.getStartAt() + " " +time.getEndsAt());
+                        Log.d(LogUtils.TAG, "Date selected: " + time.getStartAt() + " " + time.getEndsAt());
                         if (calendarTimes.checkDisponible(TimesActivity.this, time)) {
 
                             startAt = DateHelper.copyDate(dateSelected);
@@ -417,10 +271,6 @@ public class TimesActivity extends AppCompatActivity {
                     }
                 })
         );
-
-
-
-
     }
 
     private Callback callbackPostEvents = new Callback<JsonObject>(){
@@ -429,7 +279,7 @@ public class TimesActivity extends AppCompatActivity {
         public void success(JsonObject jsonObject, Response response) {
             Log.d(LogUtils.TAG,"Success postEvent: "+ response.getStatus());
             updateRecyclerView(dateSelected);
-            //initDialog(startAt, endstAt);
+            initDialog(startAt, endstAt);
         }
 
         @Override
@@ -459,7 +309,8 @@ public class TimesActivity extends AppCompatActivity {
 
     private void updateRecyclerView(final Calendar dateSelected){
 
-        dialog = ProgressDialog.show(TimesActivity.this,"Aguarde","Carregando agenda...",false,true);
+        layoutProgressBar.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.GONE);
         restClient.getEvents(userSelected.getIdServer(), DateHelper.toStringSql(dateSelected), new Callback<JsonArray>() {
 
 
@@ -472,21 +323,17 @@ public class TimesActivity extends AppCompatActivity {
                 List<Times> times = calendarTimes.construct();
                 adapter.swap(times);
 
-                dialog.dismiss();
+                layoutProgressBar.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void failure(RetrofitError error) {
-                dialog.dismiss();
+                layoutProgressBar.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
             }
         });
     }
-
-//    private void updateCalendarHorizontal(Calendar dateSelected){
-//        List<Day> mDays = populateList(dateSelected);
-//        adapterCalendarHoriz.swap(mDays);
-//    }
-
 
     @Override
     protected void onResume() {
@@ -528,6 +375,56 @@ public class TimesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void initDatePicker(){
+        Calendar cDefault = DateHelper.copyDate(dateSelected);
+        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
+                this,
+                cDefault.get(Calendar.YEAR),
+                cDefault.get(Calendar.MONTH),
+                cDefault.get(Calendar.YEAR)
+        );
 
+        Calendar minDate = Calendar.getInstance();
+        Calendar maxDate = Calendar.getInstance();
 
+        maxDate.add(Calendar.MONTH, 1);
+
+        datePickerDialog.setMinDate(minDate);
+        datePickerDialog.setMaxDate(maxDate);
+
+        List<Calendar> daysList = new LinkedList<>();
+        Calendar[] daysArray;
+        Calendar cAux = Calendar.getInstance();
+
+        while (cAux.getTimeInMillis() <= maxDate.getTimeInMillis()){
+            if(DateHelper.isWorkDay(cAux, eventManager.getCurrentUserProfessional())){
+                Calendar c = Calendar.getInstance();
+                c.setTimeInMillis(cAux.getTimeInMillis());
+
+                daysList.add(c);
+            }
+            cAux.setTimeInMillis(cAux.getTimeInMillis() + (24 * 60 * 60 * 1000));
+        }
+        daysArray = new Calendar[daysList.size()];
+        for (int i = 0; i < daysArray.length; i ++){
+            daysArray[i] = daysList.get(i);
+        }
+
+        datePickerDialog.setSelectableDays(daysArray);
+        datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
+
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        dateSelected.set(Calendar.YEAR, year);
+        dateSelected.set(Calendar.MONTH, monthOfYear);
+        dateSelected.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        setCurrentDayFragment();
+    }
 }

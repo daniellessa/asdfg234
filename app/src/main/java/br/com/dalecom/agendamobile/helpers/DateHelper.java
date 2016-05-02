@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import br.com.dalecom.agendamobile.model.User;
+
 /**
  * Created by daniellessa on 24/03/16.
  */
@@ -117,6 +119,23 @@ public class DateHelper {
         return result;
     }
 
+    public static String toStringSql(Date date){
+        String result = null;
+        String day = String.valueOf(date.getDay());
+        String month = String.valueOf(date.getMonth()+1);
+        String year = String.valueOf(date.getYear());
+
+        if(day.length() == 1){
+            day = "0"+day;
+        }
+        if(month.length() == 1){
+            month = "0"+month;
+        }
+        result = year+"-"+month+"-"+day;
+
+        return result;
+    }
+
     public static String hourToString(Calendar date){
         String r = null;
         String hour, minute;
@@ -131,7 +150,7 @@ public class DateHelper {
             minute = "0"+minute;
         }
 
-        r = hour+":"+minute+" hs";
+        r = hour+":"+minute;
 
         return r;
     }
@@ -150,7 +169,7 @@ public class DateHelper {
             minute = "0"+minute;
         }
 
-        r = hour+":"+minute+" hs";
+        r = hour+":"+minute;
 
         return r;
     }
@@ -249,5 +268,49 @@ public class DateHelper {
         Calendar newDate = Calendar.getInstance();
         newDate.set(date.get(Calendar.YEAR),date.get(Calendar.MONTH),date.get(Calendar.DAY_OF_MONTH),date.get(Calendar.HOUR_OF_DAY),date.get(Calendar.MINUTE),0);
         return newDate;
+    }
+
+    public static boolean isWorkDay(Calendar day, User user){
+
+        switch (day.get(Calendar.DAY_OF_WEEK)){
+            case 1:
+                if(user.getProfessional().isWorkSunday())
+                    return true;
+                else
+                    return false;
+            case 2:
+                if(user.getProfessional().isWorkMonday())
+                    return true;
+                else
+                    return false;
+            case 3:
+                if(user.getProfessional().isWorkTuesday())
+                    return true;
+                else
+                    return false;
+            case 4:
+                if(user.getProfessional().isWorkWednesday())
+                    return true;
+                else
+                    return false;
+            case 5:
+                if(user.getProfessional().isWorkThursday())
+                    return true;
+                else
+                    return false;
+            case 6:
+                if(user.getProfessional().isWorkFriday())
+                    return true;
+                else
+                    return false;
+            case 7:
+                if(user.getProfessional().isWorkSaturday())
+                    return true;
+                else
+                    return false;
+
+        }
+
+        return false;
     }
 }

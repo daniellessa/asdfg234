@@ -24,10 +24,14 @@ import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -39,6 +43,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Arrays;
@@ -72,6 +80,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private TextView btnLogin, textProfessional,textUser;
     private ProgressDialog dialog;
     private FloatingActionButton fab;
+    private AccessTokenTracker accessTokenTracker;
+    private AccessToken accessToken;
     private ImageView loginFacebook, loginGoogle;
     private CallbackManager callbackManager;
 
@@ -124,11 +134,47 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
 
+
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        Log.d(LogUtils.TAG, "LoginResult - " + loginResult.getRecentlyGrantedPermissions());
+                        Log.d(LogUtils.TAG, "LoginResult");
+
+                        GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                User userFacebook = new User();
+                                Log.d(LogUtils.TAG, "Response: "+ response.toString());
+                                try {
+
+                                    userFacebook.setEmail(response.getJSONObject().get("email").toString());
+                                    userFacebook.setName(response.getJSONObject().get("first_name").toString() + " " + response.getJSONObject().get("last_name").toString());
+                                    userFacebook.setPassword(response.getJSONObject().get("id").toString());
+                                    userFacebook.setPhotoPath(response.getJSONObject().getJSONObject("picture").getJSONObject("data").get("url").toString());
+                                    userFacebook.setRole(4);
+                                    userFacebook.setRegistrationId(sharedPreference.getUserRegistrationId());
+
+                                    restClient.loginGoogleOrFacebbok(userFacebook, loginCallback);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                Log.d(LogUtils.TAG, "email: "+userFacebook.getEmail());
+                                Log.d(LogUtils.TAG, "name: "+userFacebook.getName());
+                                Log.d(LogUtils.TAG, "password: "+userFacebook.getPassword());
+                                Log.d(LogUtils.TAG, "picture: "+userFacebook.getPhotoPath());
+
+                            }
+                        });
+
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "picture.type(large), id, first_name, last_name, email, gender, birthday, location");
+                        request.setParameters(parameters);
+                        request.executeAsync();
+
+
                     }
 
                     @Override
@@ -145,11 +191,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         loginFacebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends"));
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends", "email"));
             }
         });
 
     }
+
 
     private void setLoginGoogle(){
 
@@ -181,6 +228,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        callbackManager.onActivityResult(requestCode,resultCode,data);
+
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -199,6 +248,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             userGoogle.setName(acct.getDisplayName());
             userGoogle.setPassword(acct.getId());
             userGoogle.setPhotoPath(acct.getPhotoUrl().toString());
+            userGoogle.setRole(4);
             userGoogle.setRegistrationId(sharedPreference.getUserRegistrationId());
 
             restClient.loginGoogleOrFacebbok(userGoogle,loginCallback);
