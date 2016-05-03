@@ -3,12 +3,15 @@ package br.com.dalecom.agendamobile.model;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by daniellessa on 25/03/16.
@@ -24,12 +27,10 @@ public class Event extends Model implements Serializable {
     @Column(name = "UserProf")
     private User userProf;
 
-    @Column(name = "Professional")
+    @Column(name = "ProfessionalId")
     @Expose
     @SerializedName("professionals_id")
     protected int professionalsId;
-
-    private Professional professinal;
 
     @Column(name = "User_id")
     @Expose
@@ -38,12 +39,10 @@ public class Event extends Model implements Serializable {
 
     private User user;
 
-    @Column(name = "Service")
+    @Column(name = "ServiceId")
     @Expose
     @SerializedName("services_id")
     protected int servicesId;
-
-    private Service service;
 
     @Column(name = "Day")
     @Expose
@@ -73,7 +72,14 @@ public class Event extends Model implements Serializable {
     @Column(name = "FinalizedAt")
     private String finalizedAt;
 
+    @Column(name = "Professional")
+    private Professional professinal;
 
+    @Column(name = "Service")
+    private Service service;
+
+    @Column(name = "Property")
+    private Property property;
 
     public int getIdServer() {
         return (int)idServer;
@@ -184,7 +190,23 @@ public class Event extends Model implements Serializable {
         return day;
     }
 
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+
     public void setDay(String day) {
         this.day = day;
+    }
+
+    public static List<Event> getEvents(){
+
+        return new Select()
+                .from(Event.class)
+                .orderBy("StartAt ASC")
+                .execute();
     }
 }

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        card_view:cardCornerRadius="2dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/logo_property"
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:src="@drawable/scarlett"/>
+
+            <RelativeLayout
+                android:id="@+id/info_event"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/logo_property">
+
+
+                <RelativeLayout
+                    android:id="@+id/profissional_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/icon_perfil"
+                    android:layout_toLeftOf="@+id/info_status">
+
+                    <TextView
+                        android:id="@+id/name_event"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Event Name"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/event_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/name_event"
+                        android:layout_marginTop="5dp"
+                        android:text="event date"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/event_property"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/event_date"
+                        android:layout_marginTop="5dp"
+                        android:text="Property name"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/info_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignParentRight="true">
+
+                    <ImageView
+                        android:id="@+id/image_status"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/scarlett"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

@@ -11,7 +11,7 @@ public class S {
 
 
 //    public static final String AuthGoogle =  "661341416508-jmqeigejivot5erf7vhhukbofbphvsi0.apps.googleusercontent.com";
-    public  static final String END_POINT_URL = "http://172.22.3.38.xip.io:1337";
+    public  static final String END_POINT_URL = "http://192.168.1.107.xip.io:1337";
 //    public  static final String END_POINT_URL = "http://icalendar-homolog.us-east-1.elasticbeanstalk.com"; //Homolog
     public  static final String FILE_PREFIX = "image_";
     public static final String JPG_EXT = ".jpg";
@@ -25,6 +25,8 @@ public class S {
     public static String MixPanelProjectToken = "6cd5dce861e7931f425573d8e1285b9f";
     public static final int TYPE_HEADER = 0;
     public static final int TYPE_ITEM = 1;
+    public static final int TYPE_IN_DAY = 1;
+    public static final int TYPE_EXPIRED = 2;
     public static final String STATUS_PENDING = "pending";
     public static final String STATUS_SERVING = "serving";
     public static final String STATUS_FINISHED = "finished";

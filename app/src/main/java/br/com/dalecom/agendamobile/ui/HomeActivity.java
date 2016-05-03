@@ -180,7 +180,8 @@ public class HomeActivity extends AppCompatActivity
         myAppointments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //go to
+                Intent it = new Intent(HomeActivity.this, MyAppointmentsActivity.class);
+                startActivity(it);
             }
         });
         RelativeLayout settings = (RelativeLayout) navigationView.getHeaderView(0).findViewById(R.id.settings);

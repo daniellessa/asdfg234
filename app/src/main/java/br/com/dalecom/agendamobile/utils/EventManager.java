@@ -139,7 +139,11 @@ public class EventManager {
         this.mEvent.setStatus(S.STATUS_PENDING);
         this.mEvent.setFinalized(false);
 
-        //this.mEvent.save();
+        this.mEvent.setProfessinal(currentProfessional);
+        this.mEvent.setService(currentService);
+        this.mEvent.setProperty(currentProperty);
+
+        this.mEvent.save();
 
     }
 

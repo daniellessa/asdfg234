@@ -239,4 +239,5 @@ public class Professional extends Model{
     public void setProfessionName(String professionName) {
         this.professionName = professionName;
     }
+
 }

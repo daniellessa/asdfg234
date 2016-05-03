@@ -113,7 +113,12 @@
             android:name=".ui.CreateUserActivity"
             android:label="@string/title_activity_create_user"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+
+        <activity android:name=".ui.MyAppointmentsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- [Google gms services start] -->
 

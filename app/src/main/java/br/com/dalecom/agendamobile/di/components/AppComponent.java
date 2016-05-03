@@ -14,6 +14,7 @@ import br.com.dalecom.agendamobile.service.gcm.RegistrationIntentService;
 import br.com.dalecom.agendamobile.ui.CreateUserActivity;
 import br.com.dalecom.agendamobile.ui.HomeActivity;
 import br.com.dalecom.agendamobile.ui.LoginActivity;
+import br.com.dalecom.agendamobile.ui.MyAppointmentsActivity;
 import br.com.dalecom.agendamobile.ui.NewPropertyActivity;
 import br.com.dalecom.agendamobile.ui.ProfessionalsActivity;;
 import br.com.dalecom.agendamobile.ui.ProperiesActivity;
@@ -66,5 +67,6 @@ public interface AppComponent {
     void inject(UpDateImageActivity upDateImageActivity);
     void inject(PropertyActivity propertyActivity);
     void inject(PropertyActivity.PlaceholderFragment placeholderFragment);
+    void inject(MyAppointmentsActivity.PlaceholderFragment placeholderFragment);
 
 }
