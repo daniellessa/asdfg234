@@ -58,6 +58,7 @@ public class EventParser {
                 service.setHours(data.getAsJsonObject("services").get("hours").getAsInt());
                 service.setMinutes(data.getAsJsonObject("services").get("minutes").getAsInt());
                 service.setPrice(data.getAsJsonObject("services").get("price").getAsFloat());
+                service.setPropertyId(data.getAsJsonObject("services").get("property").getAsInt());
                 if(!data.getAsJsonObject("services").get("info").isJsonNull())
                     service.setInfo(data.getAsJsonObject("services").get("info").getAsString());
 

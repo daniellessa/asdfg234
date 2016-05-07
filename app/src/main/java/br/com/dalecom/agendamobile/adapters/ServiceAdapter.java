@@ -40,7 +40,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.MyViewHo
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            title = (TextView) itemView.findViewById(R.id.title_service);
+            title = (TextView) itemView.findViewById(R.id.title_services);
             subtitle = (TextView) itemView.findViewById(R.id.subtitle_service);
             price = (TextView) itemView.findViewById(R.id.price_service);
             oldPrice = (TextView) itemView.findViewById(R.id.old_price_service);

@@ -93,6 +93,10 @@ public class Property extends Model{
     @SerializedName("lng")
     protected float lng;
 
+    @Column(name = "Notification")
+    @Expose
+    protected boolean notification;
+
 
 
     public void setId(long id) {
@@ -213,6 +217,14 @@ public class Property extends Model{
 
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    public boolean isNotification() {
+        return notification;
+    }
+
+    public void setNotification(boolean notification) {
+        this.notification = notification;
     }
 
     public static List<Property> getAll(){

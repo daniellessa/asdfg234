@@ -94,7 +94,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="20dp">
+                    android:layout_marginRight="20dp"
+                    android:visibility="invisible">
 
                     <ImageView
                         android:id="@+id/background_alert"
@@ -103,14 +104,14 @@
                         android:background="@drawable/background_item_alert"
                         android:layout_centerInParent="true"/>
 
+
                     <TextView
-                        android:id="@+id/number_alert"
+                        android:id="@+id/number_of_alert"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/red"
+                        android:textColor="@color/white"
                         android:layout_centerInParent="true"
-                        android:textSize="12sp"
-                        android:text="3"/>
+                        android:textSize="12sp"/>
 
                 </RelativeLayout>
 
@@ -148,6 +149,41 @@
                     android:textStyle="bold"
                     android:textColor="@color/textEspecial"
                     android:text="Meus Agendamentos"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/colorDivider"
+                    android:layout_alignParentBottom="true"/>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/newProperty"
+                android:layout_width="match_parent"
+                android:background="@color/white"
+                android:layout_height="80dp">
+
+                <ImageView
+                    android:id="@+id/icon_property"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/inbox"
+                    android:layout_marginLeft="20dp"/>
+
+                <TextView
+                    android:id="@+id/new_property"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/icon_property"
+                    android:layout_marginLeft="25dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textEspecial"
+                    android:text="Inserir Estabelecimento"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

@@ -1,10 +1,19 @@
 package br.com.dalecom.agendamobile.ui;
 
+import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -17,16 +26,23 @@ import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import br.com.dalecom.agendamobile.adapters.NewPropertyAdapter;
+import br.com.dalecom.agendamobile.adapters.PropertiesAdapter;
 import br.com.dalecom.agendamobile.model.Property;
 import br.com.dalecom.agendamobile.utils.FileUtils;
 import br.com.dalecom.agendamobile.utils.LogUtils;
+import br.com.dalecom.agendamobile.utils.PropertyParser;
+import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
 import br.com.dalecom.agendamobile.utils.S;
 import br.com.dalecom.agendamobile.wrappers.S3;
 import retrofit.Callback;
@@ -41,13 +57,14 @@ import retrofit.client.Response;
 
 public class NewPropertyActivity extends AppCompatActivity {
 
-    private CircleImageView circleImageView;
-    private TextView nameProperty;
-    private EditText textPin;
-    private Button btnBuscar;
-    private RelativeLayout layoutProgress;
-    private RelativeLayout layoutFinalize;
+
     private Property property;
+    private List<Property> mList;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private NewPropertyAdapter adapter;
+    private SearchView searchView;
+    private int viewId;
 
     @Inject
     public RestClient restClient;
@@ -67,106 +84,82 @@ public class NewPropertyActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        carregarFindsByIds();
+        setRecycclerView();
 
 
     }
 
+    private void setRecycclerView(){
 
-    public void buscarProperty(View view){
-        layoutProgress.setVisibility(View.VISIBLE);
-        int PIN = Integer.valueOf(textPin.getText().toString());
+        mList = new ArrayList<>();
 
-        restClient.getProperties(PIN, callbackProperty);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewSerchable);
+        layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+        adapter = new NewPropertyAdapter(this, mList);
+        mRecyclerView.setAdapter(adapter);
 
+
+        hendleSearch(getIntent());
+
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        saveProperty(mList.get(position));
+                    }
+                })
+        );
     }
 
-    private Callback callbackProperty = new Callback<JsonObject>() {
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        hendleSearch(intent);
+    }
+
+    public void hendleSearch(Intent intent){
+        if(intent.ACTION_SEARCH.equalsIgnoreCase(intent.getAction())){
+            //String q = intent.getStringExtra(SearchManager.QUERY);
+        }else{
+            if(searchView != null){
+                String q = searchView.getQuery().toString();
+                if(q.length() > 3){
+                    restClient.getProperties(q, callbackProperty);
+                }
+            }
+
+        }
+    }
+
+
+    private Callback callbackProperty = new Callback<JsonArray>() {
 
         @Override
-        public void success(JsonObject o, Response response) {
+        public void success(JsonArray jsonArray, Response response) {
 
-            if(!o.isJsonNull()) {
-                property = new Property();
-                property.setIdServer(o.get("id").getAsInt());
-                property.setPin(o.get("pin").getAsString());
-                property.setName(o.get("name").getAsString());
-                property.setPhoto_path(o.get("photo_path").getAsString());
-                property.setBucketPath(o.get("bucket_name").getAsString());
-                property.setInfo(o.get("info").getAsString());
-                property.setOpenDay(o.get("open_day").getAsString());
-                property.setOpenHour(o.get("open_hour").getAsString());
-                property.setPhone(o.get("phone").getAsString());
-                property.setStreet(o.get("street").getAsString());
-                property.setNumber(o.get("number").getAsString());
-                property.setCity(o.get("city").getAsString());
+            PropertyParser parser = new PropertyParser(jsonArray);
 
-                if(!o.get("lat").isJsonNull()){
-                    property.setLat(o.get("lat").getAsFloat());
-                }
-
-                if(!o.get("lng").isJsonNull()){
-                    property.setLng(o.get("lng").getAsFloat());
-                }
-
-            }else{
-                layoutProgress.setVisibility(View.INVISIBLE);
-                nameProperty.setText("Ops! Nenhum estabelecimento encontrado.");
-            }
-
-            if(property.getPhoto_path() != null && property.getBucketPath() != null){
-
-                final String pictureName = fileUtils.getUniqueName();
-                final File pictureFile = fileUtils.getOutputMediaFile(fileUtils.MEDIA_TYPE_IMAGE, pictureName);
-
-                s3.downloadProfileFile(pictureFile,property.getBucketPath()+"/"+property.getPhoto_path()).setTransferListener(new TransferListener() {
-                    @Override
-                    public void onStateChanged(int id, TransferState state) {
-                        if(state == TransferState.COMPLETED) {
-                            nameProperty.setText(property.getName());
-                            property.setLocalImageLocationAndDeletePreviousIfExist(Uri.fromFile(pictureFile).toString());
-                            circleImageView.setImageURI(Uri.fromFile(pictureFile));
-                            btnBuscar.setVisibility(View.GONE);
-                            layoutFinalize.setVisibility(View.VISIBLE);
-                            layoutProgress.setVisibility(View.INVISIBLE);
-                        }
-                    }
-
-                    @Override
-                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
-                        Log.d(LogUtils.TAG, "Progress: "+ (int) (bytesCurrent * 100 / bytesTotal) + "%");
-                    }
-
-                    @Override
-                    public void onError(int id, Exception ex) {
-                        Log.d(LogUtils.TAG, "Erro: "+ ex);
-                        layoutProgress.setVisibility(View.INVISIBLE);
-                        nameProperty.setText("Algo de errado aconteceu, tente novamente por favor");
-                    }
-                });
+            mList = parser.parseFullProperty();
+            mRecyclerView.setAdapter(new PropertiesAdapter(NewPropertyActivity.this, mList));
+            adapter.notifyDataSetChanged();
 
 
-            }else{
-                nameProperty.setText(property.getName());
-                btnBuscar.setVisibility(View.GONE);
-                layoutFinalize.setVisibility(View.VISIBLE);
-                layoutProgress.setVisibility(View.INVISIBLE);
-            }
+
         }
 
         @Override
         public void failure(RetrofitError error) {
             Log.d(LogUtils.TAG, "FAILURE");
-            layoutProgress.setVisibility(View.INVISIBLE);
-            nameProperty.setText("Ops! Nenhum estabelecimento encontrado. Verifique sua conexão com a internet");
         }
 
     };
 
-    public void saveProperty(View view){
+    public void saveProperty(Property property){
         if(property != null){
 
             Property oldProperty = Property.findOne(property.getIdServer());
+            property.setNotification(true);
 
             if(oldProperty == null){
                 property.save();
@@ -179,36 +172,27 @@ public class NewPropertyActivity extends AppCompatActivity {
                 finish();
             }
 
-        }else{
-            messageSnackbar("Nenhum estabelecimento selecionado", view);
         }
 
     }
 
-    public void clearProperty(View view){
-        nameProperty.setText(null);
-        circleImageView.setImageResource(R.drawable.property_default);
-        property = null;
-        textPin.setText(null);
-        layoutFinalize.setVisibility(View.GONE);
-        btnBuscar.setVisibility(View.VISIBLE);
-        messageSnackbar("Verifique junto ao estabelecimento se o PIN está correto",view);
-    }
 
     private void notificationAdminProperty(){
-        //criar logica
+
+        restClient.notifyNewAssociation(property.getIdServer(), new Callback<JsonObject>() {
+
+            @Override
+            public void success(JsonObject jsonObject, Response response) {
+                Log.d(LogUtils.TAG, "notificationAdminProperty: SUCESS");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d(LogUtils.TAG, "notificationAdminProperty: FAIL");
+            }
+        });
     }
 
-
-
-    private void carregarFindsByIds(){
-        circleImageView = (CircleImageView) findViewById(R.id.icon_property);
-        nameProperty = (TextView) findViewById(R.id.title_property);
-        textPin = (EditText) findViewById(R.id.text_pin);
-        btnBuscar = (Button) findViewById(R.id.btn_buscar_property);
-        layoutProgress = (RelativeLayout) findViewById(R.id.layout_progress);
-        layoutFinalize = (RelativeLayout) findViewById(R.id.layout_finalize_or_clear);
-    }
 
     private void messageSnackbar(String text, View view){
         Snackbar.make(view, text, Snackbar.LENGTH_LONG)
@@ -217,29 +201,50 @@ public class NewPropertyActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_professional, menu);
+        getMenuInflater().inflate(R.menu.menu_searchable, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        MenuItem item = menu.findItem(R.id.action_searchable);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+            searchView = (SearchView) item.getActionView();
+        }else{
+            searchView = (SearchView) MenuItemCompat.getActionView(item);
+        }
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                hendleSearch(getIntent());
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                hendleSearch(getIntent());
+                return false;
+            }
+        });
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setQueryHint(getResources().getString(R.string.search_hint));
+
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        switch (id){
-            case R.id.action_settings:
+        switch (item.getItemId()) {
 
-                break;
             case android.R.id.home:
                 finish();
                 break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 

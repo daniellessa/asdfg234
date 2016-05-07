@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/change_professional"
+        android:id="@+id/home_acticity"
         android:orderInCategory="100"
-        android:title="Alterar profissional"
-        android:icon="@drawable/ic_swap_horiz_white_24dp"
+        android:title="Início"
+        android:icon="@drawable/ic_home_white_24dp"
         app:showAsAction="always" />
 </menu>

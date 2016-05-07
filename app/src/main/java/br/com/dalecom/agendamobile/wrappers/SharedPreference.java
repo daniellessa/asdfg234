@@ -26,6 +26,7 @@ public class SharedPreference {
     private final String CURRENT_USER_PHOTO_PATH = "PhotoPath";
     private final String CURRENT_USER_NAME = "Name";
     private final String CURRENT_USER_LOCAL_IMAGE = "image";
+    private final String CURRENT_USER_ROLE = "roles";
 
     private final String CURRENT_USER_REGISTRATION_ID = "Token";
     private final String CURRENT_USER_TOKEN = "Token";
@@ -41,6 +42,8 @@ public class SharedPreference {
     private final String CURRENT_PROPERTY_PHOTO_PATH = "PhotoPath";
     private final String CURRENT_PROPERTY_INFO = "info";
     private final String CURRENT_PROPERTY_LOCAL_IMAGE = "image";
+
+
 
 
     private SharedPreferences sharedPreferences = null;
@@ -60,6 +63,7 @@ public class SharedPreference {
         sharedPreferences.edit().putString(CURRENT_USER_PHOTO_PATH, user.getPhotoPath()).commit();
         sharedPreferences.edit().putString(CURRENT_USER_NAME, user.getName()).commit();
         sharedPreferences.edit().putString(CURRENT_USER_LOCAL_IMAGE, user.getLocalImageLocation()).commit();
+        sharedPreferences.edit().putInt(CURRENT_USER_ROLE, user.getRole()).commit();
     }
 
     public User getCurrentUser() {
@@ -72,6 +76,7 @@ public class SharedPreference {
         user.setBucketPath(sharedPreferences.getString(CURRENT_USER_BUCKET_PATH, ""));
         user.setPhotoPath(sharedPreferences.getString(CURRENT_USER_PHOTO_PATH, ""));
         user.setLocalImageLocation(sharedPreferences.getString(CURRENT_USER_LOCAL_IMAGE, ""));
+        user.setRole(sharedPreferences.getInt(CURRENT_USER_ROLE, 0));
         return user;
     }
 
@@ -164,4 +169,6 @@ public class SharedPreference {
         property.setLocalImageLocation(sharedPreferences.getString(CURRENT_PROPERTY_LOCAL_IMAGE, ""));
         return property;
     }
+
+
 }

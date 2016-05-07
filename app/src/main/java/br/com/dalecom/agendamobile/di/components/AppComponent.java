@@ -5,6 +5,7 @@ import android.content.Context;
 import javax.inject.Singleton;
 
 
+import br.com.dalecom.agendamobile.adapters.AlertAdapter;
 import br.com.dalecom.agendamobile.adapters.EventsAdapter;
 import br.com.dalecom.agendamobile.adapters.ProfessionalsAdapter;
 import br.com.dalecom.agendamobile.adapters.TimesAdapter;
@@ -68,5 +69,6 @@ public interface AppComponent {
     void inject(PropertyActivity propertyActivity);
     void inject(PropertyActivity.PlaceholderFragment placeholderFragment);
     void inject(MyAppointmentsActivity.PlaceholderFragment placeholderFragment);
+    void inject(AlertAdapter alertAdapter);
 
 }

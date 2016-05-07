@@ -34,7 +34,7 @@ public interface API {
     void postEvent(@Body Event event, Callback<JsonObject> callback);
 
     @GET("/properties")
-    void getProperties(@Query("pin") int pin, Callback<JsonObject> callback);
+    void getProperties(@Query("pin") String pin, Callback<JsonObject> callback);
 
     @GET("/professionals")
     void getProfessionals(@Query("property_id") int propertyId, @Query("service_id") int serviceId, Callback<JsonObject> callback);
@@ -48,6 +48,12 @@ public interface API {
     @GET("/professions")
     void getCategories(Callback<JsonObject> callback);
 
+    @GET("/events_not_expired")
+    void getEventsNotExpired(Callback<JsonObject> callback);
+
+    @GET("/events_expired")
+    void getEventsExpired(Callback<JsonObject> callback);
+
     @GET("/services")
     void getServicesForProperty(@Query("property_id") int professional_id,Callback<JsonObject> callback);
 
@@ -56,6 +62,12 @@ public interface API {
 
     @POST("/update-image")
     void postImage(@Body User user, Callback<JsonObject> callback);
+
+    @POST("/new_association")
+    void notifyNewAssociation(@Query("property_id") int propertyId, Callback<JsonObject> callback);
+
+    @POST("/new_event")
+    void notifyNewEvent(@Query("professional_id") int professionalId, Callback<JsonObject> callback);
 
     @FormUrlEncoded
     @POST("/exams/status")

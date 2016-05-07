@@ -143,7 +143,7 @@ public class EventManager {
         this.mEvent.setService(currentService);
         this.mEvent.setProperty(currentProperty);
 
-        this.mEvent.save();
+        //this.mEvent.save();
 
     }
 

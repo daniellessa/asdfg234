@@ -94,6 +94,57 @@ public class DateHelper {
         return result;
     }
 
+    public static String toString(String dateString){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar date = Calendar.getInstance();
+        try {
+            date.setTime(format.parse(dateString));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String result = null;
+        String day = String.valueOf(date.get(Calendar.DAY_OF_MONTH));
+        String month = String.valueOf(date.get(Calendar.MONTH)+1);
+        String year = String.valueOf(date.get(Calendar.YEAR));
+
+        if(day.length() == 1){
+            day = "0"+day;
+        }
+        if(month.length() == 1){
+            month = "0"+month;
+        }
+        result = day+"/"+month+"/"+year;
+
+        return result;
+    }
+
+    public static String toStringFull(Calendar date){
+        String result = null;
+        String day = String.valueOf(date.get(Calendar.DAY_OF_MONTH));
+        String month = String.valueOf(date.get(Calendar.MONTH)+1);
+        String year = String.valueOf(date.get(Calendar.YEAR));
+        String hour = String.valueOf(date.get(Calendar.HOUR_OF_DAY));
+        String min = String.valueOf(date.get(Calendar.MINUTE));
+
+        if(day.length() == 1){
+            day = "0"+day;
+        }
+        if(month.length() == 1){
+            month = "0"+month;
+        }
+        if(hour.length() == 1){
+            hour = "0"+hour;
+        }
+        if(min.length() == 1){
+            min = "0"+min;
+        }
+
+
+        result = day+"/"+month+"/"+year +" às "+hour+":"+min+"h";
+
+        return result;
+    }
+
     public static String getDay(Calendar date){
         String day = String.valueOf(date.get(Calendar.DAY_OF_MONTH));
         if(day.length() == 1){
@@ -160,6 +211,25 @@ public class DateHelper {
         String hour, minute;
         hour = String.valueOf(date.getHours());
         minute = String.valueOf(date.getMinutes());
+
+        if(hour.length() == 1){
+            hour = "0"+hour;
+        }
+
+        if(minute.length() == 1){
+            minute = "0"+minute;
+        }
+
+        r = hour+":"+minute;
+
+        return r;
+    }
+
+    public static String hourToString(String date){
+        String r = null;
+        String[] pasts = date.split(":");
+        String hour = pasts[0];
+        String minute = pasts[1];
 
         if(hour.length() == 1){
             hour = "0"+hour;

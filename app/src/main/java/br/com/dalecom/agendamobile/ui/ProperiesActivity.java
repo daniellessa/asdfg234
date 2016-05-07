@@ -111,7 +111,7 @@ public class ProperiesActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         int PIN = (Integer) data.getSerializableExtra("PIN");
-        restClient.getProperties(PIN, propertyCallback);
+        //restClient.getProperties(PIN, propertyCallback);
 
         Log.d(LogUtils.TAG, "Result: " + PIN );
     }

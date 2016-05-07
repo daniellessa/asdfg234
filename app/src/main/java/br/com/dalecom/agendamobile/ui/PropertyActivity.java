@@ -20,8 +20,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +36,7 @@ import javax.inject.Inject;
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.ServiceAdapter;
+import br.com.dalecom.agendamobile.model.Property;
 import br.com.dalecom.agendamobile.model.Service;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
 import br.com.dalecom.agendamobile.utils.EventManager;
@@ -143,6 +146,7 @@ public class PropertyActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private Switch mySwitch;
         private RecyclerView mRecyclerView;
         private RecyclerView.LayoutManager layoutManager;
         private ServiceAdapter adapter;
@@ -223,7 +227,24 @@ public class PropertyActivity extends AppCompatActivity {
                     TextView propertyAdress = (TextView) view.findViewById(R.id.property_adress);
                     TextView propertyOpen = (TextView) view.findViewById(R.id.property_open);
                     TextView propertyOpenHours = (TextView) view.findViewById(R.id.property_open_hour);
+                    Switch mySwitch = (Switch) view.findViewById(R.id.switch_property_notify);
                     RelativeLayout propertyCall = (RelativeLayout) view.findViewById(R.id.layout_property_call);
+
+                    if(eventManager.getCurrentProperty().isNotification())
+                        mySwitch.setChecked(true);
+                    else
+                        mySwitch.setChecked(false);
+
+                    mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                            Log.d(LogUtils.TAG, "Checked: "+ isChecked);
+                            Property property = Property.findOne(eventManager.getCurrentProperty().getIdServer());
+                            property.setNotification(isChecked);
+                            property.save();
+                        }
+                    });
 
 
                     propertyName.setText(eventManager.getCurrentProperty().getName());

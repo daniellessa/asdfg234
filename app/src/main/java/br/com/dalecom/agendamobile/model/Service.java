@@ -45,6 +45,8 @@ public class Service extends Model {
     @SerializedName("info")
     protected String info;
 
+    protected int propertyId;
+
 
 
     public int getIdServer() {
@@ -103,4 +105,11 @@ public class Service extends Model {
         this.info = info;
     }
 
+    public int getPropertyId() {
+        return propertyId;
+    }
+
+    public void setPropertyId(int propertyId) {
+        this.propertyId = propertyId;
+    }
 }

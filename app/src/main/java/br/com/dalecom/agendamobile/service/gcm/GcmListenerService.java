@@ -15,7 +15,12 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.gson.annotations.Expose;
+
 import br.com.dalecom.agendamobile.R;
+import br.com.dalecom.agendamobile.helpers.DateHelper;
+import br.com.dalecom.agendamobile.model.Alert;
+import br.com.dalecom.agendamobile.ui.AlertsActivity;
 import br.com.dalecom.agendamobile.utils.LogUtils;
 import br.com.dalecom.agendamobile.utils.S;
 
@@ -24,22 +29,78 @@ import br.com.dalecom.agendamobile.utils.S;
  */
 public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerService {
 
+    private int idServer;
+    private int type;
+    private String date;
+    private String time;
+    private String title;
+    private String message;
+    private int propertyId;
+    private String fromRegistredId;
+    private Intent intent;
+
     @Override
     public void onMessageReceived(String from, Bundle data) {
 
-        String message = data.getString("message");
-        String fromRegistredId = data.getString("from_registred_id");
+        Log.d(LogUtils.TAG, "Data: " + data.toString());
 
-        Log.d(LogUtils.TAG, "FromUser: " + fromRegistredId);
-        Log.d(LogUtils.TAG, "Message: " + message);
-
-        gerarNotificacao(message,message,fromRegistredId);
-
-        if (from.startsWith("/topics/")) {
-            // message received from some topic.
-        } else {
-            // normal downstream message.
+        idServer = Integer.valueOf(data.getString("id"));
+        type = Integer.valueOf(data.getString("type"));
+        date = data.getString("date");
+        time = data.getString("time");
+        title = data.getString("title");
+        message = data.getString("message");
+        fromRegistredId = data.getString("from_registred_id");
+        try {
+            propertyId = Integer.valueOf(data.getString("property_id"));
+        }catch (NumberFormatException ex){
+            propertyId = 0;
         }
+
+
+        intent = null;
+
+        switch (type){
+            case 1:
+                intent = new Intent(getApplicationContext(), AlertsActivity.class);
+                saveAlert();
+                gerarNotificacao("Teste",title,message);
+                break;
+            case 2:
+                intent = new Intent(getApplicationContext(), AlertsActivity.class);
+                saveAlert();
+                gerarNotificacao("Teste", title, message);
+                break;
+            case 3:
+                intent = new Intent(getApplicationContext(), AlertsActivity.class);
+                saveAlert();
+                gerarNotificacao("Teste", title, message);
+                break;
+            case 4:
+                Log.d(LogUtils.TAG, "type: " + type);
+                break;
+            case 5:
+                Log.d(LogUtils.TAG, "type: " + type);
+                break;
+            default:
+                Log.d(LogUtils.TAG, "type: " + type);
+                break;
+        }
+
+
+//        if (from.startsWith("/topics/")) {
+//            // message received from some topic.
+//        } else {
+//            // normal downstream message.
+//        }
+    }
+
+    private void saveAlert(){
+        Alert alert = new Alert(idServer, title, message, fromRegistredId, DateHelper.toString(date), DateHelper.hourToString(time), type);
+        if(Alert.findOne(idServer) == null)
+            alert.save();
+
+        Log.d(LogUtils.TAG, "IdServer Alert: "+ alert.getIdServer());
     }
 
 
@@ -54,8 +115,11 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
         builder.setSmallIcon(R.drawable.ic_icalendar_transparent);
         builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_icalendar_transparent));
 
+        if(intent != null){
+            PendingIntent p = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+            builder.setContentIntent(p);
+        }
 
-        //builder.setContentIntent(p);
 
         Notification n = builder.build();
         n.vibrate = new long[]{150,300,150,600};

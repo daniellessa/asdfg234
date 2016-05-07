@@ -79,7 +79,7 @@ public class DialogFragmentConfirmEvent extends DialogFragment {
 
         View view = inflater.inflate(R.layout.content_dialog_confirm, container);
 
-        RelativeLayout btnConfirm = (RelativeLayout) view.findViewById(R.id.btn_ok_dialog);
+        RelativeLayout btnConfirm = (RelativeLayout) view.findViewById(R.id.btn_ok_dialog_confirm);
         RelativeLayout btnCancel = (RelativeLayout) view.findViewById(R.id.btn_cancel_dialog);
         titleView = (TextView) view.findViewById(R.id.title_dialog);
         messageView = (TextView) view.findViewById(R.id.content_text_dialog);

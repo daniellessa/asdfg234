@@ -80,8 +80,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private TextView btnLogin, textProfessional,textUser;
     private ProgressDialog dialog;
     private FloatingActionButton fab;
-    private AccessTokenTracker accessTokenTracker;
-    private AccessToken accessToken;
     private ImageView loginFacebook, loginGoogle;
     private CallbackManager callbackManager;
 
@@ -228,7 +226,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        callbackManager.onActivityResult(requestCode,resultCode,data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
@@ -330,7 +328,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             final User userFromServer = userMarshalling(o.getAsJsonObject("user"));
             final User userFromDb = User.getUserByServerId(userFromServer.getIdServer());
 
-
             if ( o.get(S.KEY_TOKEN) == null || o.get(S.KEY_TOKEN).getAsString().equals("") )
             {
                 showFailDialog();
@@ -352,12 +349,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                             userFromServer.setLocalImageLocationAndDeletePreviousIfExist(Uri.fromFile(pictureFile).toString());
 
-                            if ( userFromDb == null )
-                            {
+                            if ( userFromDb == null ) {
                                 Log.d(LogUtils.TAG, "CREATING USER");
-
                                 userFromServer.save();
-                                sharedPreference.setCurrentUser(userFromServer);
+                                sharedPreference.setUserRegistrationId(userFromServer.getRegistrationId());
 
                             }
                             else
@@ -366,6 +361,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                                 userFromDb.setBucketPath(userFromServer.getBucketPath());
                                 userFromDb.setPhotoPath(userFromServer.getPhotoPath());
                                 userFromDb.setLocalImageLocationAndDeletePreviousIfExist(Uri.fromFile(pictureFile).toString());
+                                userFromDb.setRole(userFromServer.getRole());
+                                userFromDb.setRegistrationId(sharedPreference.getUserRegistrationId());
                                 userFromDb.save();
                                 sharedPreference.setCurrentUser(userFromDb);
                             }
@@ -486,6 +483,25 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         if(!user.get("id").isJsonNull())
             userObj.setIdServer(user.get("id").getAsInt());
+
+        if(!user.getAsJsonArray("roles").isJsonNull()){
+
+            int role = 0;
+            for (int i = 0; i < user.getAsJsonArray("roles").size(); i++){
+                if(role == 0){
+                    role = user.getAsJsonArray("roles").get(i).getAsJsonObject().get("roles").getAsInt();
+                }else {
+                    if(user.getAsJsonArray("roles").get(i).getAsJsonObject().get("roles").getAsInt() > role){
+                        role = user.getAsJsonArray("roles").get(i).getAsJsonObject().get("roles").getAsInt();
+                    }
+                }
+            }
+
+            userObj.setRole(role);
+            Log.d(LogUtils.TAG, "Role finded: "+ userObj.getRole());
+
+        }
+
 
 
         return userObj;

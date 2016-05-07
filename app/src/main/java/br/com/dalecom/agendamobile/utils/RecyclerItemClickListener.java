@@ -6,10 +6,12 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import br.com.dalecom.agendamobile.adapters.AlertAdapter;
+
 /**
  * Created by daniellessa on 23/03/16.
  */
-public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener{
 
 
         private OnItemClickListener mListener;

@@ -18,10 +18,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/logo_property"
-                android:layout_width="100dp"
-                android:layout_height="60dp"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/scarlett"/>
 
             <RelativeLayout
@@ -36,9 +38,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="15dp"
-                    android:layout_toRightOf="@+id/icon_perfil"
-                    android:layout_toLeftOf="@+id/info_status">
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/icon_perfil">
 
                     <TextView
                         android:id="@+id/name_event"
@@ -58,28 +59,23 @@
                         android:textSize="12sp"/>
 
                     <TextView
+                        android:id="@+id/event_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/name_event"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:textSize="12sp"
+                        android:text="Status"/>
+
+                    <TextView
                         android:id="@+id/event_property"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/event_date"
                         android:layout_marginTop="5dp"
                         android:text="Property name"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/info_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:layout_alignParentRight="true">
-
-                    <ImageView
-                        android:id="@+id/image_status"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/scarlett"/>
 
                 </RelativeLayout>
 

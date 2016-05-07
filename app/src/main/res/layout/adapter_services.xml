@@ -21,7 +21,7 @@
 
 
                    <TextView
-                       android:id="@+id/title_service"
+                       android:id="@+id/title_services"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_marginTop="10dp"
@@ -34,7 +34,7 @@
                        android:id="@+id/subtitle_service"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:layout_below="@+id/title_service"
+                       android:layout_below="@+id/title_services"
                        android:layout_marginLeft="15dp"
                        android:layout_marginTop="5dp"
                        android:layout_marginBottom="10dp"

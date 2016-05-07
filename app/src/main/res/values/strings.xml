@@ -24,6 +24,16 @@
     <string name="myProperties">Meus estabelecimentos</string>
     <string name="professionalActivity">Profissionais</string>
     <string name="subtitle_update_image">toque na imagem para editar</string>
+    <string name="new_property">Novo estabelecimento</string>
+    <string name="my_appointments">Meus Agendamentos</string>
+    <string name="alerts">Notificações</string>
+
+    <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+    </string-array>
 
 
     <array name="weeks_array">
@@ -63,6 +73,7 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_property">PropertyActivity</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_alerts">AlertsActivity</string>
 
 
 </resources>

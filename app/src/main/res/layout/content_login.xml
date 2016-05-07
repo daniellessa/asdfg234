@@ -128,14 +128,14 @@
 
             <ImageView
                 android:id="@+id/facebook_login"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/facebook_icon"/>
 
             <ImageView
                 android:id="@+id/google_login"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/google_icon"
                 android:layout_toRightOf="@+id/facebook_login"
                 android:layout_marginLeft="15dp"/>

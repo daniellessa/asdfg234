@@ -1,13 +1,17 @@
 package br.com.dalecom.agendamobile.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +19,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -64,6 +71,8 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
     private List<Event> mEvents = new ArrayList<>();
     private Calendar startAt, endstAt;
     private FloatingActionButton calendarPicker;
+    private float initPosition;
+    private float finalPosition;
 
     @Inject
     public EventManager eventManager;
@@ -105,6 +114,11 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
 
     }
 
+//    private void startAnimations() {
+//        Animation animation = AnimationUtils.loadAnimation(this, R.anim.scroll_horizontal);
+//        daysLayout.startAnimation(animation);
+//    }
+
 
 
     private void setCollapsingToolBar(){
@@ -145,35 +159,77 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
         daysLayout = (RelativeLayout) findViewById(R.id.layout_fragment_day);
         setCurrentDayFragment();
 
-        previusLayout.setOnClickListener(new View.OnClickListener() {
+//        previusLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+//
+//                while (!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
+//                    dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+//                }
+//
+//                setCurrentDayFragment();
+//
+//
+//            }
+//        });
+//
+//        nextLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dateSelected.add(Calendar.DAY_OF_MONTH, 1);
+//
+//                while(!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
+//                    dateSelected.add(Calendar.DAY_OF_MONTH, 1);
+//                }
+//
+//                setCurrentDayFragment();
+//
+//            }
+//        });
+
+
+        daysLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View v, MotionEvent event) {
 
-                dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+                int action = MotionEventCompat.getActionMasked(event);
 
-                while (!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
-                    dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+                switch (action) {
+                    case (MotionEvent.ACTION_DOWN):
+                        initPosition = event.getX();
+                        return true;
+                    case (MotionEvent.ACTION_MOVE):
+                        return true;
+                    case (MotionEvent.ACTION_UP):
+                        finalPosition = event.getX();
+                        if(initPosition < finalPosition){
+
+                            dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+                            while (!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
+                                dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+                            }
+                            setCurrentDayFragment();
+
+                        }else{
+
+                            dateSelected.add(Calendar.DAY_OF_MONTH, 1);
+                            while(!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
+                                dateSelected.add(Calendar.DAY_OF_MONTH, 1);
+                            }
+                            setCurrentDayFragment();
+
+                        }
+                        return true;
+                    case (MotionEvent.ACTION_CANCEL):
+                        Log.d(LogUtils.TAG, "Action was CANCEL");
+                        return true;
                 }
 
-                setCurrentDayFragment();
-
-
+                return false;
             }
         });
 
-        nextLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateSelected.add(Calendar.DAY_OF_MONTH, 1);
-
-                while(!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
-                    dateSelected.add(Calendar.DAY_OF_MONTH, 1);
-                }
-
-                setCurrentDayFragment();
-
-            }
-        });
 
     }
 
@@ -280,6 +336,19 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
             Log.d(LogUtils.TAG,"Success postEvent: "+ response.getStatus());
             updateRecyclerView(dateSelected);
             initDialog(startAt, endstAt);
+
+            restClient.notifyNewEvent(eventManager.getCurrentUserProfessional().getIdServer(), new Callback<JsonObject>() {
+
+                @Override
+                public void success(JsonObject jsonObject, Response response) {
+                    Log.d(LogUtils.TAG, "notificationEvent: SUCESS");
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.d(LogUtils.TAG, "notificationEvent: FAIL: "+ error);
+                }
+            });
         }
 
         @Override
@@ -363,7 +432,9 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
 
         //noinspection SimplifiableIfStatement
         switch (id){
-            case R.id.change_professional:
+            case R.id.home_acticity:
+                Intent it = new Intent(this, HomeActivity.class);
+                startActivity(it);
 
                 break;
             case android.R.id.home:

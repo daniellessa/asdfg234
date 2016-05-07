@@ -72,6 +72,7 @@ public class RestClient {
         api.postUser(user, callback);
     }
 
+
     public void loginGoogleOrFacebbok(User user, Callback callback) {
         api.loginGoogleOrFacebook(user, callback);
     }
@@ -92,7 +93,7 @@ public class RestClient {
         api.login(email, password, callback);
     }
 
-    public void getProperties(int pin, Callback callback) {
+    public void getProperties(String pin, Callback callback) {
         api.getProperties(pin, callback);
     }
 
@@ -102,6 +103,14 @@ public class RestClient {
 
     public void getEvents(int userProf_id, String day, Callback callback) {
         api.getEvents(userProf_id, day, callback);
+    }
+
+    public void getEventsNotExpired(Callback callback){
+        api.getEventsNotExpired(callback);
+    }
+
+    public void getEventsExpired(Callback callback){
+        api.getEventsExpired(callback);
     }
 
     public void getAppointments(Callback callback) {
@@ -114,6 +123,14 @@ public class RestClient {
 
     public void getServiceForProperty(int professionalId, Callback callback) {
         api.getServicesForProperty(professionalId, callback);
+    }
+
+    public void notifyNewAssociation(int propertyId, Callback callback) {
+        api.notifyNewAssociation(propertyId, callback);
+    }
+
+    public void notifyNewEvent(int professionalId, Callback callback) {
+        api.notifyNewEvent(professionalId, callback);
     }
 
 

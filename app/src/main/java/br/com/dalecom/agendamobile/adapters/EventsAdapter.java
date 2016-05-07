@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import javax.inject.Inject;
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
+import br.com.dalecom.agendamobile.helpers.FloatHelper;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Professional;
 import br.com.dalecom.agendamobile.model.Property;
@@ -39,6 +42,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private List<Event> mList;
     private Context mContext;
     private ImageLoader imageLoader;
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Inject
     RestClient restClient;
@@ -48,32 +52,32 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     class VHBusy extends RecyclerView.ViewHolder {
 
-        protected ImageView imageProperty, imageStatus;
-        protected TextView eventName, eventDate, eventProperty;
+        protected CircleImageView imageProperty;
+        protected TextView eventName, eventDate, eventProperty, eventStatus;
 
         public VHBusy(View itemView) {
             super(itemView);
-            imageProperty = (ImageView) itemView.findViewById(R.id.logo_property);
-            imageStatus = (ImageView) itemView.findViewById(R.id.image_status);
+            imageProperty = (CircleImageView) itemView.findViewById(R.id.logo_property);
             eventName = (TextView) itemView.findViewById(R.id.name_event);
             eventDate = (TextView) itemView.findViewById(R.id.event_date);
             eventProperty = (TextView) itemView.findViewById(R.id.event_property);
+            eventStatus = (TextView) itemView.findViewById(R.id.event_status);
         }
     }
 
     class VHFree extends RecyclerView.ViewHolder {
 
-        protected ImageView imageProperty, imageStatus;
-        protected TextView eventName, eventDate, eventProperty;
+        protected CircleImageView imageProperty;
+        protected TextView eventName, eventDate, eventProperty, eventStatus;
 
 
         public VHFree(View itemView) {
             super(itemView);
-            imageProperty = (ImageView) itemView.findViewById(R.id.logo_property);
-            imageStatus = (ImageView) itemView.findViewById(R.id.image_status);
+            imageProperty = (CircleImageView) itemView.findViewById(R.id.logo_property);
             eventName = (TextView) itemView.findViewById(R.id.name_event);
             eventDate = (TextView) itemView.findViewById(R.id.event_date);
             eventProperty = (TextView) itemView.findViewById(R.id.event_property);
+            eventStatus = (TextView) itemView.findViewById(R.id.event_status);
         }
     }
 
@@ -107,18 +111,41 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             //((VHBusy) holder).background.setVisibility(View.GONE);
         }
         else if(holder instanceof VHFree){
-            Professional professional = mList.get(position).getProfessinal();
-            Property property = mList.get(position).getProperty();
+            //Professional professional = mList.get(position).getProfessinal();
             Service service = mList.get(position).getService();
+            Property property = Property.findOne(service.getPropertyId());
+            Calendar date = Calendar.getInstance();
+            try {
+                date.setTime(format.parse(mList.get(position).getStartAt()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-
-            //((VHFree) holder).eventName.setText(service.getTitle());
-            ((VHFree) holder).eventDate.setText(mList.get(position).getStartAt());
+            ((VHFree) holder).eventName.setText(service.getTitle() +" R$"+ FloatHelper.formatarFloat(service.getPrice()));
+            ((VHFree) holder).eventDate.setText(DateHelper.toStringFull(date));
             ((VHFree) holder).imageProperty.setImageURI(Uri.parse(property.getLocalImageLocation()));
             ((VHFree) holder).eventProperty.setText(property.getName());
 
-
-
+            switch (mList.get(position).getStatus()){
+                case "pending":
+                    ((VHFree) holder).eventStatus.setText("Agendado");
+                    break;
+                case "serving":
+                    ((VHFree) holder).eventStatus.setText("Atendendo");
+                    ((VHFree) holder).eventStatus.setTextColor(mContext.getResources().getColor(R.color.blue));
+                    break;
+                case "finished":
+                    ((VHFree) holder).eventStatus.setText("Atendido");
+                    break;
+                case "canceled":
+                    ((VHFree) holder).eventStatus.setText("Cancelado");
+                    ((VHFree) holder).eventStatus.setTextColor(mContext.getResources().getColor(R.color.orange));
+                    break;
+                case "missed":
+                    ((VHFree) holder).eventStatus.setText("Não compareceu");
+                    ((VHFree) holder).eventStatus.setTextColor(mContext.getResources().getColor(R.color.red));
+                    break;
+            }
 
         }
 

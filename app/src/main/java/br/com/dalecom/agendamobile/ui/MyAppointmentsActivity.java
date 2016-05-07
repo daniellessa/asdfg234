@@ -2,8 +2,6 @@ package br.com.dalecom.agendamobile.ui;
 
 import android.app.ProgressDialog;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,13 +12,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import com.google.gson.JsonArray;
 
@@ -31,11 +29,11 @@ import javax.inject.Inject;
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.EventsAdapter;
-import br.com.dalecom.agendamobile.adapters.ServiceAdapter;
 import br.com.dalecom.agendamobile.model.Event;
-import br.com.dalecom.agendamobile.model.Service;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
 import br.com.dalecom.agendamobile.utils.EventManager;
+import br.com.dalecom.agendamobile.utils.EventParser;
+import br.com.dalecom.agendamobile.utils.LogUtils;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
 import br.com.dalecom.agendamobile.utils.ServicesParser;
 import retrofit.Callback;
@@ -124,8 +122,11 @@ public class MyAppointmentsActivity extends AppCompatActivity {
         private RecyclerView mRecyclerView;
         private RecyclerView.LayoutManager layoutManager;
         private EventsAdapter adapter;
-        private List<Event> mList;
-        private ProgressDialog dialog;
+        private RecyclerView mRecyclerView2;
+        private RecyclerView.LayoutManager layoutManager2;
+        private EventsAdapter adapter2;
+        private List<Event> mListNotExpired;
+        private List<Event> mListExpired;
         private float lat, lng;
         private static View view;
 
@@ -157,22 +158,79 @@ public class MyAppointmentsActivity extends AppCompatActivity {
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
 
                 case 1:
-                    view = inflater.inflate(R.layout.fragment_my_appointments_in_day, container, false);
-                    mList = Event.getEvents();
-                    setRecyclerView(view);
-                    break;
+                    Log.d(LogUtils.TAG, "Entrou 1");
+                    final View view = inflater.inflate(R.layout.fragment_my_appointments_not_expired, container, false);
+                    final RelativeLayout layoutNull = (RelativeLayout) view.findViewById(R.id.layout_null);
+                    final RelativeLayout layoutProgress = (RelativeLayout) view.findViewById(R.id.layout_progress);
+                    final RelativeLayout layoutError = (RelativeLayout) view.findViewById(R.id.layout_error);
+                    if(mListNotExpired == null) {
+                        layoutProgress.setVisibility(View.VISIBLE);
+                        restClient.getEventsNotExpired(new Callback<JsonArray>() {
+                            @Override
+                            public void success(JsonArray jsonArray, Response response) {
+
+                                EventParser servicesParser = new EventParser(jsonArray);
+                                mListNotExpired = servicesParser.parseFullEvents();
+                                setRecyclerViewNotExpired(view, mListNotExpired);
+                                layoutProgress.setVisibility(View.GONE);
+                                if(mListNotExpired == null){
+                                    layoutNull.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                //configurar view para list vazia
+                                layoutProgress.setVisibility(View.GONE);
+                                layoutError.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }else{
+                        setRecyclerViewNotExpired(view, mListNotExpired);
+                    }
+                    return view;
 
                 case 2:
-                    view = inflater.inflate(R.layout.fragment_my_appointments_expired, container, false);
-                    mList = Event.getEvents();
-                    setRecyclerView(view);
-                    break;
+
+                    final View view2 = inflater.inflate(R.layout.fragment_my_appointments_expired, container, false);
+                    final RelativeLayout layoutNull2 = (RelativeLayout) view2.findViewById(R.id.layout_null);
+                    final RelativeLayout layoutProgress2 = (RelativeLayout) view2.findViewById(R.id.layout_progress);
+                    final RelativeLayout layoutError2 = (RelativeLayout) view2.findViewById(R.id.layout_error);
+                    if(mListExpired == null) {
+                        Log.d(LogUtils.TAG, "Entrou 2");
+                        restClient.getEventsExpired(new Callback<JsonArray>() {
+                            @Override
+                            public void success(JsonArray jsonArray, Response response) {
+                                EventParser servicesParser = new EventParser(jsonArray);
+                                mListExpired = servicesParser.parseFullEvents();
+                                setRecyclerViewExpired(view2, mListExpired);
+                                layoutProgress2.setVisibility(View.GONE);
+                                if(mListExpired == null){
+                                    layoutNull2.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                //configurar view para list vazia
+                                layoutProgress2.setVisibility(View.GONE);
+                                layoutError2.setVisibility(View.VISIBLE);
+
+                            }
+                        });
+
+
+                    }else{
+                        setRecyclerViewExpired(view2, mListExpired);
+                    }
+                    return view2;
             }
 
             return view;
         }
 
-        private void setRecyclerView(View view){
+        private void setRecyclerViewNotExpired(View view, List<Event> mList){
 
 
             mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_my_appointments);
@@ -182,6 +240,24 @@ public class MyAppointmentsActivity extends AppCompatActivity {
             mRecyclerView.setAdapter(adapter);
 
             mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+
+                        }
+                    })
+            );
+
+        }
+
+        private void setRecyclerViewExpired(View view, List<Event> mList){
+
+            mRecyclerView2 = (RecyclerView) view.findViewById(R.id.recyclerView_my_appointments);
+            layoutManager2 = new LinearLayoutManager(getContext());
+            mRecyclerView2.setLayoutManager(layoutManager2);
+            adapter2 = new EventsAdapter(getContext(),mList);
+            mRecyclerView2.setAdapter(adapter2);
+
+            mRecyclerView2.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
                         @Override
                         public void onItemClick(View view, int position) {
 
@@ -206,7 +282,7 @@ public class MyAppointmentsActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return PlaceholderFragment.newInstance(position +1);
         }
 
         @Override
@@ -219,9 +295,9 @@ public class MyAppointmentsActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "A vencer";
+                    return "Agendados";
                 case 1:
-                    return "Vencidos";
+                    return "Vencidos ou cancelados";
             }
             return null;
         }
