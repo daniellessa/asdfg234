@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,16 +12,21 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -64,7 +70,10 @@ public class NewPropertyActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private NewPropertyAdapter adapter;
     private SearchView searchView;
-    private int viewId;
+    private RelativeLayout layoutDescription;
+    private RelativeLayout layoutNull;
+    private RelativeLayout layoutProgress;
+    private ImageView progressView;
 
     @Inject
     public RestClient restClient;
@@ -83,10 +92,13 @@ public class NewPropertyActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        layoutDescription = (RelativeLayout) findViewById(R.id.layout_new_property_description);
+        layoutProgress = (RelativeLayout) findViewById(R.id.layout_progress);
+        progressView = (ImageView) findViewById(R.id.back_searching);
+        layoutNull = (RelativeLayout) findViewById(R.id.layout_null_new_property);
 
         setRecycclerView();
-
-
+        searchingAnimated();
     }
 
     private void setRecycclerView(){
@@ -106,6 +118,7 @@ public class NewPropertyActivity extends AppCompatActivity {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
+                        property = mList.get(position);
                         saveProperty(mList.get(position));
                     }
                 })
@@ -119,17 +132,20 @@ public class NewPropertyActivity extends AppCompatActivity {
     }
 
     public void hendleSearch(Intent intent){
-        if(intent.ACTION_SEARCH.equalsIgnoreCase(intent.getAction())){
-            //String q = intent.getStringExtra(SearchManager.QUERY);
-        }else{
+//        if(intent.ACTION_SEARCH.equalsIgnoreCase(intent.getAction())){
+//            String q = intent.getStringExtra(SearchManager.QUERY);
+//        }else{
             if(searchView != null){
                 String q = searchView.getQuery().toString();
-                if(q.length() > 3){
+                if(q.length() > 1){
                     restClient.getProperties(q, callbackProperty);
+                }else if(q.length() == 1){
+                    layoutNull.setVisibility(View.GONE);
+                    layoutProgress.setVisibility(View.VISIBLE);
                 }
             }
 
-        }
+//        }
     }
 
 
@@ -138,14 +154,16 @@ public class NewPropertyActivity extends AppCompatActivity {
         @Override
         public void success(JsonArray jsonArray, Response response) {
 
-            PropertyParser parser = new PropertyParser(jsonArray);
-
-            mList = parser.parseFullProperty();
-            mRecyclerView.setAdapter(new PropertiesAdapter(NewPropertyActivity.this, mList));
-            adapter.notifyDataSetChanged();
-
-
-
+            if(jsonArray != null) {
+                PropertyParser parser = new PropertyParser(jsonArray);
+                mList = parser.parseFullProperty();
+                mRecyclerView.setAdapter(new NewPropertyAdapter(NewPropertyActivity.this, mList));
+                layoutDescription.setVisibility(View.GONE);
+                adapter.notifyDataSetChanged();
+            }else{
+                layoutDescription.setVisibility(View.GONE);
+                layoutNull.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -194,18 +212,14 @@ public class NewPropertyActivity extends AppCompatActivity {
     }
 
 
-    private void messageSnackbar(String text, View view){
-        Snackbar.make(view, text, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_searchable, menu);
 
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-
         MenuItem item = menu.findItem(R.id.action_searchable);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
             searchView = (SearchView) item.getActionView();
@@ -226,10 +240,10 @@ public class NewPropertyActivity extends AppCompatActivity {
                 return false;
             }
         });
-
+        //searchView.setBackgroundColor();
+        searchView.setDrawingCacheBackgroundColor(getResources().getColor(R.color.white));
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
-
 
         return true;
     }
@@ -246,6 +260,12 @@ public class NewPropertyActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void searchingAnimated() {
+        Animation rotation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotation);
+        rotation.setRepeatCount(Animation.INFINITE);
+        progressView.startAnimation(rotation);
     }
 
 }

@@ -42,7 +42,6 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private List<Event> mList;
     private Context mContext;
     private ImageLoader imageLoader;
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Inject
     RestClient restClient;
@@ -114,12 +113,7 @@ public class EventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             //Professional professional = mList.get(position).getProfessinal();
             Service service = mList.get(position).getService();
             Property property = Property.findOne(service.getPropertyId());
-            Calendar date = Calendar.getInstance();
-            try {
-                date.setTime(format.parse(mList.get(position).getStartAt()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            Calendar date = DateHelper.copyDate(mList.get(position).getStartAt());
 
             ((VHFree) holder).eventName.setText(service.getTitle() +" R$"+ FloatHelper.formatarFloat(service.getPrice()));
             ((VHFree) holder).eventDate.setText(DateHelper.toStringFull(date));

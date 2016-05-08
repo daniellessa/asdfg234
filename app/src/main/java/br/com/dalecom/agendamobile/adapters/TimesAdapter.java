@@ -1,12 +1,17 @@
 package br.com.dalecom.agendamobile.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,6 +22,9 @@ import com.google.gson.JsonArray;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -35,6 +43,7 @@ import br.com.dalecom.agendamobile.utils.EventManager;
 import br.com.dalecom.agendamobile.utils.EventParser;
 import br.com.dalecom.agendamobile.utils.LogUtils;
 import br.com.dalecom.agendamobile.utils.S;
+import br.com.dalecom.agendamobile.wrappers.SharedPreference;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -56,29 +65,36 @@ public class TimesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Inject
     EventManager eventManager;
 
+    @Inject
+    SharedPreference sharedPreference;
+
     class VHBusy extends RecyclerView.ViewHolder {
 
         protected CircleImageView imagePerfil;
-        protected TextView startAt, endsAt, userName;
-        protected RelativeLayout background;
+        protected TextView startAt;
+        protected Button btnCancel;
 
         public VHBusy(View itemView) {
             super(itemView);
+            imagePerfil = (CircleImageView) itemView.findViewById(R.id.icon_perfil);
             startAt = (TextView) itemView.findViewById(R.id.time_startAt);
-            background = (RelativeLayout) itemView.findViewById(R.id.background_times);
+            btnCancel = (Button) itemView.findViewById(R.id.btn_cancel_event);
         }
     }
 
     class VHFree extends RecyclerView.ViewHolder {
 
         protected CircleImageView imagePerfil;
-        protected TextView startAt, endsAt, userName;
+        protected TextView startAt;
         protected RelativeLayout background;
+        protected Button btnCancel;
 
 
         public VHFree(View itemView) {
             super(itemView);
+            imagePerfil = (CircleImageView) itemView.findViewById(R.id.icon_perfil);
             startAt = (TextView) itemView.findViewById(R.id.time_startAt);
+            btnCancel = (Button) itemView.findViewById(R.id.btn_cancel_event);
         }
     }
 
@@ -110,12 +126,28 @@ public class TimesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(holder instanceof VHBusy){
             ((VHBusy) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
             ((VHBusy) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.red_time));
-            //((VHBusy) holder).background.setVisibility(View.GONE);
+
+            if(mList.get(position).getUserName().equals(mContext.getApplicationContext().getString(R.string.lunch))) {
+
+                if (sharedPreference.getCurrentUser().getLocalImageLocation() != null)
+                    ((VHBusy) holder).imagePerfil.setImageURI(Uri.parse(sharedPreference.getCurrentUser().getLocalImageLocation()));
+                else if (sharedPreference.getCurrentUser().getPhotoPath() != null)
+                    new DownloadImageGoogleOrFacebook(((VHBusy) holder).imagePerfil).execute();
+
+            }else{
+
+                ((VHBusy) holder).btnCancel.setVisibility(View.GONE);
+                ((VHBusy) holder).imagePerfil.setVisibility(View.GONE);
+
+            }
+
+
+
         }
         else if(holder instanceof VHFree){
             ((VHFree) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
-            //((VHFree) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.green_time));
-
+            ((VHFree) holder).imagePerfil.setVisibility(View.GONE);
+            ((VHFree) holder).btnCancel.setVisibility(View.GONE);
         }
 
     }
@@ -146,6 +178,35 @@ public class TimesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         mList.clear();
         mList.addAll(times);
         notifyDataSetChanged();
+    }
+
+    private class DownloadImageGoogleOrFacebook extends AsyncTask<Void, Void, Void> {
+
+        private Bitmap image;
+        private CircleImageView imageView;
+
+        public DownloadImageGoogleOrFacebook(CircleImageView imageView){
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+                InputStream is = new URL(sharedPreference.getCurrentUser().getPhotoPath()).openStream();
+                image = BitmapFactory.decodeStream(is);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            imageView.setImageBitmap(image);
+        }
     }
 
 

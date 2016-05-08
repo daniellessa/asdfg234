@@ -10,8 +10,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import br.com.dalecom.agendamobile.helpers.DateHelper;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Professional;
 import br.com.dalecom.agendamobile.model.Service;
@@ -31,8 +33,6 @@ public class EventParser {
 
     public List parseFullEvents() {
 
-
-        int backCategory = 0;
         events.clear();
 
         for (JsonElement jsonElement : jsonArray) {
@@ -40,14 +40,6 @@ public class EventParser {
             Event event = new Event();
             JsonObject data = jsonElement.getAsJsonObject();
 
-//            if(data.getAsJsonObject("professions").get("id").getAsInt() != backCategory){
-//                int idCategory = data.getAsJsonObject("professions").get("id").getAsInt();
-//                String nameCategory = data.getAsJsonObject("professions").get("name").getAsString();
-//                createHeader(idCategory,nameCategory);
-//                backCategory = (data.getAsJsonObject("professions").get("id").getAsInt());
-//            } validar periodo do dia
-
-            //mandatories
             try {
                 event.setIdServer(data.get("id").getAsInt());
 
@@ -59,6 +51,7 @@ public class EventParser {
                 service.setMinutes(data.getAsJsonObject("services").get("minutes").getAsInt());
                 service.setPrice(data.getAsJsonObject("services").get("price").getAsFloat());
                 service.setPropertyId(data.getAsJsonObject("services").get("property").getAsInt());
+
                 if(!data.getAsJsonObject("services").get("info").isJsonNull())
                     service.setInfo(data.getAsJsonObject("services").get("info").getAsString());
 
@@ -70,35 +63,34 @@ public class EventParser {
 
                 event.setUser(user);
 
-                event.setStartAt(data.get("startAt").getAsString());
-                event.setEndsAt(data.get("endsAt").getAsString());
+                event.setStartAt(Calendar.getInstance());
+                String startAt = data.get("startAt").getAsString();
+                event.getStartAt().setTime(format.parse(startAt));
+
+                event.setEndsAt(Calendar.getInstance());
+                String endsAt = data.get("endsAt").getAsString();
+                event.getEndsAt().setTime(format.parse(endsAt));
+
                 event.setStatus(data.get("status").getAsString());
                 event.setFinalized(data.get("finalized").getAsBoolean());
 
-                if(!data.get("finalizedAt").isJsonNull())
-                    event.setFinalizedAt(data.get("finalizedAt").getAsString());
+//                if(!data.get("finalizedAt").isJsonNull())
+//                    event.setFinalizedAt(Calendar.getInstance());
+//                    event.getFinalizedAt().setTime(format.parse(data.get("finalizedAt").getAsString()));
 
                 events.add(event);
 
             }
             catch (UnsupportedOperationException e)
             {
-                Log.d(LogUtils.TAG, "Catch 1: " + e);
-                continue;
+                Log.e(LogUtils.TAG, "Catch 1: " + e);
+            }
+            catch (ParseException e){
+                Log.e(LogUtils.TAG, "Catch 2: " + e);
             }
         }
 
         return events;
     }
 
-//    private void createHeader(int category, String name){
-//
-//        User initial = new User();
-//        Professional init = new Professional();
-//        init.setCategory(category);
-//        init.setProfessionName(name);
-//        init.setViewType(0);
-//        initial.setProfessional(init);
-//        users.add(initial);
-//    }
 }

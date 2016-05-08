@@ -3,7 +3,6 @@ package br.com.dalecom.agendamobile.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +13,6 @@ import android.view.View;
 
 import com.google.gson.JsonArray;
 
-import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,12 +20,9 @@ import javax.inject.Inject;
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.ServiceAdapter;
-import br.com.dalecom.agendamobile.fragments.CustomDialogFragment;
-import br.com.dalecom.agendamobile.helpers.DateHelper;
 import br.com.dalecom.agendamobile.model.Service;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
 import br.com.dalecom.agendamobile.utils.EventManager;
-import br.com.dalecom.agendamobile.utils.ObjectTest;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
 import br.com.dalecom.agendamobile.utils.ServicesParser;
 import retrofit.Callback;

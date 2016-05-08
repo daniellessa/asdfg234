@@ -8,27 +8,27 @@ import java.util.Date;
  */
 public class Times {
 
-    private Date startAt;
-    private Date endsAt;
+    private Calendar startAt;
+    private Calendar endsAt;
     private String imagePerfil;
     private String userName;
     private boolean free;
     private int viewType;
 
 
-    public Date getStartAt() {
+    public Calendar getStartAt() {
         return startAt;
     }
 
-    public void setStartAt(Date startAt) {
+    public void setStartAt(Calendar startAt) {
         this.startAt = startAt;
     }
 
-    public Date getEndsAt() {
+    public Calendar getEndsAt() {
         return endsAt;
     }
 
-    public void setEndsAt(Date endsAt) {
+    public void setEndsAt(Calendar endsAt) {
         this.endsAt = endsAt;
     }
 

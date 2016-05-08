@@ -114,12 +114,6 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
 
     }
 
-//    private void startAnimations() {
-//        Animation animation = AnimationUtils.loadAnimation(this, R.anim.scroll_horizontal);
-//        daysLayout.startAnimation(animation);
-//    }
-
-
 
     private void setCollapsingToolBar(){
 
@@ -137,7 +131,7 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
         collapsingToolbarLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //listarProperties();
+                finish();
             }
         });
 
@@ -159,35 +153,6 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
         daysLayout = (RelativeLayout) findViewById(R.id.layout_fragment_day);
         setCurrentDayFragment();
 
-//        previusLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dateSelected.add(Calendar.DAY_OF_MONTH, -1);
-//
-//                while (!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
-//                    dateSelected.add(Calendar.DAY_OF_MONTH, -1);
-//                }
-//
-//                setCurrentDayFragment();
-//
-//
-//            }
-//        });
-//
-//        nextLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dateSelected.add(Calendar.DAY_OF_MONTH, 1);
-//
-//                while(!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
-//                    dateSelected.add(Calendar.DAY_OF_MONTH, 1);
-//                }
-//
-//                setCurrentDayFragment();
-//
-//            }
-//        });
-
 
         daysLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -203,22 +168,10 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
                         return true;
                     case (MotionEvent.ACTION_UP):
                         finalPosition = event.getX();
-                        if(initPosition < finalPosition){
-
-                            dateSelected.add(Calendar.DAY_OF_MONTH, -1);
-                            while (!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
-                                dateSelected.add(Calendar.DAY_OF_MONTH, -1);
-                            }
-                            setCurrentDayFragment();
-
-                        }else{
-
-                            dateSelected.add(Calendar.DAY_OF_MONTH, 1);
-                            while(!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
-                                dateSelected.add(Calendar.DAY_OF_MONTH, 1);
-                            }
-                            setCurrentDayFragment();
-
+                        if (initPosition < finalPosition) {
+                            previusDay();
+                        } else {
+                           nextDay();
                         }
                         return true;
                     case (MotionEvent.ACTION_CANCEL):
@@ -229,9 +182,34 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
                 return false;
             }
         });
-
-
     }
+
+    private void previusDay(){
+
+        Calendar dateAux = DateHelper.copyDate(dateSelected);
+        dateAux.add(Calendar.DAY_OF_MONTH, -1);
+        Calendar currentDate = Calendar.getInstance();
+
+//        if(!dateAux.before(currentDate)) {
+
+            dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+            while (!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
+                dateSelected.add(Calendar.DAY_OF_MONTH, -1);
+            }
+            setCurrentDayFragment();
+//        }
+    }
+
+    private void nextDay(){
+
+        dateSelected.add(Calendar.DAY_OF_MONTH, 1);
+        while (!DateHelper.isWorkDay(dateSelected, eventManager.getCurrentUserProfessional())) {
+            dateSelected.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        setCurrentDayFragment();
+    }
+
+
 
     private void setCurrentDayFragment(){
 
@@ -287,7 +265,7 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
     private void setRecyclerView(){
 
 
-        calendarTimes = new CalendarTimes(this, mEvents);
+        calendarTimes = new CalendarTimes(this, mEvents, dateSelected);
         mList = calendarTimes.construct();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_times);
@@ -308,15 +286,15 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
                         if (calendarTimes.checkDisponible(TimesActivity.this, time)) {
 
                             startAt = DateHelper.copyDate(dateSelected);
-                            startAt.set(Calendar.HOUR_OF_DAY, time.getStartAt().getHours());
-                            startAt.set(Calendar.MINUTE, time.getStartAt().getMinutes());
+                            startAt.set(Calendar.HOUR_OF_DAY, time.getStartAt().get(Calendar.HOUR_OF_DAY));
+                            startAt.set(Calendar.MINUTE, time.getStartAt().get(Calendar.MINUTE));
 
                             endstAt = DateHelper.copyDate(startAt);
                             endstAt.add(Calendar.HOUR_OF_DAY, eventManager.getCurrentService().getHours());
                             endstAt.add(Calendar.MINUTE, eventManager.getCurrentService().getMinutes());
 
-                            eventManager.setCurrentStartAt(DateHelper.convertDateToStringSql(startAt));
-                            eventManager.setCurrentEndsAt(DateHelper.convertDateToStringSql(endstAt));
+                            eventManager.setCurrentStartAt(DateHelper.copyDate(startAt));
+                            eventManager.setCurrentEndsAt(DateHelper.copyDate(endstAt));
                             eventManager.finalizeEvent();
 
                             Log.d(LogUtils.TAG, "Start date: " + DateHelper.convertDateToStringSql(startAt));
@@ -388,7 +366,7 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
 
                 EventParser eventParser = new EventParser(jsonArray);
                 List<Event> mEvents = eventParser.parseFullEvents();
-                CalendarTimes calendarTimes = new CalendarTimes(TimesActivity.this, mEvents);
+                CalendarTimes calendarTimes = new CalendarTimes(TimesActivity.this, mEvents, dateSelected);
                 List<Times> times = calendarTimes.construct();
                 adapter.swap(times);
 
@@ -455,13 +433,13 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
                 cDefault.get(Calendar.YEAR)
         );
 
-        Calendar minDate = Calendar.getInstance();
+//        Calendar minDate = Calendar.getInstance();
         Calendar maxDate = Calendar.getInstance();
-
-        maxDate.add(Calendar.MONTH, 1);
-
-        datePickerDialog.setMinDate(minDate);
-        datePickerDialog.setMaxDate(maxDate);
+//
+        maxDate.add(Calendar.MONTH, 3);
+//
+//        datePickerDialog.setMinDate(minDate);
+//        datePickerDialog.setMaxDate(maxDate);
 
         List<Calendar> daysList = new LinkedList<>();
         Calendar[] daysArray;

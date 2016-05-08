@@ -315,9 +315,26 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     private void startHomeActivity() {
-        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+
+        Intent intent = null;
+        int role = sharedPreference.getCurrentUser().getRole();
+        switch (role){
+            case 1:
+                intent = new Intent(LoginActivity.this, HomeProfessionalActivity.class);
+                break;
+            case 2:
+                intent = new Intent(LoginActivity.this, HomeProfessionalActivity.class);
+                break;
+            case 3:
+                intent = new Intent(LoginActivity.this, HomeProfessionalActivity.class);
+                break;
+            default:
+                intent = new Intent(LoginActivity.this, HomeActivity.class);
+                break;
+        }
         startActivity(intent);
         finish();
+
     }
 
     private Callback loginCallback = new Callback<JsonObject>() {

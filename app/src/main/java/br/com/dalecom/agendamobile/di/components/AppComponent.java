@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import br.com.dalecom.agendamobile.adapters.AlertAdapter;
 import br.com.dalecom.agendamobile.adapters.EventsAdapter;
+import br.com.dalecom.agendamobile.adapters.NewPropertyAdapter;
 import br.com.dalecom.agendamobile.adapters.ProfessionalsAdapter;
 import br.com.dalecom.agendamobile.adapters.TimesAdapter;
 import br.com.dalecom.agendamobile.fragments.DialogFragmentConfirmEvent;
@@ -70,5 +71,6 @@ public interface AppComponent {
     void inject(PropertyActivity.PlaceholderFragment placeholderFragment);
     void inject(MyAppointmentsActivity.PlaceholderFragment placeholderFragment);
     void inject(AlertAdapter alertAdapter);
+    void inject(NewPropertyAdapter newPropertyAdapter);
 
 }

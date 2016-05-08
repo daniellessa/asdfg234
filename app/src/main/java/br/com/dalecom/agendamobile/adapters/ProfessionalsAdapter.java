@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,6 +51,7 @@ public class ProfessionalsAdapter extends RecyclerView.Adapter<RecyclerView.View
         protected TextView professionalName;
         protected TextView professionalTime;
         protected CircleImageView imagePerfil;
+        protected ImageView progress;
 
 
         public VHItem(View itemView) {
@@ -57,6 +60,7 @@ public class ProfessionalsAdapter extends RecyclerView.Adapter<RecyclerView.View
             professionalName = (TextView) itemView.findViewById(R.id.name_professional);
             professionalTime = (TextView) itemView.findViewById(R.id.professional_type);
             imagePerfil = (CircleImageView) itemView.findViewById(R.id.icon_perfil);
+            progress = (ImageView) itemView.findViewById(R.id.back_searching);
         }
     }
 
@@ -98,6 +102,7 @@ public class ProfessionalsAdapter extends RecyclerView.Adapter<RecyclerView.View
         {
             ((VHItem) holder).professionalName.setText(mList.get(position).getName());
             ((VHItem) holder).professionalTime.setText(mList.get(position).getProfessional().getProfessionName());
+            searchedAnimated(((VHItem) holder).progress);
 
             if(mList.get(position).getBucketPath() != null && mList.get(position).getPhotoPath() != null){
 
@@ -141,6 +146,13 @@ public class ProfessionalsAdapter extends RecyclerView.Adapter<RecyclerView.View
         {
             ((VHHeader) holder).headerText.setText(mList.get(position).getProfessional().getProfessionName());
         }
+    }
+
+    public void searchedAnimated(final ImageView view) {
+
+        Animation rotation = AnimationUtils.loadAnimation(mContext.getApplicationContext(), R.anim.rotation);
+        rotation.setRepeatCount(Animation.INFINITE);
+        view.startAnimation(rotation);
     }
 
     @Override

@@ -11,20 +11,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+
 import com.activeandroid.query.Select;
 import com.google.gson.JsonObject;
-import java.util.ArrayList;
+
 import java.util.List;
 import javax.inject.Inject;
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
-import br.com.dalecom.agendamobile.adapters.ProfessionalsAdapter;
 import br.com.dalecom.agendamobile.adapters.PropertiesAdapter;
 import br.com.dalecom.agendamobile.model.Property;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
 import br.com.dalecom.agendamobile.utils.LogUtils;
-import br.com.dalecom.agendamobile.utils.ObjectTest;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
 import br.com.dalecom.agendamobile.wrappers.SharedPreference;
 import retrofit.Callback;

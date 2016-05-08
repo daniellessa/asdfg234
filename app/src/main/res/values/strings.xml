@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">iCalendar</string>
+    <string name="app_name">Agenda Mobile</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">Agenda Moblie</string>
     <string name="title_activity_home">iCalendar</string>
@@ -27,6 +27,8 @@
     <string name="new_property">Novo estabelecimento</string>
     <string name="my_appointments">Meus Agendamentos</string>
     <string name="alerts">Notificações</string>
+    <string name="lunch">Lunch</string>
+    <string name="invalid_hour">invalid hour</string>
 
     <string-array name="planets_array">
         <item>Mercury</item>

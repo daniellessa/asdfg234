@@ -3,5 +3,6 @@
     android:label="@string/app_name"
     android:hint="@string/search_hint"
     android:autoUrlDetect="true"
-    android:voiceSearchMode="launchRecognizer" >
+    android:voiceSearchMode="launchWebSearch" >
+    <!-- launchRecognizer  showVoiceSearchButton-->
 </searchable>

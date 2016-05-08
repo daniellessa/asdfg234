@@ -38,8 +38,8 @@ public class EventManager {
     private Calendar dateSelected;
     private Service currentService;
     private String currentDay;
-    private String currentStartAt;
-    private String currentEndsAt;
+    private Calendar currentStartAt;
+    private Calendar currentEndsAt;
     private Property currentProperty;
 
     @Inject public static SharedPreference sharedPreference;
@@ -55,8 +55,7 @@ public class EventManager {
         this.mEvent = new Event();
         this.dateSelected = date;
         this.currentDay = DateHelper.toStringSql(date);
-        String dateSql = DateHelper.convertDateToStringSql(date);
-        this.mEvent.setStartAt(dateSql);
+        this.mEvent.setStartAt(date);
         setEventCurrentUser();
     }
 
@@ -95,19 +94,19 @@ public class EventManager {
         return dateSelected;
     }
 
-    public String getCurrentStartAt() {
+    public Calendar getCurrentStartAt() {
         return currentStartAt;
     }
 
-    public void setCurrentStartAt(String currentStartAt) {
+    public void setCurrentStartAt(Calendar currentStartAt) {
         this.currentStartAt = currentStartAt;
     }
 
-    public String getCurrentEndsAt() {
+    public Calendar getCurrentEndsAt() {
         return currentEndsAt;
     }
 
-    public void setCurrentEndsAt(String currentEndsAt) {
+    public void setCurrentEndsAt(Calendar currentEndsAt) {
         this.currentEndsAt = currentEndsAt;
     }
 

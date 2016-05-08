@@ -14,6 +14,13 @@ public class DateHelper {
 
     private final static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    public static void makeIgualsDate(Calendar dateForChange, Calendar dateSelected){
+        dateForChange.set(Calendar.DAY_OF_MONTH, dateSelected.get(Calendar.DAY_OF_MONTH));
+        dateForChange.set(Calendar.MONTH, dateSelected.get(Calendar.MONTH));
+        dateForChange.set(Calendar.YEAR, dateSelected.get(Calendar.YEAR));
+    }
+
+
     public static String convertDateToStringSql(Calendar date){
         String year = String.valueOf(date.get(Calendar.YEAR));
         String month = String.valueOf(date.get(Calendar.MONTH)+1);
@@ -74,6 +81,12 @@ public class DateHelper {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return date;
+    }
+
+    public static Calendar convertStringSqlInCalendar(String dateSql){
+        Calendar date = Calendar.getInstance();
+        date.setTime(convertStringSqlInDate(dateSql));
         return date;
     }
 

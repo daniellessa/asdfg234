@@ -13,6 +13,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import br.com.dalecom.agendamobile.helpers.DateHelper;
+
 /**
  * Created by daniellessa on 25/03/16.
  */
@@ -52,12 +54,16 @@ public class Event extends Model implements Serializable {
     @Column(name = "StartAt")
     @Expose
     @SerializedName("startAt")
-    private String startAt;
+    protected String startAtString;
+
+    private Calendar startAt;
 
     @Column(name = "EndsAt")
     @Expose
     @SerializedName("endsAt")
-    private String endsAt;
+    protected String endsAtString;
+
+    private Calendar endsAt;
 
     @Column(name = "status")
     @Expose
@@ -70,7 +76,9 @@ public class Event extends Model implements Serializable {
     private boolean finalized;
 
     @Column(name = "FinalizedAt")
-    private String finalizedAt;
+    protected String finalizedAtString;
+
+    private Calendar finalizedAt;
 
     @Column(name = "Professional")
     private Professional professinal;
@@ -113,20 +121,22 @@ public class Event extends Model implements Serializable {
         this.service = service;
     }
 
-    public String getStartAt() {
+    public Calendar getStartAt() {
         return startAt;
     }
 
-    public void setStartAt(String startAt) {
+    public void setStartAt(Calendar startAt) {
         this.startAt = startAt;
+        this.startAtString = DateHelper.convertDateToStringSql(startAt);
     }
 
-    public String getEndsAt() {
+    public Calendar getEndsAt() {
         return endsAt;
     }
 
-    public void setEndsAt(String endsAt) {
+    public void setEndsAt(Calendar endsAt) {
         this.endsAt = endsAt;
+        this.endsAtString = DateHelper.convertDateToStringSql(endsAt);
     }
 
     public String getStatus() {
@@ -145,14 +155,14 @@ public class Event extends Model implements Serializable {
         this.finalized = finalized;
     }
 
-    public String getFinalizedAt() {
+    public Calendar getFinalizedAt() {
         return finalizedAt;
     }
 
-    public void setFinalizedAt(String finalizedAt) {
+    public void setFinalizedAt(Calendar finalizedAt) {
         this.finalizedAt = finalizedAt;
+        this.finalizedAtString = DateHelper.convertDateToStringSql(finalizedAt);
     }
-
 
     public Professional getProfessinal() {
         return professinal;
