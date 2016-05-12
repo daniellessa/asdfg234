@@ -32,6 +32,8 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.inject.Inject;
@@ -41,6 +43,7 @@ import br.com.dalecom.agendamobile.adapters.TimesAdapter;
 import br.com.dalecom.agendamobile.fragments.CustomDialogFragment;
 import br.com.dalecom.agendamobile.fragments.DialogFragmentConfirmEvent;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
+import br.com.dalecom.agendamobile.helpers.Helper;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Times;
 import br.com.dalecom.agendamobile.model.User;
@@ -56,7 +59,7 @@ import retrofit.client.Response;
 
 public class TimesActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, DialogInterface.OnCancelListener{
 
-    private TextView dayPrevius, dayCurrent, dayNext, weekDayPrevius, weekDayCurrent, weekDayNext, monthCurrent;
+    private TextView dayPrevius, dayCurrent, dayNext, weekDayPrevius, weekDayCurrent, weekDayNext, monthCurrent, professionalName, professionType;
     private RelativeLayout previusLayout, nextLayout, daysLayout;
     private ImageView imageProfessional;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -104,6 +107,12 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
         layoutProgressBar = (RelativeLayout) findViewById(R.id.layout_progress);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_times);
         calendarPicker = (FloatingActionButton) findViewById(R.id.fab);
+        professionalName = (TextView) findViewById(R.id.name_professional);
+        professionType = (TextView) findViewById(R.id.professional_type);
+
+
+        professionalName.setText(Helper.getFirstName(eventManager.getCurrentUserProfessional().getName()));
+        professionType.setText(eventManager.getCurrentProfessional().getProfessionName());
 
         calendarPicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,9 +134,8 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
             imageProfessional.setImageURI(Uri.parse(userProf.getLocalImageLocation()));
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.textWhite));
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(android.R.color.transparent));
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
-        collapsingToolbarLayout.setTitle(userProf.getName());
         collapsingToolbarLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -368,7 +376,10 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
                 List<Event> mEvents = eventParser.parseFullEvents();
                 CalendarTimes calendarTimes = new CalendarTimes(TimesActivity.this, mEvents, dateSelected);
                 List<Times> times = calendarTimes.construct();
-                adapter.swap(times);
+
+                if(times != null)
+                    if (adapter != null)
+                        adapter.swap(times);
 
                 layoutProgressBar.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
@@ -426,20 +437,10 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
 
     private void initDatePicker(){
         Calendar cDefault = DateHelper.copyDate(dateSelected);
-        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
-                this,
-                cDefault.get(Calendar.YEAR),
-                cDefault.get(Calendar.MONTH),
-                cDefault.get(Calendar.YEAR)
-        );
 
-//        Calendar minDate = Calendar.getInstance();
+        Calendar minDate = Calendar.getInstance();
         Calendar maxDate = Calendar.getInstance();
-//
         maxDate.add(Calendar.MONTH, 3);
-//
-//        datePickerDialog.setMinDate(minDate);
-//        datePickerDialog.setMaxDate(maxDate);
 
         List<Calendar> daysList = new LinkedList<>();
         Calendar[] daysArray;
@@ -454,13 +455,31 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
             }
             cAux.setTimeInMillis(cAux.getTimeInMillis() + (24 * 60 * 60 * 1000));
         }
+
         daysArray = new Calendar[daysList.size()];
-        for (int i = 0; i < daysArray.length; i ++){
+        for (int i = daysArray.length - 1; i >=  0; i --){
             daysArray[i] = daysList.get(i);
         }
 
+        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
+                this,
+                cDefault.get(Calendar.YEAR),
+                cDefault.get(Calendar.MONTH),
+                cDefault.get(Calendar.YEAR)
+        );
+
+        datePickerDialog.setMinDate(minDate);
         datePickerDialog.setSelectableDays(daysArray);
+
+        datePickerDialog.initialize(
+            this, cDefault.get(Calendar.YEAR),
+            cDefault.get(Calendar.MONTH),
+            cDefault.get(Calendar.YEAR)
+        );
+
         datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
+
+
 
     }
 

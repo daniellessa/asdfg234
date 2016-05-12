@@ -59,5 +59,6 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.wdullaer:materialdatetimepicker:2.3.0'
+    compile 'com.github.alamkanak:android-week-view:1.2.6'
 }
 

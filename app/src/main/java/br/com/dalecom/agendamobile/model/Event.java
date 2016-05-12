@@ -212,6 +212,8 @@ public class Event extends Model implements Serializable {
         this.day = day;
     }
 
+
+
     public static List<Event> getEvents(){
 
         return new Select()

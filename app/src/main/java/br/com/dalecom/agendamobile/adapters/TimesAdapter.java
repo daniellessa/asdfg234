@@ -82,6 +82,20 @@ public class TimesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
+    class VHBusyMy extends RecyclerView.ViewHolder {
+
+        protected CircleImageView imagePerfil;
+        protected TextView startAt;
+        protected Button btnCancel;
+
+        public VHBusyMy(View itemView) {
+            super(itemView);
+            imagePerfil = (CircleImageView) itemView.findViewById(R.id.icon_perfil);
+            startAt = (TextView) itemView.findViewById(R.id.time_startAt);
+            btnCancel = (Button) itemView.findViewById(R.id.btn_cancel_event);
+        }
+    }
+
     class VHFree extends RecyclerView.ViewHolder {
 
         protected CircleImageView imagePerfil;
@@ -91,6 +105,54 @@ public class TimesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
         public VHFree(View itemView) {
+            super(itemView);
+            imagePerfil = (CircleImageView) itemView.findViewById(R.id.icon_perfil);
+            startAt = (TextView) itemView.findViewById(R.id.time_startAt);
+            btnCancel = (Button) itemView.findViewById(R.id.btn_cancel_event);
+        }
+    }
+
+    class VHLunch extends RecyclerView.ViewHolder {
+
+        protected CircleImageView imagePerfil;
+        protected TextView startAt;
+        protected RelativeLayout background;
+        protected Button btnCancel;
+
+
+        public VHLunch(View itemView) {
+            super(itemView);
+            imagePerfil = (CircleImageView) itemView.findViewById(R.id.icon_perfil);
+            startAt = (TextView) itemView.findViewById(R.id.time_startAt);
+            btnCancel = (Button) itemView.findViewById(R.id.btn_cancel_event);
+        }
+    }
+
+    class VHInvalidHour extends RecyclerView.ViewHolder {
+
+        protected CircleImageView imagePerfil;
+        protected TextView startAt;
+        protected RelativeLayout background;
+        protected Button btnCancel;
+
+
+        public VHInvalidHour(View itemView) {
+            super(itemView);
+            imagePerfil = (CircleImageView) itemView.findViewById(R.id.icon_perfil);
+            startAt = (TextView) itemView.findViewById(R.id.time_startAt);
+            btnCancel = (Button) itemView.findViewById(R.id.btn_cancel_event);
+        }
+    }
+
+    class VHBloqued extends RecyclerView.ViewHolder {
+
+        protected CircleImageView imagePerfil;
+        protected TextView startAt;
+        protected RelativeLayout background;
+        protected Button btnCancel;
+
+
+        public VHBloqued(View itemView) {
             super(itemView);
             imagePerfil = (CircleImageView) itemView.findViewById(R.id.icon_perfil);
             startAt = (TextView) itemView.findViewById(R.id.time_startAt);
@@ -112,42 +174,67 @@ public class TimesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_times, parent, false);
             return new VHBusy(view);
         }
+        else if(viewType == S.TYPE_ITEM_MY){
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_times, parent, false);
+            return new VHBusyMy(view);
+        }
         else if(viewType == S.TYPE_ITEM){
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_times, parent, false);
             return new VHFree(view);
         }
+        else if(viewType == S.TYPE_LUNCH){
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_times, parent, false);
+            return new VHLunch(view);
+        }
+        else if(viewType == S.TYPE_INVALID_HOUR){
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_times, parent, false);
+            return new VHInvalidHour(view);
+        }
+        else if(viewType == S.TYPE_ITEM_BLOQUED){
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_times, parent, false);
+            return new VHBloqued(view);
+        }
+
 
         throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder,final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder,final int position) {
 
-        if(holder instanceof VHBusy){
-            ((VHBusy) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
-            ((VHBusy) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.red_time));
+        if(holder instanceof VHBusyMy){
+            ((VHBusyMy) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
+            ((VHBusyMy) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.red_time));
+            ((VHBusyMy) holder).imagePerfil.setVisibility(View.VISIBLE);
+            ((VHBusyMy) holder).btnCancel.setVisibility(View.VISIBLE);
 
-            if(mList.get(position).getUserName().equals(mContext.getApplicationContext().getString(R.string.lunch))) {
-
-                if (sharedPreference.getCurrentUser().getLocalImageLocation() != null)
-                    ((VHBusy) holder).imagePerfil.setImageURI(Uri.parse(sharedPreference.getCurrentUser().getLocalImageLocation()));
-                else if (sharedPreference.getCurrentUser().getPhotoPath() != null)
-                    new DownloadImageGoogleOrFacebook(((VHBusy) holder).imagePerfil).execute();
-
-            }else{
-
-                ((VHBusy) holder).btnCancel.setVisibility(View.GONE);
-                ((VHBusy) holder).imagePerfil.setVisibility(View.GONE);
-
+            if(sharedPreference.getCurrentUser().getLocalImageLocation().length() > 0){
+                ((VHBusyMy) holder).imagePerfil.setImageURI(Uri.parse(sharedPreference.getCurrentUser().getLocalImageLocation()));
+                Log.d(LogUtils.TAG, "Photo uri: "+ sharedPreference.getCurrentUser().getLocalImageLocation());
             }
 
-
-
+        }
+        else if(holder instanceof VHBusy){
+            ((VHBusy) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
+            ((VHBusy) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.red_time));
         }
         else if(holder instanceof VHFree){
             ((VHFree) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
-            ((VHFree) holder).imagePerfil.setVisibility(View.GONE);
-            ((VHFree) holder).btnCancel.setVisibility(View.GONE);
+        }
+
+        else if(holder instanceof VHLunch){
+            ((VHLunch) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
+            ((VHLunch) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.red_time));
+        }
+
+        else if(holder instanceof VHInvalidHour){
+            ((VHInvalidHour) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
+            ((VHInvalidHour) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.red_time));
+        }
+
+        else if(holder instanceof VHBloqued){
+            ((VHBloqued) holder).startAt.setText(DateHelper.hourToString(mList.get(position).getStartAt()));
+            ((VHBloqued) holder).startAt.setTextColor(mContext.getResources().getColor(R.color.red_time));
         }
 
     }
@@ -159,20 +246,9 @@ public class TimesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-
-        if(mList.get(position).getViewType() == S.TYPE_HEADER)
-            return S.TYPE_HEADER;
-        return S.TYPE_ITEM;
+        return mList.get(position).getViewType();
     }
 
-    private void displayProfilePhotoByUri(String uriString, ImageView imageView) {
-        imageLoader = ImageLoader.getInstance();
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .considerExifParams(true)
-                .build();
-
-        imageLoader.displayImage(uriString, imageView, options);
-    }
 
     public void swap(List<Times> times){
         mList.clear();
@@ -180,34 +256,28 @@ public class TimesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    private class DownloadImageGoogleOrFacebook extends AsyncTask<Void, Void, Void> {
-
-        private Bitmap image;
-        private CircleImageView imageView;
-
-        public DownloadImageGoogleOrFacebook(CircleImageView imageView){
-            this.imageView = imageView;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            try {
-                InputStream is = new URL(sharedPreference.getCurrentUser().getPhotoPath()).openStream();
-                image = BitmapFactory.decodeStream(is);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            imageView.setImageBitmap(image);
-        }
-    }
+//    private class DownloadImageGoogleOrFacebook extends AsyncTask<Void, Void, Void> {
+//
+//        private Bitmap image;
+//
+//        public DownloadImageGoogleOrFacebook(Bitmap image){
+//            this.image = image;
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//
+//            try {
+//                InputStream is = new URL(sharedPreference.getCurrentUser().getPhotoPath()).openStream();
+//                image = BitmapFactory.decodeStream(is);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            return null;
+//        }
+//
+//    }
 
 
 

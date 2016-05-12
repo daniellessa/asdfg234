@@ -17,9 +17,9 @@ import br.com.dalecom.agendamobile.ui.CreateUserActivity;
 import br.com.dalecom.agendamobile.ui.HomeActivity;
 import br.com.dalecom.agendamobile.ui.LoginActivity;
 import br.com.dalecom.agendamobile.ui.MyAppointmentsActivity;
+import br.com.dalecom.agendamobile.ui.NewHomeActivity;
 import br.com.dalecom.agendamobile.ui.NewPropertyActivity;
-import br.com.dalecom.agendamobile.ui.ProfessionalsActivity;;
-import br.com.dalecom.agendamobile.ui.ProperiesActivity;
+import br.com.dalecom.agendamobile.ui.ProfessionalsActivity;
 import br.com.dalecom.agendamobile.ui.PropertyActivity;
 import br.com.dalecom.agendamobile.ui.ServicesActivity;
 import br.com.dalecom.agendamobile.ui.TimesActivity;
@@ -53,10 +53,10 @@ public interface AppComponent {
     void inject(FileUtils fileUtils);
     void inject(RestClient restClient);
     void inject(HomeActivity homeActivity);
+    void inject(HomeActivity.PlaceholderFragment placeholderFragment);
     void inject(S3 s3);
     void inject(MixPanel mixPanel);
     void inject(NewPropertyActivity newPropertyActivity);
-    void inject(ProperiesActivity properiesActivity);
     void inject(CreateUserActivity createUserActivity);
     void inject(DialogFragmentCreateUser dialogFragmentCreateUser);
     void inject(RegistrationIntentService registrationIntentService);
@@ -72,5 +72,7 @@ public interface AppComponent {
     void inject(MyAppointmentsActivity.PlaceholderFragment placeholderFragment);
     void inject(AlertAdapter alertAdapter);
     void inject(NewPropertyAdapter newPropertyAdapter);
+    void inject(NewHomeActivity.PlaceholderFragment placeholderFragment);
+    void inject(NewHomeActivity newHomeActivity);
 
 }

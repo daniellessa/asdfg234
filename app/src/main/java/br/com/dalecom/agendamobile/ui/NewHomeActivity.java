@@ -1,65 +1,57 @@
 package br.com.dalecom.agendamobile.ui;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 import com.google.gson.JsonArray;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.EventsAdapter;
 import br.com.dalecom.agendamobile.adapters.PropertiesAdapter;
-import br.com.dalecom.agendamobile.fragments.CustomDialogFragment;
-import br.com.dalecom.agendamobile.model.Alert;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Property;
 import br.com.dalecom.agendamobile.model.User;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
 import br.com.dalecom.agendamobile.utils.EventManager;
 import br.com.dalecom.agendamobile.utils.EventParser;
-import br.com.dalecom.agendamobile.utils.FileUtils;
 import br.com.dalecom.agendamobile.utils.LogUtils;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
 import br.com.dalecom.agendamobile.wrappers.SharedPreference;
@@ -68,58 +60,38 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+public class NewHomeActivity extends AppCompatActivity {
 
-public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
+    /**
+     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * fragments for each of the sections. We use a
+     * {@link FragmentPagerAdapter} derivative, which will keep every
+     * loaded fragment in memory. If this becomes too memory intensive, it
+     * may be best to switch to a
+     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private CircleImageView imageView;
-    private TextView userName;
-    private User currentUser;
-    private NavigationView navigationView;
-    private List<Property> mList;
-    private PropertiesAdapter adapter;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager layoutManager;
+
+    /**
+     * The {@link ViewPager} that will host the section contents.
+     */
     private ViewPager mViewPager;
+    private User currentUser;
+    private ImageView imageView;
+    private Toolbar toolbar;
 
-    @Inject
-    public EventManager eventManager;
-    @Inject
-    public FileUtils fileUtils;
-    @Inject
-    public SharedPreference sharedPreference;
-
+    @Inject SharedPreference sharedPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((AgendaMobileApplication) getApplication()).getAppComponent().inject(this);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_new_home);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-
-        populateFindByIds();
-        setUserOnNavigation();
-        setRecyclerView();
-        setMenuOptions();
-
-    }
-
-    private void setTabView(){
-
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -128,56 +100,8 @@ public class HomeActivity extends AppCompatActivity
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryLight));
-    }
 
-
-    private void setRecyclerView() {
-
-        mList = getallProperties();
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_properties);
-        layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
-        adapter = new PropertiesAdapter(this, mList);
-        mRecyclerView.setAdapter(adapter);
-
-
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-
-                        sharedPreference.setCurrentProperty(mList.get(position));
-                        Calendar currentDate = Calendar.getInstance();
-                        eventManager.startNewEvent(currentDate);
-                        eventManager.setCurrentProperty(mList.get(position));
-
-                        Intent it = new Intent(HomeActivity.this, PropertyActivity.class);
-                        startActivity(it);
-                    }
-                })
-        );
-
-    }
-
-    public List<Property> getallProperties() {
-        return new Select()
-                .from(Property.class)
-                .orderBy("name ASC")
-                .execute();
-    }
-
-
-    private void populateFindByIds() {
-        imageView = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.icon_perfil);
-        userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.name_user);
-
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(HomeActivity.this, UpDateImageActivity.class);
-                startActivity(it);
-            }
-        });
+        setCurrentUser();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
@@ -185,7 +109,7 @@ public class HomeActivity extends AppCompatActivity
                 @Override
                 public void onClick(View view) {
 
-                    Intent it = new Intent(HomeActivity.this, NewPropertyActivity.class);
+                    Intent it = new Intent(NewHomeActivity.this, NewPropertyActivity.class);
                     startActivity(it);
 
                 }
@@ -194,74 +118,12 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    public void setMenuOptions() {
+    private void setCurrentUser(){
 
-        RelativeLayout alerts = (RelativeLayout) navigationView.getHeaderView(0).findViewById(R.id.alerts);
-        alerts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(HomeActivity.this, AlertsActivity.class);
-                startActivity(it);
-            }
-        });
-
-        RelativeLayout myAppointments = (RelativeLayout) navigationView.getHeaderView(0).findViewById(R.id.myAppointments);
-        myAppointments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(HomeActivity.this, MyAppointmentsActivity.class);
-                startActivity(it);
-            }
-        });
-
-        RelativeLayout newproperty = (RelativeLayout) navigationView.getHeaderView(0).findViewById(R.id.newProperty);
-        newproperty.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(HomeActivity.this, NewPropertyActivity.class);
-                startActivity(it);
-            }
-        });
-
-        RelativeLayout settings = (RelativeLayout) navigationView.getHeaderView(0).findViewById(R.id.settings);
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(HomeActivity.this, CalendarActivity.class);
-                startActivity(it);
-            }
-        });
-
-        RelativeLayout logout = (RelativeLayout) navigationView.getHeaderView(0).findViewById(R.id.logout);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sharedPreference.clearUserToken();
-                Intent it = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(it);
-            }
-        });
-
-    }
-
-    private void setNotificationNumber() {
-        RelativeLayout layoutAlert = (RelativeLayout) navigationView.getHeaderView(0).findViewById(R.id.layout_alert_number);
-        TextView numberOfAlerts = (TextView) navigationView.getHeaderView(0).findViewById(R.id.number_of_alert);
-        int alertsNumber = Alert.getAlerts().size();
-
-        if (alertsNumber > 0) {
-            numberOfAlerts.setText(String.valueOf(alertsNumber));
-            layoutAlert.setVisibility(View.VISIBLE);
-        } else {
-            layoutAlert.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void setUserOnNavigation() {
         currentUser = sharedPreference.getCurrentUser();
+        imageView = (ImageView) findViewById(R.id.icon_perfil);
 
         try {
-            userName.setText(currentUser.getName());
 
             if (currentUser.getLocalImageLocation().length() > 0) {
                 imageView.setImageURI(Uri.parse(currentUser.getLocalImageLocation()));
@@ -274,105 +136,6 @@ public class HomeActivity extends AppCompatActivity
             Intent it = new Intent(this, LoginActivity.class);
             startActivity(it);
         }
-
-
-        switch (currentUser.getRole()){
-            case 0:
-                Toast.makeText(this,"User NULL",Toast.LENGTH_SHORT).show();
-                break;
-            case 1:
-                Toast.makeText(this,"User Super admin",Toast.LENGTH_SHORT).show();
-                break;
-            case 2:
-                Toast.makeText(this,"User Admin",Toast.LENGTH_SHORT).show();
-                break;
-            case 3:
-                Toast.makeText(this,"User Professional",Toast.LENGTH_SHORT).show();
-                break;
-            case 4:
-                Toast.makeText(this,"User comum",Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
-
-
-    public void listarProperties() {
-
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        adapter.swap(getallProperties());
-        setNotificationNumber();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        Intent it;
-
-        switch (id) {
-            case R.id.mycalendar:
-
-                break;
-            case R.id.nav_slideshow:
-
-                break;
-            case R.id.settings:
-
-                break;
-            case R.id.history:
-
-                break;
-            case R.id.properties:
-                listarProperties();
-                break;
-            case R.id.logout:
-
-                break;
-        }
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     private class DownloadImageGoogle extends AsyncTask<Void, Void, Void> {
@@ -396,14 +159,43 @@ public class HomeActivity extends AppCompatActivity
         protected void onPostExecute(Void aVoid) {
             if (image != null)
                 imageView.setImageBitmap(image);
+            Drawable drawableIcon = new BitmapDrawable(getResources(), image);
+            getSupportActionBar().setLogo(drawableIcon);
         }
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_new_home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id){
+            case R.id.action_settings:
+
+                break;
+            case android.R.id.home:
+                finish();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends android.support.v4.app.Fragment {
+    public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -555,18 +347,18 @@ public class HomeActivity extends AppCompatActivity
 
 
 
-    /**
+        /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(android.support.v4.app.FragmentManager fm) {
+        public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
-        public android.support.v4.app.Fragment getItem(int position) {
+        public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             return PlaceholderFragment.newInstance(position + 1);
@@ -589,6 +381,4 @@ public class HomeActivity extends AppCompatActivity
             return null;
         }
     }
-
-
 }

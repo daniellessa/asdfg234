@@ -26,6 +26,7 @@ import br.com.dalecom.agendamobile.model.Service;
 import br.com.dalecom.agendamobile.model.Times;
 import br.com.dalecom.agendamobile.model.User;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
+import br.com.dalecom.agendamobile.wrappers.SharedPreference;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -46,6 +47,9 @@ public class CalendarTimes {
     @Inject EventManager eventManager;
 
     @Inject RestClient restClient;
+
+    @Inject
+    SharedPreference sharedPreference;
 
 
 
@@ -82,20 +86,15 @@ public class CalendarTimes {
 
         Calendar auxStart = copyDate(startAt);
         Calendar auxTarget = copyDate(startAt);
-//        auxTarget.add(Calendar.HOUR_OF_DAY, split.get(Calendar.HOUR_OF_DAY));
-//        auxTarget.add(Calendar.MINUTE, split.get(Calendar.MINUTE));
+
         int next = 1;
 
-//        Log.d(LogUtils.TAG, "StartAt: "+ DateHelper.convertDateToStringSql(startAt));
-//        Log.d(LogUtils.TAG, "EndsAt: "+ DateHelper.convertDateToStringSql(endsAt));
 
         while (startAt.getTimeInMillis() < endsAt.getTimeInMillis()){
 
             boolean find = false;
 
             for (Event event: mEvents){
-
-//                Log.d(LogUtils.TAG, "Compare: "+ DateHelper.hourToString(startAt) + " => " + DateHelper.hourToString(event.getStartAt()));
 
                 if(DateHelper.hourToString(startAt).equals(DateHelper.hourToString(event.getStartAt()))){
 
@@ -105,7 +104,12 @@ public class CalendarTimes {
                     auxEnd.add(Calendar.HOUR_OF_DAY, event.getService().getHours() + interval.get(Calendar.HOUR_OF_DAY));
                     auxEnd.add(Calendar.MINUTE, event.getService().getMinutes() + interval.get(Calendar.MINUTE));
 
-                    list.add(populateTime(startAt, auxEnd, event.getUser().getName()));
+                    Log.d(LogUtils.TAG, "idServer: " + event.getUser().getIdServer() + " => " + sharedPreference.getCurrentUser().getIdServer());
+
+                    if(event.getUser().getIdServer() == sharedPreference.getCurrentUser().getIdServer())
+                        list.add(populateMy(startAt, auxEnd, event.getUser().getName()));
+                    else
+                        list.add(populateTime(startAt, auxEnd, event.getUser().getName()));
 
 
                     startAt = copyDate(auxEnd);
@@ -131,7 +135,8 @@ public class CalendarTimes {
                 Calendar auxEnd = copyDate(startAt);
                 auxEnd.add(Calendar.MINUTE, timeLunch);
 
-                list.add(populateTime(startAt, auxEnd, mContext.getResources().getString(R.string.lunch)));
+                list.add(populateLunch(startAt, auxEnd));
+                //auxEnd.add(Calendar.MINUTE, -1);
 
                 startAt = copyDate(auxEnd);
                 auxTarget = copyDate(startAt);
@@ -146,9 +151,9 @@ public class CalendarTimes {
 
                 Calendar auxEnd = copyDate(startAt);
                 auxEnd.add(Calendar.HOUR_OF_DAY, split.get(Calendar.HOUR_OF_DAY));
-                auxEnd.add(Calendar.MINUTE, split.get(Calendar.MINUTE) -1);
+                auxEnd.add(Calendar.MINUTE, split.get(Calendar.MINUTE) -1); //-1
 
-                list.add(populateTime(startAt, auxEnd, mContext.getResources().getString(R.string.invalid_hour)));
+                list.add(populateInvalidHour(startAt, auxEnd));
 
                 startAt = copyDate(auxEnd);
                 auxTarget = copyDate(startAt);
@@ -197,6 +202,52 @@ public class CalendarTimes {
 
         return time;
     }
+
+    private Times populateLunch(Calendar startAt, Calendar ends){
+        Times time = new Times();
+        time.setViewType(S.TYPE_LUNCH);
+        time.setStartAt(DateHelper.copyDate(startAt));
+        time.setEndsAt(DateHelper.copyDate(ends));
+        time.setUserName(mContext.getResources().getString(R.string.lunch));
+        time.setFree(false);
+
+        return time;
+    }
+
+    private Times populateInvalidHour(Calendar startAt, Calendar ends){
+        Times time = new Times();
+        time.setViewType(S.TYPE_INVALID_HOUR);
+        time.setStartAt(DateHelper.copyDate(startAt));
+        time.setEndsAt(DateHelper.copyDate(ends));
+        time.setUserName(mContext.getResources().getString(R.string.invalid_hour));
+        time.setFree(false);
+
+        return time;
+    }
+
+    private Times populateBloqued(Calendar startAt, Calendar ends){
+        Times time = new Times();
+        time.setViewType(S.TYPE_ITEM_BLOQUED);
+        time.setStartAt(DateHelper.copyDate(startAt));
+        time.setEndsAt(DateHelper.copyDate(ends));
+        time.setUserName(mContext.getResources().getString(R.string.bloqued));
+        time.setFree(false);
+
+        return time;
+    }
+
+    private Times populateMy(Calendar startAt, Calendar ends, String name){
+        Times time = new Times();
+        time.setViewType(S.TYPE_ITEM_MY);
+        time.setStartAt(DateHelper.copyDate(startAt));
+        time.setEndsAt(DateHelper.copyDate(ends));
+        time.setUserName(name);
+        time.setFree(false);
+
+        return time;
+    }
+
+
 
     public boolean checkDisponible(Context context, Times selectedTime){
 

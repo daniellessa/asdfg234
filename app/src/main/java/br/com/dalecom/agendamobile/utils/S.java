@@ -11,7 +11,7 @@ public class S {
 
 
 //    public static final String AuthGoogle =  "661341416508-jmqeigejivot5erf7vhhukbofbphvsi0.apps.googleusercontent.com";
-    public  static final String END_POINT_URL = "http://192.168.1.101.xip.io:1337";
+    public  static final String END_POINT_URL = "http://172.22.4.87.xip.io:1337";
 //    public  static final String END_POINT_URL = "http://icalendar-homolog.us-east-1.elasticbeanstalk.com"; //Homolog
     public  static final String FILE_PREFIX = "image_";
     public static final String JPG_EXT = ".jpg";
@@ -28,6 +28,10 @@ public class S {
     public static final int TYPE_NEW_PROMOTION = 3;
     public static final int TYPE_HEADER = 0;
     public static final int TYPE_ITEM = 1;
+    public static final int TYPE_LUNCH = 2;
+    public static final int TYPE_INVALID_HOUR = 3;
+    public static final int TYPE_ITEM_BLOQUED = 4;
+    public static final int TYPE_ITEM_MY = 5;
     public static final int TYPE_NOT_EXPIRED = 1;
     public static final int TYPE_EXPIRED = 2;
     public static final String STATUS_PENDING = "pending";

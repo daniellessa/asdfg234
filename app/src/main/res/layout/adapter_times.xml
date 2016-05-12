@@ -19,7 +19,8 @@
             android:layout_toLeftOf="@+id/time_startAt"
             android:layout_marginRight="30dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/user_default"/>
+            android:src="@drawable/user_default"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/time_startAt"
@@ -40,7 +41,8 @@
             android:background="@drawable/background_buttom"
             android:layout_centerVertical="true"
             android:text="Cancelar"
-            android:textColor="@color/textWhite"/>
+            android:textColor="@color/textWhite"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
