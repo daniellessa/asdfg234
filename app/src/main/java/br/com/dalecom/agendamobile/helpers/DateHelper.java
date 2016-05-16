@@ -153,7 +153,7 @@ public class DateHelper {
         }
 
 
-        result = day+"/"+month+"/"+year +" às "+hour+":"+min+"h";
+        result = day+" de "+getMonth(date)+" de "+year;
 
         return result;
     }

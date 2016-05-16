@@ -16,6 +16,7 @@ import java.util.List;
 import br.com.dalecom.agendamobile.helpers.DateHelper;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Professional;
+import br.com.dalecom.agendamobile.model.Property;
 import br.com.dalecom.agendamobile.model.Service;
 import br.com.dalecom.agendamobile.model.User;
 
@@ -49,10 +50,27 @@ public class EventParser {
                 service.setHours(data.getAsJsonObject("services").get("hours").getAsInt());
                 service.setMinutes(data.getAsJsonObject("services").get("minutes").getAsInt());
                 service.setPrice(data.getAsJsonObject("services").get("price").getAsFloat());
-                service.setPropertyId(data.getAsJsonObject("services").get("property").getAsInt());
+                service.setPropertyId(data.getAsJsonObject("services").getAsJsonObject("property").get("id").getAsInt());
                 if(!data.getAsJsonObject("services").get("info").isJsonNull())
                     service.setInfo(data.getAsJsonObject("services").get("info").getAsString());
                 event.setService(service);
+
+                Property property = new Property();
+                property.setIdServer(data.getAsJsonObject("services").getAsJsonObject("property").get("id").getAsInt());
+                property.setPin(data.getAsJsonObject("services").getAsJsonObject("property").get("pin").getAsString());
+                property.setName(data.getAsJsonObject("services").getAsJsonObject("property").get("name").getAsString());
+                property.setStreet(data.getAsJsonObject("services").getAsJsonObject("property").get("street").getAsString());
+                property.setNumber(String.valueOf(data.getAsJsonObject("services").getAsJsonObject("property").get("number").getAsInt()));
+                property.setInfo(data.getAsJsonObject("services").getAsJsonObject("property").get("compl").getAsString());
+                property.setCity(data.getAsJsonObject("services").getAsJsonObject("property").get("city").getAsString());
+                property.setPhone(data.getAsJsonObject("services").getAsJsonObject("property").get("phone").getAsString());
+                property.setLat(data.getAsJsonObject("services").getAsJsonObject("property").get("lat").getAsFloat());
+                property.setLng(data.getAsJsonObject("services").getAsJsonObject("property").get("lng").getAsFloat());
+                property.setBucketPath(data.getAsJsonObject("services").getAsJsonObject("property").get("bucket_name").getAsString());
+                property.setPhoto_path(data.getAsJsonObject("services").getAsJsonObject("property").get("photo_path").getAsString());
+                property.setOpenDay(data.getAsJsonObject("services").getAsJsonObject("property").get("open_day").getAsString());
+                property.setOpenHour(data.getAsJsonObject("services").getAsJsonObject("property").get("open_hour").getAsString());
+                event.setProperty(property);
 
                 User user = new User();
                 user.setIdServer(data.getAsJsonObject("users").get("id").getAsInt());
@@ -68,13 +86,18 @@ public class EventParser {
 
                 User userProf = new User();
                 userProf.setIdServer(data.getAsJsonObject("professionals").getAsJsonObject("users").get("id").getAsInt());
+                userProf.setName(data.getAsJsonObject("professionals").getAsJsonObject("users").get("name").getAsString());
                 userProf.setRegistrationId(data.getAsJsonObject("professionals").getAsJsonObject("users").get("registration_id").getAsString());
                 userProf.setEmail(data.getAsJsonObject("professionals").getAsJsonObject("users").get("email").getAsString());
                 userProf.setSex(data.getAsJsonObject("professionals").getAsJsonObject("users").get("sex").getAsString());
                 userProf.setBucketPath(data.getAsJsonObject("professionals").getAsJsonObject("users").get("bucket_name").getAsString());
                 userProf.setPhotoPath(data.getAsJsonObject("professionals").getAsJsonObject("users").get("photo_path").getAsString());
-                event.setUserProf(userProf);
 
+                Professional prof = new Professional();
+                prof.setIdServer(data.getAsJsonObject("professionals").get("id").getAsInt());
+                userProf.setProfessional(prof);
+
+                event.setUserProf(userProf);
 
                 event.setStartAt(Calendar.getInstance());
                 String startAt = data.get("startAt").getAsString();

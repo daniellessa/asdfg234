@@ -99,10 +99,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ProperiesActivity"
-            android:label="@string/myProperties"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".ui.NewPropertyActivity"
             android:label="@string/new_property"
             android:theme="@style/AppTheme.NoActionBar">
@@ -192,13 +188,17 @@
             android:label="@string/alerts"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.CalendarActivity"
-            android:label="@string/title_activity_calendar_times"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".ui.NewHomeActivity"
             android:label="@string/title_activity_new_home"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.EventActivity"
+            android:label="@string/title_activity_perfil_professional"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

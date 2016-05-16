@@ -1,6 +1,7 @@
 package br.com.dalecom.agendamobile.ui;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -75,7 +76,7 @@ public class MyAppointmentsActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryLight));
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
         tabLayout.setSelectedTabIndicatorHeight(10);
 
 
@@ -230,19 +231,21 @@ public class MyAppointmentsActivity extends AppCompatActivity {
             return view;
         }
 
-        private void setRecyclerViewNotExpired(View view, List<Event> mList){
+        private void setRecyclerViewNotExpired(View view,final List<Event> mList){
 
 
             mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_my_appointments);
             layoutManager = new LinearLayoutManager(getContext());
             mRecyclerView.setLayoutManager(layoutManager);
-            adapter = new EventsAdapter(getContext(),mList);
+            adapter = new EventsAdapter(getContext(),mList, mRecyclerView);
             mRecyclerView.setAdapter(adapter);
 
             mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
                         @Override
                         public void onItemClick(View view, int position) {
-
+                            eventManager.setCurrentEvent(mList.get(position));
+                            Intent it = new Intent(getContext(), EventActivity.class);
+                            startActivity(it);
                         }
                     })
             );
@@ -254,7 +257,7 @@ public class MyAppointmentsActivity extends AppCompatActivity {
             mRecyclerView2 = (RecyclerView) view.findViewById(R.id.recyclerView_my_appointments);
             layoutManager2 = new LinearLayoutManager(getContext());
             mRecyclerView2.setLayoutManager(layoutManager2);
-            adapter2 = new EventsAdapter(getContext(),mList);
+            adapter2 = new EventsAdapter(getContext(),mList, mRecyclerView2);
             mRecyclerView2.setAdapter(adapter2);
 
             mRecyclerView2.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {

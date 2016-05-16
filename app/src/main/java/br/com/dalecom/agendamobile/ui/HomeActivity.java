@@ -1,7 +1,5 @@
 package br.com.dalecom.agendamobile.ui;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,17 +18,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,9 +30,6 @@ import android.widget.Toast;
 import com.activeandroid.query.Select;
 import com.google.gson.JsonArray;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -51,7 +40,6 @@ import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.EventsAdapter;
 import br.com.dalecom.agendamobile.adapters.PropertiesAdapter;
-import br.com.dalecom.agendamobile.fragments.CustomDialogFragment;
 import br.com.dalecom.agendamobile.model.Alert;
 import br.com.dalecom.agendamobile.model.Event;
 import br.com.dalecom.agendamobile.model.Property;
@@ -60,7 +48,6 @@ import br.com.dalecom.agendamobile.service.rest.RestClient;
 import br.com.dalecom.agendamobile.utils.EventManager;
 import br.com.dalecom.agendamobile.utils.EventParser;
 import br.com.dalecom.agendamobile.utils.FileUtils;
-import br.com.dalecom.agendamobile.utils.LogUtils;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
 import br.com.dalecom.agendamobile.wrappers.SharedPreference;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -77,10 +64,6 @@ public class HomeActivity extends AppCompatActivity
     private TextView userName;
     private User currentUser;
     private NavigationView navigationView;
-    private List<Property> mList;
-    private PropertiesAdapter adapter;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager layoutManager;
     private ViewPager mViewPager;
 
     @Inject
@@ -100,7 +83,6 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -109,11 +91,9 @@ public class HomeActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
+        setTabView();
         populateFindByIds();
         setUserOnNavigation();
-        setRecyclerView();
         setMenuOptions();
 
     }
@@ -121,49 +101,12 @@ public class HomeActivity extends AppCompatActivity
     private void setTabView(){
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryLight));
-    }
-
-
-    private void setRecyclerView() {
-
-        mList = getallProperties();
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_properties);
-        layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
-        adapter = new PropertiesAdapter(this, mList);
-        mRecyclerView.setAdapter(adapter);
-
-
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-
-                        sharedPreference.setCurrentProperty(mList.get(position));
-                        Calendar currentDate = Calendar.getInstance();
-                        eventManager.startNewEvent(currentDate);
-                        eventManager.setCurrentProperty(mList.get(position));
-
-                        Intent it = new Intent(HomeActivity.this, PropertyActivity.class);
-                        startActivity(it);
-                    }
-                })
-        );
-
-    }
-
-    public List<Property> getallProperties() {
-        return new Select()
-                .from(Property.class)
-                .orderBy("name ASC")
-                .execute();
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
     }
 
 
@@ -227,7 +170,7 @@ public class HomeActivity extends AppCompatActivity
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent it = new Intent(HomeActivity.this, CalendarActivity.class);
+                Intent it = new Intent(HomeActivity.this, SettingsActivity.class);
                 startActivity(it);
             }
         });
@@ -296,9 +239,6 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
-    public void listarProperties() {
-
-    }
 
 
     @Override
@@ -314,7 +254,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.swap(getallProperties());
+       // adapter.swap(getallProperties());
         setNotificationNumber();
     }
 
@@ -362,7 +302,7 @@ public class HomeActivity extends AppCompatActivity
 
                 break;
             case R.id.properties:
-                listarProperties();
+
                 break;
             case R.id.logout:
 
@@ -455,32 +395,28 @@ public class HomeActivity extends AppCompatActivity
                     final RelativeLayout layoutNull = (RelativeLayout) view.findViewById(R.id.layout_null);
                     final RelativeLayout layoutProgress = (RelativeLayout) view.findViewById(R.id.layout_progress);
                     final RelativeLayout layoutError = (RelativeLayout) view.findViewById(R.id.layout_error);
-                    if(mListNotExpired == null) {
-                        layoutProgress.setVisibility(View.VISIBLE);
-                        restClient.getEventsNotExpired(new Callback<JsonArray>() {
-                            @Override
-                            public void success(JsonArray jsonArray, Response response) {
 
-                                EventParser servicesParser = new EventParser(jsonArray);
-                                mListNotExpired = servicesParser.parseFullEvents();
-                                setRecyclerViewNotExpired(view, mListNotExpired);
-                                layoutProgress.setVisibility(View.GONE);
-                                if(mListNotExpired == null){
-                                    layoutNull.setVisibility(View.VISIBLE);
-                                }
+                    layoutProgress.setVisibility(View.VISIBLE);
+                    restClient.getEventsNotExpired(new Callback<JsonArray>() {
+                        @Override
+                        public void success(JsonArray jsonArray, Response response) {
 
+                            EventParser servicesParser = new EventParser(jsonArray);
+                            mListNotExpired = servicesParser.parseFullEvents();
+                            setRecyclerViewNotExpired(view, mListNotExpired);
+                            layoutProgress.setVisibility(View.GONE);
+                            if(mListNotExpired == null){
+                                layoutNull.setVisibility(View.VISIBLE);
                             }
+                        }
+                        @Override
+                        public void failure(RetrofitError error) {
+                            //configurar view para list vazia
+                            layoutProgress.setVisibility(View.GONE);
+                            layoutError.setVisibility(View.VISIBLE);
+                        }
+                    });
 
-                            @Override
-                            public void failure(RetrofitError error) {
-                                //configurar view para list vazia
-                                layoutProgress.setVisibility(View.GONE);
-                                layoutError.setVisibility(View.VISIBLE);
-                            }
-                        });
-                    }else{
-                        setRecyclerViewNotExpired(view, mListNotExpired);
-                    }
                     return view;
                 case 2:
                     final View view2 = inflater.inflate(R.layout.content_home, container, false);
@@ -488,33 +424,31 @@ public class HomeActivity extends AppCompatActivity
                     mRecyclerViewProperty = (RecyclerView) view2.findViewById(R.id.recyclerView_properties);
                     layoutManagerProperty = new LinearLayoutManager(getContext());
                     mRecyclerViewProperty.setLayoutManager(layoutManagerProperty);
-                    adapterProperty = new PropertiesAdapter(getContext(), mList);
+                    adapterProperty = new PropertiesAdapter(getContext(), mList, mRecyclerViewProperty);
                     mRecyclerViewProperty.setAdapter(adapterProperty);
 
-                    mRecyclerViewProperty.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(View view, int position) {
-
-                                    sharedPreference.setCurrentProperty(mList.get(position));
-                                    Calendar currentDate = Calendar.getInstance();
-                                    eventManager.startNewEvent(currentDate);
-                                    eventManager.setCurrentProperty(mList.get(position));
-
-                                    Intent it = new Intent(getContext(), PropertyActivity.class);
-                                    startActivity(it);
-                                }
-                            })
-                    );
+//                    mRecyclerViewProperty.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
+//                                @Override
+//                                public void onItemClick(View view, int position) {
+//
+//                                    sharedPreference.setCurrentProperty(mList.get(position));
+//                                    Calendar currentDate = Calendar.getInstance();
+//                                    eventManager.startNewEvent(currentDate);
+//                                    eventManager.setCurrentProperty(mList.get(position));
+//
+//                                    Intent it = new Intent(getContext(), PropertyActivity.class);
+//                                    startActivity(it);
+//                                }
+//                            })
+//                    );
 
                     FloatingActionButton fab = (FloatingActionButton) view2.findViewById(R.id.fab);
                     if (fab != null) {
                         fab.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
                                 Intent it = new Intent(getContext(), NewPropertyActivity.class);
                                 startActivity(it);
-
                             }
                         });
                     }
@@ -532,19 +466,29 @@ public class HomeActivity extends AppCompatActivity
                     .execute();
         }
 
-        private void setRecyclerViewNotExpired(View view, List<Event> mList){
+        @Override
+        public void onResume() {
+            super.onResume();
+            mList = getallProperties();
+            if(mRecyclerViewProperty != null)
+                adapterProperty.swap(mList);
+        }
+
+        private void setRecyclerViewNotExpired(View view, final List<Event> mList){
 
 
             mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_my_appointments);
             layoutManager = new LinearLayoutManager(getContext());
             mRecyclerView.setLayoutManager(layoutManager);
-            adapter = new EventsAdapter(getContext(),mList);
+            adapter = new EventsAdapter(getContext(),mList,mRecyclerView);
             mRecyclerView.setAdapter(adapter);
 
             mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
                         @Override
                         public void onItemClick(View view, int position) {
-
+                            eventManager.setCurrentEvent(mList.get(position));
+                            Intent it = new Intent(getContext(), EventActivity.class);
+                            startActivity(it);
                         }
                     })
             );
@@ -574,7 +518,7 @@ public class HomeActivity extends AppCompatActivity
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
+            // Show 3 total pages.?
             return 2;
         }
 
@@ -584,11 +528,10 @@ public class HomeActivity extends AppCompatActivity
                 case 0:
                     return "Próximos Agendamentos";
                 case 1:
-                    return "Agendar";
+                    return "Estabelecimentos Favoritos";
             }
             return null;
         }
     }
-
 
 }

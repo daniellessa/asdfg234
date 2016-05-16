@@ -73,6 +73,7 @@ public class ProfessionalParser {
 
                 Professional professional = new Professional();
 
+                professional.setIdServer(data.get("id").getAsInt());
                 professional.setProperties(data.getAsJsonObject("properties").get("id").getAsInt());
                 professional.setCategory(data.getAsJsonObject("professions").get("id").getAsInt());
                 professional.setProfessionName(data.getAsJsonObject("professions").get("name").getAsString());

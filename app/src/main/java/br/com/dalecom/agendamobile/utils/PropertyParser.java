@@ -39,21 +39,21 @@ public class PropertyParser {
             property.setName(data.get("name").getAsString());
             property.setPhoto_path(data.get("photo_path").getAsString());
             property.setBucketPath(data.get("bucket_name").getAsString());
-            property.setInfo(data.get("info").getAsString());
             property.setOpenDay(data.get("open_day").getAsString());
             property.setOpenHour(data.get("open_hour").getAsString());
             property.setPhone(data.get("phone").getAsString());
             property.setStreet(data.get("street").getAsString());
             property.setNumber(data.get("number").getAsString());
             property.setCity(data.get("city").getAsString());
+            property.setLat(data.get("lat").getAsFloat());
+            property.setLng(data.get("lng").getAsFloat());
 
-            if(!data.get("lat").isJsonNull()){
-                property.setLat(data.get("lat").getAsFloat());
+
+            if(!data.get("compl").isJsonNull()){
+                property.setInfo(data.get("compl").getAsString());
             }
 
-            if(!data.get("lng").isJsonNull()){
-                property.setLng(data.get("lng").getAsFloat());
-            }
+
 
             properties.add(property);
 

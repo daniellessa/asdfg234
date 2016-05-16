@@ -61,6 +61,13 @@ public class CalendarTimes {
         populateVariables();
     }
 
+    public CalendarTimes(Context context, List<Times> listTimes){
+        this.mContext = context;
+        ((AgendaMobileApplication) mContext.getApplicationContext()).getAppComponent().inject(this);
+        list = listTimes;
+        populateVariables();
+    }
+
     private void populateVariables(){
         userProf = eventManager.getCurrentProfessional();
         startAt = copyDate(userProf.getStartAt());
@@ -94,6 +101,32 @@ public class CalendarTimes {
 
             boolean find = false;
 
+            if(DateHelper.hourToString(startAt).equals(DateHelper.hourToString(startLunch))) {
+
+                int timeLunch = 0;
+
+                while (startLunch.getTimeInMillis() < endsLunch.getTimeInMillis()){
+                    timeLunch++;
+                    startLunch.add(Calendar.MINUTE, next);
+                }
+
+                //timeLunch -= 1;
+
+                Calendar auxEnd = copyDate(startAt);
+                auxEnd.add(Calendar.MINUTE, timeLunch -1);
+
+                list.add(populateLunch(startAt, auxEnd));
+
+                auxEnd.add(Calendar.MINUTE, 1);
+
+                startAt = copyDate(auxEnd);
+                auxTarget = copyDate(startAt);
+                auxTarget.add(Calendar.HOUR_OF_DAY, split.get(Calendar.HOUR_OF_DAY));
+                auxTarget.add(Calendar.MINUTE, split.get(Calendar.MINUTE));
+                auxStart = copyDate(startAt);
+
+            }
+
             for (Event event: mEvents){
 
                 if(DateHelper.hourToString(startAt).equals(DateHelper.hourToString(event.getStartAt()))){
@@ -107,7 +140,7 @@ public class CalendarTimes {
                     Log.d(LogUtils.TAG, "idServer: " + event.getUser().getIdServer() + " => " + sharedPreference.getCurrentUser().getIdServer());
 
                     if(event.getUser().getIdServer() == sharedPreference.getCurrentUser().getIdServer())
-                        list.add(populateMy(startAt, auxEnd, event.getUser().getName()));
+                        list.add(populateMy(startAt, auxEnd, event.getUser().getName(), event));
                     else
                         list.add(populateTime(startAt, auxEnd, event.getUser().getName()));
 
@@ -123,35 +156,13 @@ public class CalendarTimes {
 
             }
 
-            if(DateHelper.hourToString(startAt).equals(DateHelper.hourToString(startLunch))) {
-
-                int timeLunch = 0;
-
-                while (startLunch.getTimeInMillis() < endsLunch.getTimeInMillis()){
-                    timeLunch++;
-                    startLunch.add(Calendar.MINUTE, next);
-                }
-
-                Calendar auxEnd = copyDate(startAt);
-                auxEnd.add(Calendar.MINUTE, timeLunch);
-
-                list.add(populateLunch(startAt, auxEnd));
-                //auxEnd.add(Calendar.MINUTE, -1);
-
-                startAt = copyDate(auxEnd);
-                auxTarget = copyDate(startAt);
-                auxTarget.add(Calendar.HOUR_OF_DAY, split.get(Calendar.HOUR_OF_DAY));
-                auxTarget.add(Calendar.MINUTE, split.get(Calendar.MINUTE));
-                auxStart = copyDate(startAt);
-
-            }
 
             if(startAt.getTimeInMillis() <  today.getTimeInMillis()) {
 
 
                 Calendar auxEnd = copyDate(startAt);
                 auxEnd.add(Calendar.HOUR_OF_DAY, split.get(Calendar.HOUR_OF_DAY));
-                auxEnd.add(Calendar.MINUTE, split.get(Calendar.MINUTE) -1); //-1
+                auxEnd.add(Calendar.MINUTE, split.get(Calendar.MINUTE) -1);
 
                 list.add(populateInvalidHour(startAt, auxEnd));
 
@@ -236,13 +247,14 @@ public class CalendarTimes {
         return time;
     }
 
-    private Times populateMy(Calendar startAt, Calendar ends, String name){
+    private Times populateMy(Calendar startAt, Calendar ends, String name, Event event){
         Times time = new Times();
         time.setViewType(S.TYPE_ITEM_MY);
         time.setStartAt(DateHelper.copyDate(startAt));
         time.setEndsAt(DateHelper.copyDate(ends));
         time.setUserName(name);
         time.setFree(false);
+        time.setEvent(event);
 
         return time;
     }

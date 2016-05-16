@@ -2,7 +2,6 @@ package br.com.dalecom.agendamobile.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,29 +12,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-
-import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import com.google.gson.JsonArray;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import br.com.dalecom.agendamobile.AgendaMobileApplication;
 import br.com.dalecom.agendamobile.R;
 import br.com.dalecom.agendamobile.adapters.ProfessionalsAdapter;
-import br.com.dalecom.agendamobile.adapters.expandable.ExpandableAdapter;
-import br.com.dalecom.agendamobile.adapters.expandable.Header;
 import br.com.dalecom.agendamobile.model.Property;
 import br.com.dalecom.agendamobile.model.User;
 import br.com.dalecom.agendamobile.service.rest.RestClient;
 import br.com.dalecom.agendamobile.utils.EventManager;
-import br.com.dalecom.agendamobile.utils.HeaderParser;
 import br.com.dalecom.agendamobile.utils.LogUtils;
 import br.com.dalecom.agendamobile.utils.ProfessionalParser;
 import br.com.dalecom.agendamobile.utils.RecyclerItemClickListener;
@@ -55,7 +42,6 @@ public class ProfessionalsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Property currentProperty;
     private List<User> mList;
-    private List<Header> mListHeader;
 
     @Inject public RestClient restClient;
 
@@ -131,72 +117,6 @@ public class ProfessionalsActivity extends AppCompatActivity {
         }
     };
 
-    private void getListCategoryFromServer(){
-        restClient.getCategories(callbackCategory);
-    }
-
-    private Callback callbackCategory = new Callback<JsonArray>(){
-
-        @Override
-        public void success(JsonArray jsonArray, Response response) {
-           HeaderParser parser = new HeaderParser(jsonArray);
-            mListHeader = parser.parseFullCategory();
-            setRecyclerView();
-            dialog.dismiss();
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Log.d(LogUtils.TAG,"Failure getCategory: "+ error);
-        }
-    };
-
-    private List<Header> generateProfessionals(List<Header> headers, List<User> users) {
-
-        List<Header> recipe = new ArrayList<>();
-        for (Header header : headers) {
-
-            List<User> childItemList = new ArrayList<>();
-
-            for (User user : users){
-                Log.d(LogUtils.TAG, "Varrendo user");
-                if(header.getId() == user.getProfessional().getCategory()) {
-                    childItemList.add(user);
-                    Log.d(LogUtils.TAG, "Profissional Add");
-                }
-            }
-
-            if(childItemList.size() > 0){
-                header.setItens(childItemList);
-                recipe.add(header);
-                Log.d(LogUtils.TAG, "Recipe: "+ recipe.size());
-            }
-        }
-        return recipe;
-
-//        List<ParentListItem> parentListItems = new ArrayList<>();
-//        for (Header header : headers) {
-//
-//            List<User> childItemList = new ArrayList<>();
-//
-//            for (User user : users){
-//                if(header.getId() == user.getProfessional().getCategory()) {
-//                    childItemList.add(user);
-//                    Log.d(LogUtils.TAG, "Profissional Add");
-//                }
-//            }
-//
-//            Log.d(LogUtils.TAG, "Header: " + header.getItens().size());
-//
-//            if(header.getItens() != null){
-//                parentListItems.add(header);
-//                header.setItens(childItemList);
-//            }
-//
-//
-//        }
-//        return parentListItems;
-    }
 
     @Override
     protected void onResume() {

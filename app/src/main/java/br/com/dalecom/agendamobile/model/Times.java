@@ -14,6 +14,7 @@ public class Times {
     private String userName;
     private boolean free;
     private int viewType;
+    private Event event;
 
 
     public Calendar getStartAt() {
@@ -62,5 +63,13 @@ public class Times {
 
     public void setViewType(int viewType) {
         this.viewType = viewType;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 }

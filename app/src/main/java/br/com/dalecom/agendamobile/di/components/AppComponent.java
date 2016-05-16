@@ -1,7 +1,5 @@
 package br.com.dalecom.agendamobile.di.components;
 
-import android.content.Context;
-
 import javax.inject.Singleton;
 
 
@@ -9,11 +7,13 @@ import br.com.dalecom.agendamobile.adapters.AlertAdapter;
 import br.com.dalecom.agendamobile.adapters.EventsAdapter;
 import br.com.dalecom.agendamobile.adapters.NewPropertyAdapter;
 import br.com.dalecom.agendamobile.adapters.ProfessionalsAdapter;
+import br.com.dalecom.agendamobile.adapters.PropertiesAdapter;
 import br.com.dalecom.agendamobile.adapters.TimesAdapter;
 import br.com.dalecom.agendamobile.fragments.DialogFragmentConfirmEvent;
 import br.com.dalecom.agendamobile.fragments.DialogFragmentCreateUser;
 import br.com.dalecom.agendamobile.service.gcm.RegistrationIntentService;
 import br.com.dalecom.agendamobile.ui.CreateUserActivity;
+import br.com.dalecom.agendamobile.ui.EventActivity;
 import br.com.dalecom.agendamobile.ui.HomeActivity;
 import br.com.dalecom.agendamobile.ui.LoginActivity;
 import br.com.dalecom.agendamobile.ui.MyAppointmentsActivity;
@@ -22,6 +22,7 @@ import br.com.dalecom.agendamobile.ui.NewPropertyActivity;
 import br.com.dalecom.agendamobile.ui.ProfessionalsActivity;
 import br.com.dalecom.agendamobile.ui.PropertyActivity;
 import br.com.dalecom.agendamobile.ui.ServicesActivity;
+import br.com.dalecom.agendamobile.ui.SettingsActivity;
 import br.com.dalecom.agendamobile.ui.TimesActivity;
 import br.com.dalecom.agendamobile.di.modules.AwsModule;
 import br.com.dalecom.agendamobile.di.modules.FileModule;
@@ -74,5 +75,8 @@ public interface AppComponent {
     void inject(NewPropertyAdapter newPropertyAdapter);
     void inject(NewHomeActivity.PlaceholderFragment placeholderFragment);
     void inject(NewHomeActivity newHomeActivity);
+    void inject(EventActivity perfilProfessionalActivity);
+    void inject(PropertiesAdapter propertiesAdapter);
+    void inject(SettingsActivity settingsActivity);
 
 }

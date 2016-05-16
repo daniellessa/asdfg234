@@ -24,6 +24,8 @@ public class Event extends Model implements Serializable {
 
 
     @Column(name = "IdServer")
+    @Expose
+    @SerializedName("idServer")
     protected long idServer;
 
     @Column(name = "UserProf")

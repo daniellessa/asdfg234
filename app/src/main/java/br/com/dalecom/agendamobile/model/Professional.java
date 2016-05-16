@@ -22,6 +22,8 @@ import br.com.dalecom.agendamobile.utils.LogUtils;
 public class Professional extends Model{
 
 
+    @Column(name = "IdServer")
+    protected int idServer;
 
     @Column(name = "Properties")
     @Expose
@@ -103,6 +105,13 @@ public class Professional extends Model{
     protected String professionName;
 
 
+    public int getIdServer() {
+        return idServer;
+    }
+
+    public void setIdServer(int idServer) {
+        this.idServer = idServer;
+    }
 
     public int getProperties() {
         return properties;
@@ -239,5 +248,7 @@ public class Professional extends Model{
     public void setProfessionName(String professionName) {
         this.professionName = professionName;
     }
+
+
 
 }

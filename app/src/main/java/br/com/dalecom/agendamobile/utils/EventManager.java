@@ -41,6 +41,7 @@ public class EventManager {
     private Calendar currentStartAt;
     private Calendar currentEndsAt;
     private Property currentProperty;
+    private Event CurrentEvent;
 
     @Inject public static SharedPreference sharedPreference;
 
@@ -126,11 +127,19 @@ public class EventManager {
         this.currentProperty = currentProperty;
     }
 
+    public Event getCurrentEvent() {
+        return CurrentEvent;
+    }
+
+    public void setCurrentEvent(Event currentEvent) {
+        CurrentEvent = currentEvent;
+    }
+
     public void finalizeEvent() {
 
 //
         this.mEvent.setUserId(currentUser.getIdServer());
-        this.mEvent.setProfessionalsId(currentUserProf.getIdServer());
+        this.mEvent.setProfessionalsId(currentUserProf.getProfessional().getIdServer());
         this.mEvent.setServicesId(currentService.getIdServer());
         this.mEvent.setDay(DateHelper.toStringSql(dateSelected));
         this.mEvent.setStartAt(currentStartAt);

@@ -16,9 +16,6 @@
             android:background="@color/textWhite"
             android:layout_centerVertical="true"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -183,7 +180,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="@color/textEspecial"
-                    android:text="Inserir Estabelecimento"/>
+                    android:text="Buscar Estabelecimentos"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

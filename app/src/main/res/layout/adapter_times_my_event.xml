@@ -10,39 +10,56 @@
         android:id="@+id/background_times"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@color/white"
         android:layout_centerVertical="true">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/icon_perfil"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_toLeftOf="@+id/time_startAt"
-            android:layout_marginRight="30dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/user_default"
-            android:visibility="gone"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/time_startAt">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/icon_perfil"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/user_default"/>
+
+
+        </RelativeLayout>
+
+
 
         <TextView
             android:id="@+id/time_startAt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:layout_centerInParent="true"
             android:textStyle="bold"
             android:text="00:00 hs"
             android:textSize="16sp"/>
 
-        <Button
+        <RelativeLayout
             android:id="@+id/btn_cancel_event"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_toRightOf="@+id/time_startAt"
             android:layout_marginLeft="30dp"
             android:background="@drawable/background_buttom"
             android:layout_centerVertical="true"
-            android:text="Ver"
-            android:textColor="@color/textWhite"
-            android:visibility="gone"/>
+            android:textColor="@color/textWhite">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@color/white"
+                android:text="Ver Agendamento"/>
+
+
+
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

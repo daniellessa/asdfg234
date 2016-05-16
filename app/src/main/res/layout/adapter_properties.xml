@@ -30,6 +30,14 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/image_property"/>
 
+                <ImageView
+                    android:id="@+id/icon_unfavorite"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/ic_unfavorite"/>
+
+
             </RelativeLayout>
 
             </RelativeLayout>

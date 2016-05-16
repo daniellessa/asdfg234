@@ -15,71 +15,148 @@
         card_view:cardCornerRadius="2dp">
 
         <RelativeLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/logo_property"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/scarlett"/>
+            <RelativeLayout
+                android:id="@+id/layout_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/green">
+
+                <TextView
+                    android:id="@+id/event_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_margin="5dp"
+                    android:textColor="@color/white"
+                    android:text="Situation"/>
+
+            </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/info_event"
-                android:layout_width="wrap_content"
+                android:id="@+id/layout_professional"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/logo_property">
-
+                android:layout_below="@+id/layout_status">
 
                 <RelativeLayout
-                    android:id="@+id/profissional_info"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="10dp"
-                    android:layout_toRightOf="@+id/icon_perfil">
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp">
 
-                    <TextView
-                        android:id="@+id/name_event"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Event Name"
-                        android:textSize="14sp"
-                        android:textStyle="bold"/>
+                    <ImageView
+                        android:id="@+id/back_searching"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/searching_back"/>
 
-                    <TextView
-                        android:id="@+id/event_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/name_event"
-                        android:layout_marginTop="5dp"
-                        android:text="event date"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:id="@+id/event_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/name_event"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/holo_green_dark"
-                        android:textSize="12sp"
-                        android:text="Status"/>
-
-                    <TextView
-                        android:id="@+id/event_property"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/event_date"
-                        android:layout_marginTop="5dp"
-                        android:text="Property name"/>
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/searching_camera_front"/>
 
                 </RelativeLayout>
 
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/icon_professional"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"/>
+
+                <TextView
+                    android:id="@+id/professional_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/icon_professional"
+                    android:text="Professional Name"/>
+
+                <TextView
+                    android:id="@+id/name_event"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/professional_name"
+                    android:text="Service"/>
+
             </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="10dp"
+                android:background="@color/colorDivider"
+                android:layout_below="@+id/layout_professional"/>
+
+            <RelativeLayout
+                android:id="@+id/layout_info_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/divider"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/property_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:text="Property name"/>
+
+                <ImageView
+                    android:id="@+id/icon_property"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_below="@+id/property_name"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/calendar_flat"/>
+
+                <TextView
+                    android:id="@+id/text_day_week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/property_name"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@+id/icon_property"
+                    android:layout_marginLeft="15dp"
+                    android:text="week-day"/>
+
+                <TextView
+                    android:id="@+id/text_day_month_year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/icon_property"
+                    android:layout_below="@+id/text_day_week"
+                    android:layout_marginLeft="15dp"
+                    android:textStyle="bold"
+                    android:text="00 de November de 0000"/>
+
+                <TextView
+                    android:id="@+id/text_hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/icon_property"
+                    android:layout_below="@+id/text_day_month_year"
+                    android:layout_marginLeft="15dp"
+                    android:text="hour"/>
+
+            </RelativeLayout>
+
 
         </RelativeLayout>
 

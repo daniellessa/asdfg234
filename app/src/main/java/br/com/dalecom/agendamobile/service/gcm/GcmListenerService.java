@@ -77,7 +77,9 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
                 gerarNotificacao("Teste", title, message);
                 break;
             case 4:
-                Log.d(LogUtils.TAG, "type: " + type);
+                intent = new Intent(getApplicationContext(), AlertsActivity.class);
+                saveAlert();
+                gerarNotificacao("Teste", title, message);
                 break;
             case 5:
                 Log.d(LogUtils.TAG, "type: " + type);

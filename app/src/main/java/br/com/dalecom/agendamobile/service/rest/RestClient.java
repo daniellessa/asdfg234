@@ -81,6 +81,11 @@ public class RestClient {
         api.postEvent(event, callback);
     }
 
+    public void cancelEvent(Event event, Callback callback) {
+        api.cancelEvent(event, callback);
+    }
+
+
     public void postImage(User user, Callback callback) {
         api.postImage(user, callback);
     }

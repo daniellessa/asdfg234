@@ -161,6 +161,20 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
         daysLayout = (RelativeLayout) findViewById(R.id.layout_fragment_day);
         setCurrentDayFragment();
 
+        previusLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                previusDay();
+            }
+        });
+
+        nextLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nextDay();
+            }
+        });
+
 
         daysLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -245,7 +259,7 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
 
     private void populateEventsList(){
         mEvents.clear();
-        restClient.getEvents(userSelected.getIdServer(), DateHelper.toStringSql(eventManager.getDateSelected()), callbackEvents);
+        restClient.getEvents(eventManager.getCurrentUserProfessional().getProfessional().getIdServer(), DateHelper.toStringSql(eventManager.getDateSelected()), callbackEvents);
         layoutProgressBar.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
     }
@@ -279,40 +293,40 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_times);
         layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
-        adapter = new TimesAdapter(this,mList,dateSelected);
+        adapter = new TimesAdapter(this,mList,mEvents,dateSelected);
         mRecyclerView.invalidate();
         adapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(adapter);
 
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-
-                        Times time = mList.get(position);
-
-                        Log.d(LogUtils.TAG, "Date selected: " + time.getStartAt() + " " + time.getEndsAt());
-                        if (calendarTimes.checkDisponible(TimesActivity.this, time)) {
-
-                            startAt = DateHelper.copyDate(dateSelected);
-                            startAt.set(Calendar.HOUR_OF_DAY, time.getStartAt().get(Calendar.HOUR_OF_DAY));
-                            startAt.set(Calendar.MINUTE, time.getStartAt().get(Calendar.MINUTE));
-
-                            endstAt = DateHelper.copyDate(startAt);
-                            endstAt.add(Calendar.HOUR_OF_DAY, eventManager.getCurrentService().getHours());
-                            endstAt.add(Calendar.MINUTE, eventManager.getCurrentService().getMinutes());
-
-                            eventManager.setCurrentStartAt(DateHelper.copyDate(startAt));
-                            eventManager.setCurrentEndsAt(DateHelper.copyDate(endstAt));
-                            eventManager.finalizeEvent();
-
-                            Log.d(LogUtils.TAG, "Start date: " + DateHelper.convertDateToStringSql(startAt));
-                            Log.d(LogUtils.TAG, "Ends date: " + DateHelper.convertDateToStringSql(endstAt));
-
-                            initConfirmDialog(startAt, endstAt);
-                        }
-                    }
-                })
-        );
+//        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(View view, int position) {
+//
+//                        Times time = mList.get(position);
+//
+//                        Log.d(LogUtils.TAG, "Date selected: " + time.getStartAt() + " " + time.getEndsAt());
+//                        if (calendarTimes.checkDisponible(TimesActivity.this, time)) {
+//
+//                            startAt = DateHelper.copyDate(dateSelected);
+//                            startAt.set(Calendar.HOUR_OF_DAY, time.getStartAt().get(Calendar.HOUR_OF_DAY));
+//                            startAt.set(Calendar.MINUTE, time.getStartAt().get(Calendar.MINUTE));
+//
+//                            endstAt = DateHelper.copyDate(startAt);
+//                            endstAt.add(Calendar.HOUR_OF_DAY, eventManager.getCurrentService().getHours());
+//                            endstAt.add(Calendar.MINUTE, eventManager.getCurrentService().getMinutes());
+//
+//                            eventManager.setCurrentStartAt(DateHelper.copyDate(startAt));
+//                            eventManager.setCurrentEndsAt(DateHelper.copyDate(endstAt));
+//                            eventManager.finalizeEvent();
+//
+//                            Log.d(LogUtils.TAG, "Start date: " + DateHelper.convertDateToStringSql(startAt));
+//                            Log.d(LogUtils.TAG, "Ends date: " + DateHelper.convertDateToStringSql(endstAt));
+//
+//                            initConfirmDialog(startAt, endstAt);
+//                        }
+//                    }
+//                })
+//        );
     }
 
     private Callback callbackPostEvents = new Callback<JsonObject>(){
@@ -366,7 +380,7 @@ public class TimesActivity extends AppCompatActivity implements DatePickerDialog
 
         layoutProgressBar.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
-        restClient.getEvents(userSelected.getIdServer(), DateHelper.toStringSql(dateSelected), new Callback<JsonArray>() {
+        restClient.getEvents(eventManager.getCurrentUserProfessional().getProfessional().getIdServer(), DateHelper.toStringSql(dateSelected), new Callback<JsonArray>() {
 
 
             @Override

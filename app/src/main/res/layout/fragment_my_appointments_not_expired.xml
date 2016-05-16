@@ -10,10 +10,12 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@drawable/scarlett"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:text="Você não possui nenhum agendamento a vencer"
             android:layout_centerInParent="true"/>
 
     </RelativeLayout>

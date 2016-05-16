@@ -33,6 +33,9 @@ public interface API {
     @POST("/events")
     void postEvent(@Body Event event, Callback<JsonObject> callback);
 
+    @POST("/event_cancel")
+    void cancelEvent(@Body Event event, Callback<JsonObject> callback);
+
     @GET("/properties")
     void getProperties(@Query("pin") String pin, Callback<JsonObject> callback);
 

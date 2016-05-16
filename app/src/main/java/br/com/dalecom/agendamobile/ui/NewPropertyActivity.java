@@ -73,7 +73,7 @@ public class NewPropertyActivity extends AppCompatActivity {
     private RelativeLayout layoutDescription;
     private RelativeLayout layoutNull;
     private RelativeLayout layoutProgress;
-    private ImageView progressView;
+    private ImageView progressView, iconFavorite;
 
     @Inject
     public RestClient restClient;
@@ -96,6 +96,7 @@ public class NewPropertyActivity extends AppCompatActivity {
         layoutProgress = (RelativeLayout) findViewById(R.id.layout_progress);
         progressView = (ImageView) findViewById(R.id.back_searching);
         layoutNull = (RelativeLayout) findViewById(R.id.layout_null_new_property);
+        iconFavorite = (ImageView) findViewById(R.id.icon_favorite);
 
         setRecycclerView();
         searchingAnimated();
@@ -115,14 +116,14 @@ public class NewPropertyActivity extends AppCompatActivity {
         hendleSearch(getIntent());
 
 
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        property = mList.get(position);
-                        saveProperty(mList.get(position));
-                    }
-                })
-        );
+//        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(View view, int position) {
+//                        property = mList.get(position);
+//                       // saveProperty(mList.get(position));
+//                    }
+//                })
+//        );
     }
 
     @Override
@@ -173,43 +174,6 @@ public class NewPropertyActivity extends AppCompatActivity {
 
     };
 
-    public void saveProperty(Property property){
-        if(property != null){
-
-            Property oldProperty = Property.findOne(property.getIdServer());
-            property.setNotification(true);
-
-            if(oldProperty == null){
-                property.save();
-                notificationAdminProperty();
-                finish();
-            }else{
-                oldProperty.delete();
-                property.save();
-                notificationAdminProperty();
-                finish();
-            }
-
-        }
-
-    }
-
-
-    private void notificationAdminProperty(){
-
-        restClient.notifyNewAssociation(property.getIdServer(), new Callback<JsonObject>() {
-
-            @Override
-            public void success(JsonObject jsonObject, Response response) {
-                Log.d(LogUtils.TAG, "notificationAdminProperty: SUCESS");
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d(LogUtils.TAG, "notificationAdminProperty: FAIL");
-            }
-        });
-    }
 
 
     @Override

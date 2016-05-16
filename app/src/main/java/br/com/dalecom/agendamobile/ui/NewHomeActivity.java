@@ -280,7 +280,7 @@ public class NewHomeActivity extends AppCompatActivity {
                     mRecyclerViewProperty = (RecyclerView) view2.findViewById(R.id.recyclerView_properties);
                     layoutManagerProperty = new LinearLayoutManager(getContext());
                     mRecyclerViewProperty.setLayoutManager(layoutManagerProperty);
-                    adapterProperty = new PropertiesAdapter(getContext(), mList);
+                    adapterProperty = new PropertiesAdapter(getContext(), mList, mRecyclerViewProperty);
                     mRecyclerViewProperty.setAdapter(adapterProperty);
 
                     mRecyclerViewProperty.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {
@@ -330,7 +330,7 @@ public class NewHomeActivity extends AppCompatActivity {
             mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_my_appointments);
             layoutManager = new LinearLayoutManager(getContext());
             mRecyclerView.setLayoutManager(layoutManager);
-            adapter = new EventsAdapter(getContext(),mList);
+            adapter = new EventsAdapter(getContext(),mList, mRecyclerView);
             mRecyclerView.setAdapter(adapter);
 
             mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), new RecyclerItemClickListener.OnItemClickListener() {

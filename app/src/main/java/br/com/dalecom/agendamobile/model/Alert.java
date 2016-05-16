@@ -35,6 +35,9 @@ public class Alert extends Model {
     @Column(name = "Type")
     protected int type;
 
+    @Column(name = "Seen")
+    protected boolean seen;
+
     public Alert() {}
 
     public Alert(int idServer, String title, String message, String from, String date, String hour, int type) {
@@ -45,6 +48,7 @@ public class Alert extends Model {
         this.date = date;
         this.hour = hour;
         this.type = type;
+        this.seen = false;
     }
 
     public int getIdServer() {
@@ -101,6 +105,14 @@ public class Alert extends Model {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
     }
 
     public static List<Alert> getAlerts(){

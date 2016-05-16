@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.JsonArray;
@@ -89,7 +90,7 @@ public class PropertyActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryLight));
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.white));
         tabLayout.setSelectedTabIndicatorHeight(10);
         setFindsByIds();
 
@@ -293,7 +294,9 @@ public class PropertyActivity extends AppCompatActivity {
                 lng = eventManager.getCurrentProperty().getLng();
                 Log.d(LogUtils.TAG,"LatLng: "+ lat +" - "+ lng);
                 map = fragment.getMap();
-                map.addMarker(new MarkerOptions().position(new LatLng(lat, lng)));
+                map.addMarker(new MarkerOptions().position(new LatLng(lat, lng)))
+                        .setTitle(eventManager.getCurrentProperty().getName());
+                        //.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.logo_icalendar_primary));
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lng), 12.0f));
             }
         }
